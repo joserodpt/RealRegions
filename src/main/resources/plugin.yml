@@ -1,0 +1,16 @@
+name: RealRegions
+version: ${project.version}
+main: josegamerpt.realregions.RealRegions
+api-version: 1.13
+prefix: RealRegions
+authors: [JoseGamer_PT]
+description: New and Beautiful Region Management Plugin.
+depend: [WorldEdit]
+website: https://www.spigotmc.org/members/josegamer_pt.40267/
+commands:
+  regions:
+    description: Main command for RealRegions.
+    aliases:
+      - r
+      - rr
+      - realregions
