@@ -6,6 +6,7 @@ import josegamerpt.realregions.classes.Data;
 import josegamerpt.realregions.classes.PickType;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.classes.Region;
+import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -30,12 +31,12 @@ public class WorldGUI {
     private Inventory inv;
 
     static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
-    static ItemStack unload = Itens.createItem(Material.DISPENSER, 1, "&6Unload", Arrays.asList("&FClick to unload this world."));
-    static ItemStack entit = Itens.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&FClick to manage this worlds entities."));
-    static ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Arrays.asList("&FClick to create a new region."));
+    static ItemStack unload = Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world."));
+    static ItemStack entit = Itens.createItem(Material.SPAWNER, 1, "&aEntities", Collections.singletonList("&FClick to manage this worlds entities."));
+    static ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
 
     static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
-            Arrays.asList("&fClick here to close this menu."));
+            Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
     private ArrayList<Region> regions;
@@ -58,7 +59,7 @@ public class WorldGUI {
     public void load() {
         regions = r.getRegions();
 
-        p = new Pagination<Region>(21, regions);
+        p = new Pagination<>(21, regions);
         fillChest(p.getPage(pageNumber));
     }
 
@@ -68,7 +69,7 @@ public class WorldGUI {
         display.clear();
 
         for (int i = 10; i < 33; i++) {
-            if (i != 9 && i != 18 && i != 27 && i != 17 && i != 26 && i != 16 && i != 25 && i != 34 && i != 15 && i != 24 && i != 33) {
+            if (i != 18 && i != 27 && i != 17 && i != 26 && i != 16 && i != 25 && i != 15 && i != 24) {
                 if (items.size() != 0) {
                     Region wi = items.get(0);
                     inv.setItem(i, wi.getItem());
@@ -82,7 +83,7 @@ public class WorldGUI {
 
         inv.setItem(16, unload);
         inv.setItem(25, entit);
-        inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Arrays.asList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
+        inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
 
         inv.setItem(41, newr);
 
@@ -148,7 +149,7 @@ public class WorldGUI {
                                 break;
                             case 41:
 
-                                if (current.r.getWorld().getName() != p.getWorld().getName())
+                                if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
                                     Text.send(p, "&fYou have to be on " + current.r.getWorld().getName() + " to create a region.");
                                     return;
@@ -163,27 +164,19 @@ public class WorldGUI {
                                         Location max = new Location(p.getWorld(), r.getMaximumPoint().getBlockX(), r.getMaximumPoint().getBlockY(), r.getMaximumPoint().getBlockZ());
 
                                         p.closeInventory();
-                                        new PlayerInput(p, new PlayerInput.InputRunnable() {
-                                            @Override
-                                            public void run(String input) {
-                                                //continue
-                                                Region r = new Region(min, max, ChatColor.stripColor(Text.color(input)), input, current.r, Material.LIGHT_BLUE_STAINED_GLASS, 100);
-                                                current.r.addRegion(r);
-                                                r.saveData(Data.Region.REGION);
-                                                Text.send(p, "&aRegion created.");
-                                                new BukkitRunnable() {
-                                                    public void run() {
-                                                        WorldGUI g = new WorldGUI(p, current.r);
-                                                        g.openInventory(p);
-                                                    }
-                                                }.runTaskLater(RealRegions.getPL(), 2);
-                                            }
-                                        }, new PlayerInput.InputRunnable() {
-                                            @Override
-                                            public void run(String input) {
-                                                WorldGUI wv = new WorldGUI(p, current.r);
-                                                wv.openInventory(p);
-                                            }
+                                        new PlayerInput(p, input -> {
+                                            //continue
+                                            WorldManager.createRegion(input, min, max, current.r);
+                                            Text.send(p, "&aRegion created.");
+                                            new BukkitRunnable() {
+                                                public void run() {
+                                                    WorldGUI g = new WorldGUI(p, current.r);
+                                                    g.openInventory(p);
+                                                }
+                                            }.runTaskLater(RealRegions.getPL(), 2);
+                                        }, input -> {
+                                            WorldGUI wv = new WorldGUI(p, current.r);
+                                            wv.openInventory(p);
                                         });
                                     } else {
                                         Text.send(p, "nada");
@@ -214,9 +207,6 @@ public class WorldGUI {
                             Region a = current.display.get(e.getRawSlot());
                             switch (e.getClick()) {
                                 case RIGHT:
-                                    a.teleport(p);
-                                    break;
-                                case MIDDLE:
                                     a.toggleVisual(p);
                                     break;
                                 case LEFT:
@@ -254,26 +244,20 @@ public class WorldGUI {
                                     }
                                     break;
                                 case SHIFT_RIGHT:
-                                    new PlayerInput(p, new PlayerInput.InputRunnable() {
-                                        @Override
-                                        public void run(String input) {
-                                            //continue
-                                            a.setDisplayName(input);
-                                            a.saveData(Data.Region.SETTINGS);
-                                            Text.send(p, "&fRegion displayname changed to " + Text.color(input));
-                                            new BukkitRunnable() {
-                                                public void run() {
-                                                    WorldGUI g = new WorldGUI(p, current.r);
-                                                    g.openInventory(p);
-                                                }
-                                            }.runTaskLater(RealRegions.getPL(), 2);
-                                        }
-                                    }, new PlayerInput.InputRunnable() {
-                                        @Override
-                                        public void run(String input) {
-                                            WorldGUI wv = new WorldGUI(p, current.r);
-                                            wv.openInventory(p);
-                                        }
+                                    new PlayerInput(p, input -> {
+                                        //continue
+                                        a.setDisplayName(input);
+                                        a.saveData(Data.Region.SETTINGS);
+                                        Text.send(p, "&fRegion displayname changed to " + Text.color(input));
+                                        new BukkitRunnable() {
+                                            public void run() {
+                                                WorldGUI g = new WorldGUI(p, current.r);
+                                                g.openInventory(p);
+                                            }
+                                        }.runTaskLater(RealRegions.getPL(), 2);
+                                    }, input -> {
+                                        WorldGUI wv = new WorldGUI(p, current.r);
+                                        wv.openInventory(p);
                                     });
                                     break;
                                 default:

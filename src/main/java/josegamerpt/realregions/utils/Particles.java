@@ -14,6 +14,9 @@ public class Particles {
             case FLAME_CANCEL:
                 l.getWorld().spawnParticle(Particle.REDSTONE, l.getX()+ 0.5D, l.getY() + 1.5D, l.getZ()+ 0.5D, 0, 0.001, 1, 0, 1, new Particle.DustOptions(Color.BLACK, 1));
                 break;
+            case BARRIER:
+                l.getWorld().spawnParticle(Particle.BARRIER, l.getX()+ 0.5D, l.getY() + 1.5D, l.getZ()+ 0.5D, 0, 0.001, 1, 0);
+                break;
         }
     }
 

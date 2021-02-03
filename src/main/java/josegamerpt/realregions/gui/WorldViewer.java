@@ -30,15 +30,15 @@ public class WorldViewer {
 
 	static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Worlds");
 	static ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
-			Arrays.asList("&fClick here to go to the next page."));
+			Collections.singletonList("&fClick here to go to the next page."));
 	static ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
-			Arrays.asList("&fClick here to go back to the next page."));
+			Collections.singletonList("&fClick here to go back to the next page."));
 	static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
-			Arrays.asList("&fClick here to close this menu."));
+			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;
 	private ArrayList<RWorld> worlds;
-	private HashMap<Integer, RWorld> display = new HashMap<Integer, RWorld>();
+	private HashMap<Integer, RWorld> display = new HashMap<>();
 
 	int pageNumber = 0;
 	Pagination<RWorld> p;
@@ -55,7 +55,7 @@ public class WorldViewer {
 	public void load() {
 		worlds = WorldManager.getWorlds();
 
-		p = new Pagination<RWorld>(21, worlds);
+		p = new Pagination<>(21, worlds);
 		fillChest(p.getPage(pageNumber));
 	}
 
@@ -65,7 +65,7 @@ public class WorldViewer {
 		display.clear();
 
 		for (int i = 10; i < 35; i++) {
-			if (i != 9 && i != 18 && i != 27 && i != 17 && i != 26) {
+			if (i != 18 && i != 27 && i != 17 && i != 26) {
 				if (items.size() != 0) {
 					RWorld wi = items.get(0);
 					inv.setItem(i, wi.getItem());
@@ -84,14 +84,11 @@ public class WorldViewer {
 
 	public void openInventory(Player target) {
 		Inventory inv = getInventory();
-		InventoryView openInv = target.getOpenInventory();
-		if (openInv != null) {
-			Inventory openTop = target.getOpenInventory().getTopInventory();
-			if (openTop != null && openTop.getType().name().equalsIgnoreCase(inv.getType().name())) {
-				openTop.setContents(inv.getContents());
-			} else {
-				target.openInventory(inv);
-			}
+		Inventory openTop = target.getOpenInventory().getTopInventory();
+		if (openTop != null && openTop.getType().name().equalsIgnoreCase(inv.getType().name())) {
+			openTop.setContents(inv.getContents());
+		} else {
+			target.openInventory(inv);
 		}
 	}
 

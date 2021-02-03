@@ -1,28 +1,31 @@
 package josegamerpt.realregions.listeners;
 
-import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RRParticle;
 import josegamerpt.realregions.classes.Region;
 import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.utils.Particles;
+import josegamerpt.realregions.utils.PlayerMovement;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.world.PortalCreateEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
@@ -30,7 +33,9 @@ public class PlayerListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player p = event.getPlayer();
 
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(event.getBlock().getLocation());
         if (r.blockbreak) {
@@ -49,7 +54,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Player p = event.getPlayer();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(event.getBlock().getLocation());
         if (r.blockplace) {
@@ -71,7 +78,9 @@ public class PlayerListener implements Listener {
             return;
 
         Player p = (Player) event.getEntity();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(event.getEntity().getLocation());
         if (r.hunger) {
@@ -88,7 +97,9 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(p.getLocation());
         if (r.itemdrop) {
@@ -110,7 +121,9 @@ public class PlayerListener implements Listener {
             return;
 
         Player p = (Player) e.getEntity();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(p.getLocation());
         if (r.itempickup) {
@@ -127,10 +140,12 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onDamage(EntityDamageEvent e){
-        if (e.getEntity() instanceof Player){
+    public void onDamage(EntityDamageEvent e) {
+        if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
-            if (p.isOp()) { return; }
+            if (p.isOp()) {
+                return;
+            }
 
             Region r = WorldManager.isLocationInRegion(p.getLocation());
             if (r.takedamage) {
@@ -146,30 +161,66 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void tp(PlayerTeleportEvent event) {
+        Player p = event.getPlayer();
+        switch (event.getCause()) {
+            case PLUGIN:
+            case UNKNOWN:
+            case COMMAND:
+            case ENDER_PEARL:
+                Region r = WorldManager.isLocationInRegion(event.getTo());
+                if (r.enter) {
+                    if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Disallow")) {
+                        event.setCancelled(true);
+                        p.teleport(event.getFrom());
+                        p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
+                        cancel(event.getTo(), p, "&cYou cant enter here.");
+                        Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
+                    }
+                } else {
+                    if (!p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Allow")) {
+                        event.setCancelled(true);
+                        p.teleport(event.getFrom());
+                        p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
+                        cancel(event.getTo(), p, "&cYou cant enter here.");
+                        Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
+                    }
+                }
+                break;
+        }
+    }
+
+    @EventHandler
     public void move(PlayerMoveEvent event) {
         Player p = event.getPlayer();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         Region r = WorldManager.isLocationInRegion(event.getTo());
         if (r.enter) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Disallow")) {
-                event.setCancelled(true);
-                p.teleport(event.getFrom());
-                cancel(event.getTo(), p, "&cYou cant enter here.");
+                cancelMovement(p, event);
             }
         } else {
             if (!p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Allow")) {
-                event.setCancelled(true);
-                p.teleport(event.getFrom());
-                cancel(event.getTo(), p, "&cYou cant enter here.");
+                cancelMovement(p, event);
             }
         }
+    }
+
+    private void cancelMovement(Player p, PlayerMoveEvent event) {
+        cancel(event.getTo(), p, "&cYou cant enter here.");
+        Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
+        event.setCancelled(true);
     }
 
     @EventHandler
     public void onBlockInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
-        if (p.isOp()) { return; }
+        if (p.isOp()) {
+            return;
+        }
 
         if (event.getClickedBlock() == null) {
             return;
@@ -267,7 +318,9 @@ public class PlayerListener implements Listener {
 
         Player damagee = (Player) event.getEntity();
         Player damager = (Player) event.getDamager();
-        if (damager.isOp()) { return; }
+        if (damager.isOp()) {
+            return;
+        }
 
         //pvp
 
@@ -291,7 +344,9 @@ public class PlayerListener implements Listener {
             return;
 
         Player damager = (Player) event.getDamager();
-        if (damager.isOp()) { return; }
+        if (damager.isOp()) {
+            return;
+        }
 
         //pvp
 

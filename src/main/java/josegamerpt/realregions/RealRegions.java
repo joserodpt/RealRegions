@@ -9,13 +9,14 @@ import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.utils.CubeVisualizer;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
+import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.swing.*;
+import java.util.logging.Level;
 
 public class RealRegions extends JavaPlugin {
 
@@ -35,12 +36,10 @@ public class RealRegions extends JavaPlugin {
 
         String star = "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion());
-        log(star);
-        log("Loading Config Files.");
+        log(Level.INFO,star);
         saveDefaultConfig();
         Config.setup(this);
 
-        log("Registering Events.");
         pm.registerEvents(WorldViewer.getListener(), this);
         pm.registerEvents(WorldGUI.getListener(), this);
         pm.registerEvents(MaterialPicker.getListener(), this);
@@ -50,18 +49,17 @@ public class RealRegions extends JavaPlugin {
         pm.registerEvents(new WorldListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
-        log("Registering Commands.");
-        getCommand("realregions").setExecutor(new Command());
+        new CommandManager(this).register(new Commands());
 
-        log("Loading Regions.");
+        log(Level.INFO,"Loading Regions.");
         WorldManager.loadWorlds();
-        log("Loaded %1 worlds and %2 regions.".replace("%1", WorldManager.getWorlds().size() + "").replace("%2", WorldManager.getRegions().size() + ""));
+        log(Level.INFO,"Loaded %1 worlds and %2 regions.".replace("%1", WorldManager.getWorlds().size() + "").replace("%2", WorldManager.getRegions().size() + ""));
 
         prefix = Text.color(Config.file().getString("RealRegions.Prefix"));
 
-        log("Plugin has been loaded.");
-        log("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
-        log(star);
+        log(Level.INFO,"Plugin has been loaded.");
+        log(Level.INFO,"Author: JoseGamer_PT | " + this.getDescription().getWebsite());
+        log(Level.INFO,star);
 
         new BukkitRunnable() {
 
@@ -70,7 +68,7 @@ public class RealRegions extends JavaPlugin {
                 for (Region r : WorldManager.getRegions()) {
                     if (r.canVisualize()) {
                         CubeVisualizer v = r.getViewingMaster();
-                        v.getCube().forEach(location -> v.spawnParticle(location));
+                        v.getCube().forEach(v::spawnParticle);
                     }
                 }
             }
@@ -78,12 +76,8 @@ public class RealRegions extends JavaPlugin {
         }.runTaskTimer(this,0, 10);
     }
 
-    public void onDisable() {
-        WorldManager.unload();
-    }
-
-    public static void log(String string) {
-        System.out.print(string);
+    public static void log(Level lev, String string) {
+        Bukkit.getLogger().log(lev, string);
     }
 
     public static String getPrefix() {

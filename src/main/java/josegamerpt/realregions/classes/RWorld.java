@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import java.util.logging.Level;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class RWorld {
     private void loadRegions() {
         for (String r : config.getConfigurationSection("Regions").getKeys(false)) {
             String n = config.getString("Regions." + r + ".Display-Name");
-            Region reg = null;
+            Region reg;
             if (config.getBoolean("Regions." + r + ".isGlobal")) {
                 reg = new Region(r, n, this, Material.valueOf(config.getString("Regions." + r + ".Icon")));
             } else {
@@ -74,7 +75,7 @@ public class RWorld {
                 file.createNewFile();
                 setupDefaultConfig();
             } catch (IOException e) {
-                RealRegions.log("RealRegions threw an error while creating world config for " + world.getName());
+                RealRegions.log(Level.SEVERE, "RealRegions threw an error while creating world config for " + world.getName());
                 e.printStackTrace();
             }
         }
@@ -92,7 +93,7 @@ public class RWorld {
         try {
             config.save(file);
         } catch (IOException e) {
-            RealRegions.log("RealRegions threw an error while saving world config for " + world.getName());
+            RealRegions.log(Level.OFF,"RealRegions threw an error while saving world config for " + world.getName());
         }
     }
 
@@ -169,7 +170,7 @@ public class RWorld {
 
     public ItemStack getItem() {
         File folder = new File(Bukkit.getWorldContainer() + "/" + world.getName());
-        return Itens.createItem(getIcon(), 1, "&f" + world.getName() + " &7[&b" + IO.toMB(IO.folderSize(folder)) + "mb&7]", Arrays.asList("&fOn this world:", "  &b" + world.getPlayers().size() + " &fplayers.", "  &b" + world.getEntities().size() + " &fentities.", "  &b" + world.getLoadedChunks().length + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
+        return Itens.createItem(getIcon(), 1, "&f" + world.getName() + " &7[&b" + IO.toMB(IO.folderSize(folder)) + "mb&7]", Arrays.asList("&5", " &6On this world:", "  &b" + world.getPlayers().size() + " &fplayers.", "  &b" + world.getEntities().size() + " &fentities.", "  &b" + world.getLoadedChunks().length + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
     }
 
     private Material getIcon() {

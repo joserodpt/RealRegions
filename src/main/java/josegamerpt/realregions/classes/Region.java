@@ -67,7 +67,8 @@ public class Region {
         if (global) {
             return Itens.createItem(icon, 1, "&f" + this.displayname + " &7[&b" + getType() + "&7]", Arrays.asList(
                     "&fPriority: &b" + this.priority,
-                    "&fFlags:",
+                    "&a",
+                    "&6Flags:",
                     "  &fBlock Break: " + boolStyle(blockbreak),
                     "  &fBlock Place: " + boolStyle(blockplace),
                     "  &fBlock Interactions: " + boolStyle(blockinteract),
@@ -87,9 +88,8 @@ public class Region {
                     "&f",
                     "&7Left Click to edit this region.",
                     "&7Shift + Left Click to change this region icon.",
-                    "&7Right Click to teleport to this region.",
-                    "&7Shift + Right Click to change this regions displayname.",
-                    "&7Middle Click to visualize this region."));
+                    "&7Right Click to visualize this region.",
+                    "&7Shift + Right Click to change this regions displayname."));
         } else {
             return Itens.createItem(icon, 1, "&f" + this.displayname + " &7[&b" + getType() + "&7]", Arrays.asList(
                     "&fPriority: &b" + this.priority,
@@ -114,10 +114,8 @@ public class Region {
                     "&f",
                     "&7Left Click to edit this region.",
                     "&7Shift + Left Click to change this region icon.",
-                    "&7Right Click to teleport to this region.",
-                    "&7Shift + Right Click to change this regions displayname.",
-                    "&7Middle Click to visualize this region.",
-                    "&7Press Q to delete this region."));
+                    "&7Right Click to visualize this region.",
+                    "&7Shift + Right Click to change this regions displayname."));
         }
     }
 
@@ -270,12 +268,7 @@ public class Region {
     public boolean isLocationInRegion(Location l) {
         if (this.global)
         {
-            if (this.getWorld().getWorld() == l.getWorld())
-            {
-                return true;
-            } else {
-                return false;
-            }
+            return this.getWorld().getWorld() == l.getWorld();
         } else {
             return this.cube.contains(l);
         }
