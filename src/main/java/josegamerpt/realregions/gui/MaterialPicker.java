@@ -1,17 +1,12 @@
 package josegamerpt.realregions.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.Data;
-import josegamerpt.realregions.classes.PickType;
+import josegamerpt.realregions.enums.PickType;
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.classes.Region;
+import josegamerpt.realregions.regions.CuboidRegion;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -37,13 +32,13 @@ public class MaterialPicker {
 
     static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
     static ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
-            Arrays.asList("&fClick here to go to the next page."));
+            Collections.singletonList("&fClick here to go to the next page."));
     static ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
-            Arrays.asList("&fClick here to go back to the next page."));
+            Collections.singletonList("&fClick here to go back to the next page."));
     static ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
-            Arrays.asList("&fClick here to go back."));
-    static ItemStack search = Itens.createItem(Material.SIGN, 1, "&9Search",
-            Arrays.asList("&fClick here to search for a block."));
+            Collections.singletonList("&fClick here to go back."));
+    static ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
+            Collections.singletonList("&fClick here to search for a block."));
 
     private UUID uuid;
     private ArrayList<Material> items;
@@ -58,17 +53,20 @@ public class MaterialPicker {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
-        if (block.equals(PickType.ICON_REG)) {
-            inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
-        }
-        if (block.equals(PickType.ICON_WORLD)) {
-            inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+
+        switch (block) {
+            case ICON_REG:
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
+                break;
+            case ICON_WORLD:
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+                break;
         }
 
-        items = getIcons();
+        this.items = getIcons();
 
-        p = new Pagination<Material>(28, items);
-        fillChest(p.getPage(pageNumber));
+        this.p = new Pagination<>(28, this.items);
+        fillChest(this.p.getPage(this.pageNumber));
 
         this.register();
     }
@@ -77,17 +75,19 @@ public class MaterialPicker {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
-        if (block.equals(PickType.ICON_REG)) {
-            inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
-        }
-        if (block.equals(PickType.ICON_WORLD)) {
-            inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+        switch (block)
+        {
+            case ICON_REG:
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
+                break;
+            case ICON_WORLD:
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+                break;
         }
 
-        items = searchMaterial(search);
-
-        p = new Pagination<Material>(28, items);
-        fillChest(p.getPage(pageNumber));
+        this.items = searchMaterial(search);
+        this.p = new Pagination<>(28, this.items);
+        fillChest(this.p.getPage(this.pageNumber));
 
         this.register();
     }
@@ -114,49 +114,60 @@ public class MaterialPicker {
 
     public void fillChest(List<Material> items) {
 
-        inv.clear();
-        display.clear();
+        this.inv.clear();
+        this.display.clear();
 
         for (int i = 0; i < 9; i++) {
-            inv.setItem(i, placeholder);
+            this.inv.setItem(i, placeholder);
         }
 
-        inv.setItem(4, search);
+        this.inv.setItem(4, search);
 
-        inv.setItem(45, placeholder);
-        inv.setItem(46, placeholder);
-        inv.setItem(47, placeholder);
-        inv.setItem(48, placeholder);
-        inv.setItem(49, placeholder);
-        inv.setItem(50, placeholder);
-        inv.setItem(51, placeholder);
-        inv.setItem(52, placeholder);
-        inv.setItem(53, placeholder);
-        inv.setItem(36, placeholder);
-        inv.setItem(44, placeholder);
-        inv.setItem(9, placeholder);
-        inv.setItem(17, placeholder);
+        this.inv.setItem(45, placeholder);
+        this.inv.setItem(46, placeholder);
+        this.inv.setItem(47, placeholder);
+        this.inv.setItem(48, placeholder);
+        this.inv.setItem(49, placeholder);
+        this.inv.setItem(50, placeholder);
+        this.inv.setItem(51, placeholder);
+        this.inv.setItem(52, placeholder);
+        this.inv.setItem(53, placeholder);
+        this.inv.setItem(36, placeholder);
+        this.inv.setItem(44, placeholder);
+        this.inv.setItem(9, placeholder);
+        this.inv.setItem(17, placeholder);
 
-        inv.setItem(18, back);
-        inv.setItem(27, back);
-        inv.setItem(26, next);
-        inv.setItem(35, next);
+        if (firstPage()) {
+            this.inv.setItem(18, placeholder);
+            this.inv.setItem(27, placeholder);
+        } else {
+            this.inv.setItem(18, back);
+            this.inv.setItem(27, back);
+        }
+
+        if (lastPage()) {
+            this.inv.setItem(26, placeholder);
+            this.inv.setItem(35, placeholder);
+        } else {
+            this.inv.setItem(26, next);
+            this.inv.setItem(35, next);
+        }
 
         int slot = 0;
         for (ItemStack i : inv.getContents()) {
             if (i == null) {
                 if (items.size() != 0) {
                     Material s = items.get(0);
-                    inv.setItem(slot,
+                    this.inv.setItem(slot,
                             Itens.createItem(s, 1, "§f" + s.name(), Arrays.asList("&fClick to pick this.")));
-                    display.put(slot, s);
+                    this.display.put(slot, s);
                     items.remove(0);
                 }
             }
             slot++;
         }
 
-        inv.setItem(49, close);
+        this.inv.setItem(49, close);
     }
 
     public void openInventory(Player target) {
@@ -189,13 +200,12 @@ public class MaterialPicker {
                         }
 
                         Player gp = (Player) clicker;
-
                         e.setCancelled(true);
 
-                        if (e.getRawSlot() == 4) {
-                            new PlayerInput(gp, new PlayerInput.InputRunnable() {
-                                @Override
-                                public void run(String input) {
+                        switch (e.getRawSlot())
+                        {
+                            case 4:
+                                new PlayerInput(gp, input -> {
                                     if (current.searchMaterial(input).size() == 0) {
                                         Text.send(gp, "&fNothing found for your search terms.");
 
@@ -204,28 +214,25 @@ public class MaterialPicker {
                                     }
                                     MaterialPicker df = new MaterialPicker(current.min, gp, current.pt, input);
                                     df.openInventory(gp);
-                                }
-                            }, new PlayerInput.InputRunnable() {
-                                @Override
-                                public void run(String input) {
+                                }, input -> {
                                     gp.closeInventory();
                                     WorldViewer wv = new WorldViewer(gp);
                                     wv.openInventory(gp);
-                                }
-                            });
-                        }
-
-                        if (e.getRawSlot() == 49) {
-                            current.exit(gp);
-                        }
-
-                        if (e.getRawSlot() == 26 || e.getRawSlot() == 35) {
-                            nextPage(current);
-                            gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
-                        }
-                        if (e.getRawSlot() == 18 || e.getRawSlot() == 27) {
-                            backPage(current);
-                            gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                });
+                                break;
+                            case 49:
+                                current.exit(gp);
+                                break;
+                            case 26:
+                            case 35:
+                                nextPage(current);
+                                gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                break;
+                            case 18:
+                            case 27:
+                                backPage(current);
+                                gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                break;
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
@@ -234,7 +241,7 @@ public class MaterialPicker {
                                 gp.closeInventory();
                                 Region r = ((Region) current.min);
                                 r.setIcon(a);
-                                r.saveData(Data.Region.ICON);
+                                r.saveData(Region.Data.ICON);
                                 WorldGUI v = new WorldGUI(gp, r.getWorld());
                                 v.openInventory(gp);
                             }
@@ -242,7 +249,7 @@ public class MaterialPicker {
                                 gp.closeInventory();
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);
-                                r.saveData(Data.World.ICON);
+                                r.saveData(RWorld.Data.ICON);
                                 WorldViewer v = new WorldViewer(gp);
                                 v.openInventory(gp);
                             }
@@ -283,24 +290,34 @@ public class MaterialPicker {
         };
     }
 
+    private boolean lastPage() {
+        return pageNumber == (p.totalPages() - 1);
+    }
+
+    private boolean firstPage() {
+        return pageNumber == 0;
+    }
+
     protected void exit(Player p) {
-        if (this.pt.equals(PickType.ICON_WORLD)) {
-            p.closeInventory();
-            new BukkitRunnable() {
-                public void run() {
-                    WorldViewer wv = new WorldViewer(p);
-                    wv.openInventory(p);
-                }
-            }.runTaskLater(RealRegions.getPL(), 2);
-        }
-        if (this.pt.equals(PickType.ICON_REG)) {
-            p.closeInventory();
-            new BukkitRunnable() {
-                public void run() {
-                    WorldGUI v = new WorldGUI(p, ((Region) min).getWorld());
-                    v.openInventory(p);
-                }
-            }.runTaskLater(RealRegions.getPL(), 2);
+        p.closeInventory();
+        switch (this.pt)
+        {
+            case ICON_WORLD:
+                new BukkitRunnable() {
+                    public void run() {
+                        WorldViewer wv = new WorldViewer(p);
+                        wv.openInventory(p);
+                    }
+                }.runTaskLater(RealRegions.getPL(), 2);
+                break;
+            case ICON_REG:
+                new BukkitRunnable() {
+                    public void run() {
+                        WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getWorld());
+                        v.openInventory(p);
+                    }
+                }.runTaskLater(RealRegions.getPL(), 2);
+                break;
         }
     }
 

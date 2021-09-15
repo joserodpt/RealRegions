@@ -6,7 +6,7 @@
 
     <groupId>josegamerpt</groupId>
     <artifactId>RealRegions</artifactId>
-    <version>27-1-2021 Build 1</version>
+    <version>15-9-2021 Build 1</version>
     <packaging>jar</packaging>
 
     <name>RealRegions</name>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.14.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

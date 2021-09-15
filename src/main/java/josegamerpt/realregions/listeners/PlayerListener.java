@@ -1,13 +1,11 @@
 package josegamerpt.realregions.listeners;
 
-import josegamerpt.realregions.classes.RRParticle;
-import josegamerpt.realregions.classes.Region;
-import josegamerpt.realregions.managers.WorldManager;
+import josegamerpt.realregions.RealRegions;
+import josegamerpt.realregions.enums.RRParticle;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Particles;
-import josegamerpt.realregions.utils.PlayerMovement;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,8 +22,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
@@ -37,8 +33,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(event.getBlock().getLocation());
-        if (r.blockbreak) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getBlock().getLocation());
+        if (r.hasBlockBreak()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Breaking.Disallow")) {
                 event.setCancelled(true);
                 cancel(event.getBlock().getLocation(), p, "&cYou cant break that block here.");
@@ -58,8 +54,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(event.getBlock().getLocation());
-        if (r.blockplace) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getBlock().getLocation());
+        if (r.hasBlockPlace()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Placing.Disallow")) {
                 event.setCancelled(true);
                 cancel(event.getBlock().getLocation(), p, "&cYou cant place blocks here.");
@@ -82,8 +78,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(event.getEntity().getLocation());
-        if (r.hunger) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getEntity().getLocation());
+        if (r.hasHunger()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hunger.Disallow")) {
                 event.setCancelled(true);
             }
@@ -101,8 +97,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(p.getLocation());
-        if (r.itemdrop) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(p.getLocation());
+        if (r.hasItemDrop()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Drop.Disallow")) {
                 e.setCancelled(true);
                 cancel(p.getLocation(), p, "&cYou cant drop items here.");
@@ -125,8 +121,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(p.getLocation());
-        if (r.itempickup) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(p.getLocation());
+        if (r.hasItemPickup()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Pickup.Disallow")) {
                 e.setCancelled(true);
                 cancel(e.getItem().getLocation(), p, "&cYou cant pick up items here.");
@@ -147,8 +143,8 @@ public class PlayerListener implements Listener {
                 return;
             }
 
-            Region r = WorldManager.isLocationInRegion(p.getLocation());
-            if (r.takedamage) {
+            Region r = RealRegions.getWorldManager().isLocationInRegion(p.getLocation());
+            if (r.hasTakeDamage()) {
                 if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Damage.Disallow")) {
                     e.setCancelled(true);
                 }
@@ -163,27 +159,17 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void tp(PlayerTeleportEvent event) {
         Player p = event.getPlayer();
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getTo());
         switch (event.getCause()) {
-            case PLUGIN:
-            case UNKNOWN:
-            case COMMAND:
             case ENDER_PEARL:
-                Region r = WorldManager.isLocationInRegion(event.getTo());
-                if (r.enter) {
+            case CHORUS_FRUIT:
+                if (r.hasEnter()) {
                     if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Disallow")) {
-                        event.setCancelled(true);
-                        p.teleport(event.getFrom());
-                        p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
-                        cancel(event.getTo(), p, "&cYou cant enter here.");
-                        Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
+                        cancelMovement(p, event);
                     }
                 } else {
                     if (!p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Allow")) {
-                        event.setCancelled(true);
-                        p.teleport(event.getFrom());
-                        p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
-                        cancel(event.getTo(), p, "&cYou cant enter here.");
-                        Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
+                        cancelMovement(p, event);
                     }
                 }
                 break;
@@ -197,8 +183,8 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Region r = WorldManager.isLocationInRegion(event.getTo());
-        if (r.enter) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getTo());
+        if (r.hasEnter()) {
             if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Disallow")) {
                 cancelMovement(p, event);
             }
@@ -225,9 +211,9 @@ public class PlayerListener implements Listener {
         if (event.getClickedBlock() == null) {
             return;
         }
-        Region r = WorldManager.isLocationInRegion(event.getClickedBlock().getLocation());
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getClickedBlock().getLocation());
         if (event.getHand().equals(EquipmentSlot.HAND)) {
-            if (r.blockinteract) {
+            if (r.hasBlockInteract()) {
                 if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Interaction.Disallow")) {
                     event.setCancelled(true);
                     cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with blocks here.");
@@ -241,14 +227,29 @@ public class PlayerListener implements Listener {
 
             Block b = event.getClickedBlock();
             //container
+            if (b.getType().name().contains("SHULKER_BOX"))
+            {
+                if (r.hasContainerInteract()) {
+                    if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Containers.Disallow")) {
+                        event.setCancelled(true);
+                        cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with this container.");
+                    }
+                } else {
+                    if (!p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Containers.Allow")) {
+                        event.setCancelled(true);
+                        cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with this container.");
+                    }
+                }
+                return;
+            }
             switch (b.getType()) {
                 case ENDER_CHEST:
                 case DROPPER:
                 case DISPENSER:
                 case HOPPER:
-                case SHULKER_BOX:
+                case BARREL:
                 case CHEST:
-                    if (r.containerinteract) {
+                    if (r.hasContainerInteract()) {
                         if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Containers.Disallow")) {
                             event.setCancelled(true);
                             cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with this container.");
@@ -266,7 +267,7 @@ public class PlayerListener implements Listener {
             //individual
             switch (b.getType()) {
                 case CRAFTING_TABLE:
-                    if (r.acesscrafting) {
+                    if (r.hasAccessCrafting()) {
                         if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Crafting.Disallow")) {
                             event.setCancelled(true);
                             cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with crafting tables here.");
@@ -279,7 +280,7 @@ public class PlayerListener implements Listener {
                     }
                     break;
                 case HOPPER:
-                    if (r.acesshoppers) {
+                    if (r.hasAccessHoppers()) {
                         if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hoppers.Disallow")) {
                             event.setCancelled(true);
                             cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with hoppers here.");
@@ -292,7 +293,7 @@ public class PlayerListener implements Listener {
                     }
                     break;
                 case CHEST:
-                    if (r.acesschests) {
+                    if (r.hasAccessChests()) {
                         if (p.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Chests.Disallow")) {
                             event.setCancelled(true);
                             cancel(event.getClickedBlock().getLocation(), p, "&cYou cant interact with chest here.");
@@ -316,16 +317,15 @@ public class PlayerListener implements Listener {
         if (!(event.getEntity() instanceof Player))
             return;
 
-        Player damagee = (Player) event.getEntity();
         Player damager = (Player) event.getDamager();
         if (damager.isOp()) {
             return;
         }
 
         //pvp
-
-        Region r = WorldManager.isLocationInRegion(damagee.getLocation());
-        if (r.pvp) {
+        Player damagee = (Player) event.getEntity();
+        Region r = RealRegions.getWorldManager().isLocationInRegion(damagee.getLocation());
+        if (r.hasPVP()) {
             if (damager.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVP.Disallow")) {
                 event.setCancelled(true);
                 Text.send(damager, "&cYou cant PVP here.");
@@ -348,10 +348,9 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        //pvp
-
-        Region r = WorldManager.isLocationInRegion(damager.getLocation());
-        if (r.pve) {
+        //pve
+        Region r = RealRegions.getWorldManager().isLocationInRegion(damager.getLocation());
+        if (r.hasPVE()) {
             if (damager.hasPermission("RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVE.Disallow")) {
                 event.setCancelled(true);
                 Text.send(damager, "&cYou cant PVE here.");

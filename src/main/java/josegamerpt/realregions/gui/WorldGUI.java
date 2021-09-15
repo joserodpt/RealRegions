@@ -2,11 +2,9 @@ package josegamerpt.realregions.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.Data;
-import josegamerpt.realregions.classes.PickType;
+import josegamerpt.realregions.enums.PickType;
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.classes.Region;
-import josegamerpt.realregions.managers.WorldManager;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -43,12 +41,12 @@ public class WorldGUI {
     private HashMap<Integer, Region> display = new HashMap<>();
     private RWorld r;
 
-    int pageNumber = 0;
-    Pagination<Region> p;
+    static int pageNumber = 0;
+    static Pagination<Region> p;
 
     public WorldGUI(Player as, RWorld r) {
         this.uuid = as.getUniqueId();
-        inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getName()));
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getName()));
 
         this.r = r;
         load();
@@ -57,43 +55,56 @@ public class WorldGUI {
     }
 
     public void load() {
-        regions = r.getRegions();
+        this.regions = r.getRegions();
 
-        p = new Pagination<>(21, regions);
+        p = new Pagination<>(21, this.regions);
         fillChest(p.getPage(pageNumber));
     }
 
     public void fillChest(List<Region> items) {
-
-        inv.clear();
-        display.clear();
+        this.inv.clear();
+        this.display.clear();
 
         for (int i = 10; i < 33; i++) {
-            if (i != 18 && i != 27 && i != 17 && i != 26 && i != 16 && i != 25 && i != 15 && i != 24) {
-                if (items.size() != 0) {
-                    Region wi = items.get(0);
-                    inv.setItem(i, wi.getItem());
-                    display.put(i, wi);
-                    items.remove(0);
-                } else {
-                    inv.setItem(i, placeholder);
-                }
+            switch (i)
+            {
+                case 18:
+                case 24:
+                case 25:
+                case 26:
+                case 27:
+                case 15:
+                case 16:
+                case 17:
+                    break;
+                default:
+                    if (items.size() != 0) {
+                        Region wi = items.get(0);
+                        this.inv.setItem(i, wi.getItem());
+                        this.display.put(i, wi);
+                        items.remove(0);
+                    } else {
+                        this.inv.setItem(i, placeholder);
+                    }
+                    break;
             }
         }
 
-        inv.setItem(16, unload);
-        inv.setItem(25, entit);
-        inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
+        this.inv.setItem(16, unload);
+        this.inv.setItem(25, entit);
+        this.inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
 
-        inv.setItem(41, newr);
+        this.inv.setItem(41, newr);
 
         ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
                 Arrays.asList("&fCurrent Page: &b" + (pageNumber + 1), "&fClick here to go to the next page."));
-        ItemStack back = Itens.createItem(Material.ORANGE_STAINED_GLASS, 1, "&6Back",
+        ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
                 Arrays.asList("&fCurrent Page: &b" + (pageNumber + 1), "&fClick here to go back to the next page."));
-        inv.setItem(38, next);
-        inv.setItem(37, back);
-        inv.setItem(43, close);
+
+        this.inv.setItem(38, next);
+        this.inv.setItem(37, back);
+
+        this.inv.setItem(43, close);
     }
 
     public void openInventory(Player target) {
@@ -111,6 +122,7 @@ public class WorldGUI {
 
     public static Listener getListener() {
         return new Listener() {
+
             @EventHandler
             public void onClick(InventoryClickEvent e) {
                 HumanEntity clicker = e.getWhoClicked();
@@ -166,7 +178,7 @@ public class WorldGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            WorldManager.createRegion(input, min, max, current.r);
+                                            RealRegions.getWorldManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, "&aRegion created.");
                                             new BukkitRunnable() {
                                                 public void run() {
@@ -203,7 +215,6 @@ public class WorldGUI {
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
-
                             Region a = current.display.get(e.getRawSlot());
                             switch (e.getClick()) {
                                 case RIGHT:
@@ -247,7 +258,7 @@ public class WorldGUI {
                                     new PlayerInput(p, input -> {
                                         //continue
                                         a.setDisplayName(input);
-                                        a.saveData(Data.Region.SETTINGS);
+                                        a.saveData(Region.Data.SETTINGS);
                                         Text.send(p, "&fRegion displayname changed to " + Text.color(input));
                                         new BukkitRunnable() {
                                             public void run() {

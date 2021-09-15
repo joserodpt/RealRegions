@@ -1,11 +1,12 @@
 package josegamerpt.realregions;
 
-import josegamerpt.realregions.classes.Region;
+import josegamerpt.realregions.commands.RealRegionsCMD;
+import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.gui.*;
 import josegamerpt.realregions.listeners.PlayerListener;
 import josegamerpt.realregions.listeners.WorldListener;
-import josegamerpt.realregions.managers.WorldManager;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.CubeVisualizer;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
@@ -20,14 +21,16 @@ import java.util.logging.Level;
 
 public class RealRegions extends JavaPlugin {
 
-    PluginManager pm = Bukkit.getPluginManager();
+    static WorldManager worldManager = new WorldManager();
 
-    public static String prefix;
-
-    private static Plugin pl;
-
+    static Plugin pl;
+    static String prefix;
     public static Plugin getPL() {
         return pl;
+    }
+
+    public static WorldManager getWorldManager() {
+        return worldManager;
     }
 
     @Override
@@ -40,6 +43,7 @@ public class RealRegions extends JavaPlugin {
         saveDefaultConfig();
         Config.setup(this);
 
+        PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(WorldViewer.getListener(), this);
         pm.registerEvents(WorldGUI.getListener(), this);
         pm.registerEvents(MaterialPicker.getListener(), this);
@@ -49,11 +53,13 @@ public class RealRegions extends JavaPlugin {
         pm.registerEvents(new WorldListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
-        new CommandManager(this).register(new Commands());
+        CommandManager cm = new CommandManager(this);
+        cm.hideTabComplete(true);
+        cm.register(new RealRegionsCMD(this));
 
         log(Level.INFO,"Loading Regions.");
-        WorldManager.loadWorlds();
-        log(Level.INFO,"Loaded %1 worlds and %2 regions.".replace("%1", WorldManager.getWorlds().size() + "").replace("%2", WorldManager.getRegions().size() + ""));
+        worldManager.loadWorlds();
+        log(Level.INFO,"Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegions().size() + " regions.");
 
         prefix = Text.color(Config.file().getString("RealRegions.Prefix"));
 
@@ -65,7 +71,7 @@ public class RealRegions extends JavaPlugin {
 
             @Override
             public void run() {
-                for (Region r : WorldManager.getRegions()) {
+                for (Region r : getWorldManager().getRegions()) {
                     if (r.canVisualize()) {
                         CubeVisualizer v = r.getViewingMaster();
                         v.getCube().forEach(v::spawnParticle);
@@ -82,5 +88,9 @@ public class RealRegions extends JavaPlugin {
 
     public static String getPrefix() {
         return prefix + " ";
+    }
+
+    public void setPrefix(String c) {
+        prefix = c;
     }
 }

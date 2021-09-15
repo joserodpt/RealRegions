@@ -38,7 +38,7 @@ public class PlayerInput implements Listener {
 			public void run() {
 				p.sendTitle(texts.get(0), texts.get(1), 0, 21, 0);
 			}
-		}.runTaskTimer(RealRegions.getPL(), 0L, (long) 20);
+		}.runTaskTimer(RealRegions.getPL(), 0L, 20);
 
 		this.register();
 	}
@@ -53,7 +53,7 @@ public class PlayerInput implements Listener {
 
 	@FunctionalInterface
 	public interface InputRunnable {
-		public void run(String input);
+		void run(String input);
 	}
 
 	public static Listener getListener() {
@@ -65,30 +65,20 @@ public class PlayerInput implements Listener {
 				UUID uuid = p.getUniqueId();
 				if (inputs.containsKey(uuid)) {
 					PlayerInput current = inputs.get(uuid);
-					if (current.inputMode == true) {
+					if (current.inputMode) {
 						event.setCancelled(true);
 						try {
 							if (input.equalsIgnoreCase("cancel")) {
 								Text.send(p, "&cInput cancelled.");
 								current.taskId.cancel();
 								p.sendTitle("", "", 0, 1, 0);
-								Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPL(), new Runnable() {
-									@Override
-									public void run() {
-										current.runCancel.run(input);
-									}
-								}, 3);
+								Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPL(), () -> current.runCancel.run(input), 3);
 								current.unregister();
 								return;
 							}
 
 							current.taskId.cancel();
-							Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPL(), new Runnable() {
-								@Override
-								public void run() {
-									current.runGo.run(input);
-								}
-							}, 3);
+							Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPL(), () -> current.runGo.run(input), 3);
 							p.sendTitle("", "", 0, 1, 0);
 							current.unregister();
 						} catch (Exception e) {

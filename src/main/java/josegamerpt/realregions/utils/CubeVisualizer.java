@@ -1,6 +1,6 @@
 package josegamerpt.realregions.utils;
 
-import josegamerpt.realregions.classes.Region;
+import josegamerpt.realregions.regions.Region;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -20,7 +20,7 @@ public class CubeVisualizer {
     }
 
     public List<Location> getCube() {
-        if (mp.getMaster().getPOS(1) != null && mp.getMaster().getPOS(2) != null && mp.view) {
+        if (mp.getMaster().getPOS(1) != null && mp.getMaster().getPOS(2) != null && mp.getView()) {
             List<Location> result = new ArrayList<>();
             World world = mp.getMaster().getPOS(1).getWorld();
             double minX = Math.min(mp.getMaster().getPOS(1).getX(), mp.getMaster().getPOS(2).getX());

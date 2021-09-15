@@ -1,6 +1,6 @@
 package josegamerpt.realregions.utils;
 
-import josegamerpt.realregions.classes.RRParticle;
+import josegamerpt.realregions.enums.RRParticle;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;

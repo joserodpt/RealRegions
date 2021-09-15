@@ -1,8 +1,8 @@
 package josegamerpt.realregions.listeners;
 
-import josegamerpt.realregions.classes.RRParticle;
-import josegamerpt.realregions.classes.Region;
-import josegamerpt.realregions.managers.WorldManager;
+import josegamerpt.realregions.RealRegions;
+import josegamerpt.realregions.enums.RRParticle;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Particles;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -10,27 +10,26 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class WorldListener implements Listener {
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        Region r = WorldManager.isLocationInRegion(event.getLocation());
-        if (!r.entityspawning && event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM)) {
+        Region r = RealRegions.getWorldManager().isLocationInRegion(event.getLocation());
+        if (r != null && !r.hasEntitySpawning()) {
             event.getEntity().remove();
             cancel(event.getLocation());
             event.setCancelled(true);
         }
     }
 
-    @EventHandler(priority=EventPriority.NORMAL)
+    @EventHandler(priority=EventPriority.HIGH)
     public void explodeHeight(EntityExplodeEvent e) {
         if (e.getEntityType() == EntityType.PRIMED_TNT) {
-            Region r = WorldManager.isLocationInRegion(e.getEntity().getLocation());
-            if (!r.explosions) {
+            Region r = RealRegions.getWorldManager().isLocationInRegion(e.getEntity().getLocation());
+            if (r != null && !r.hasExplosions()) {
                 e.blockList().clear();
                 cancel(e.getEntity().getLocation());
                 e.setCancelled(true);

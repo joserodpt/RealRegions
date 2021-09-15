@@ -1,6 +1,5 @@
 package josegamerpt.realregions.classes;
 
-import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Material;
