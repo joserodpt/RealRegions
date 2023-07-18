@@ -7,6 +7,7 @@ import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.gui.RegionGUI;
 import josegamerpt.realregions.gui.WorldGUI;
 import josegamerpt.realregions.gui.WorldViewer;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Text;
 import me.mattstudios.mf.annotations.*;
 import me.mattstudios.mf.base.CommandBase;
@@ -70,7 +71,7 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         RWorld rw = RealRegions.getInstance().getWorldManager().getWorld(p.getWorld());
-        if (!RealRegions.getInstance().getWorldManager().hasRegion(rw, name)) {
+        if (!RealRegions.getInstance().getWorldManager().getRegionManager().hasRegion(rw, name)) {
             try {
                 WorldEditPlugin w = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
                 com.sk89q.worldedit.regions.Region r = w.getSession(p).getSelection(w.getSession(p).getSelectionWorld());
@@ -79,7 +80,7 @@ public class RealRegionsCMD extends CommandBase {
                     Location min = new Location(p.getWorld(), r.getMinimumPoint().getBlockX(), r.getMinimumPoint().getBlockY(), r.getMinimumPoint().getBlockZ());
                     Location max = new Location(p.getWorld(), r.getMaximumPoint().getBlockX(), r.getMaximumPoint().getBlockY(), r.getMaximumPoint().getBlockZ());
 
-                    RealRegions.getInstance().getWorldManager().createCubeRegion(name, min, max, rw);
+                    RealRegions.getInstance().getWorldManager().getRegionManager().createCubeRegion(name, min, max, rw);
                     Text.send(p, "&aRegion created.");
                     WorldGUI g = new WorldGUI(p, rw);
                     g.openInventory(p);
@@ -102,7 +103,19 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            RegionGUI wv = new RegionGUI(p, RealRegions.getInstance().getWorldManager().getRegion(RealRegions.getInstance().getWorldManager().getWorld(p.getWorld()), name));
+            RWorld rw = RealRegions.getInstance().getWorldManager().getWorld(p.getWorld());
+            if (rw == null) {
+                Text.send(p, "There is no world named &c" + name);
+                return;
+            }
+
+            Region rr = RealRegions.getInstance().getWorldManager().getRegionManager().getRegion(rw, name);
+            if (rr == null) {
+                Text.send(p, "There is no region named &c" + name);
+                return;
+            }
+
+            RegionGUI wv = new RegionGUI(p, rr);
             wv.openInventory(p);
         } else {
             commandSender.sendMessage("[RealRegions] Only players can run this command.");
@@ -118,7 +131,13 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            WorldGUI wv = new WorldGUI(p, RealRegions.getInstance().getWorldManager().getWorld(name));
+            RWorld rw = RealRegions.getInstance().getWorldManager().getWorld(name);
+            if (rw == null) {
+                Text.send(p, "There is no world named &c" + name);
+                return;
+            }
+
+            WorldGUI wv = new WorldGUI(p, rw);
             wv.openInventory(p);
         } else {
             commandSender.sendMessage("[RealRegions] Only players can run this command.");

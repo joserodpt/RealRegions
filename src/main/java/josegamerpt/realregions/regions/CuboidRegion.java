@@ -15,12 +15,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class CuboidRRegion extends RRegion {
+public class CuboidRegion extends Region {
 
-    private Cube cube;
-    private CubeVisualizer cv;
+    private final Cube cube;
+    private final CubeVisualizer cv;
 
-    public CuboidRRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri) {
+    public CuboidRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri) {
         super(name, displayname, w, m, pri, RegionType.CUBOID);
 
         //Cube Region
@@ -56,7 +56,7 @@ public class CuboidRRegion extends RRegion {
     }
 
     @Override
-    public void saveData(RRegion.RegionData dr) {
+    public void saveData(Region.RegionData dr) {
         FileConfiguration cfg = super.getRWorld().getConfig();
         switch (dr) {
             case SETTINGS:

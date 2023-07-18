@@ -1,7 +1,7 @@
 package josegamerpt.realregions.gui;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.regions.RRegion;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
@@ -31,9 +31,9 @@ public class RegionGUI {
 			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;
-	private RRegion r;
+	private Region r;
 
-	public RegionGUI(Player as, RRegion r) {
+	public RegionGUI(Player as, Region r) {
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
 
@@ -121,7 +121,7 @@ public class RegionGUI {
 						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Drop.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(24, Itens.createItem(Material.HOPPER_MINECART, 1, "&7&lItem Pickup &r&7[" + getStyle(r.hasItemPickup()) + "&7]",
-				Arrays.asList("&e&nDescription", "  Allows or Disallows Entity Spawning.", "&e&nPermissions",
+				Arrays.asList("&e&nDescription", "  Allows or Disallows Item Pickup.", "&e&nPermissions",
 						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Pickup.Allow",
 						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Pickup.Disallow",
 						"&e","Click to change the value.")));
@@ -190,97 +190,97 @@ public class RegionGUI {
 								break;
 							case 2:
 								current.r.setBlockBreak(!current.r.hasBlockBreak());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 3:
 								current.r.setBlockPlace(!current.r.hasBlockPlace());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 4:
 								current.r.setBlockInteract(!current.r.hasBlockInteract());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 5:
 								current.r.setPVP(!current.r.hasPVP());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 6:
 								current.r.setPVE(!current.r.hasPVE());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 11:
 								current.r.setAccessCrafting(!current.r.hasAccessCrafting());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 12:
 								current.r.setAccessChests(!current.r.hasAccessChests());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 13:
 								current.r.setAccessHoppers(!current.r.hasAccessHoppers());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 14:
 								current.r.setContainerInteract(!current.r.hasContainerInteract());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 15:
 								current.r.setEntitySpawning(!current.r.hasEntitySpawning());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 20:
 								current.r.setEnter(!current.r.hasEnter());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 21:
 								current.r.setExplosions(!current.r.hasExplosions());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 22:
 								current.r.setHunger(!current.r.hasHunger());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 23:
 								current.r.setItemDrop(!current.r.hasItemDrop());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 24:
 								current.r.setItemPickup(!current.r.hasItemPickup());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 30:
 								current.r.setTakeDamage(!current.r.hasTakeDamage());
-								current.r.saveData(RRegion.RegionData.FLAGS);
+								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
@@ -297,7 +297,7 @@ public class RegionGUI {
 									}
 
 									current.r.setPriority(Integer.valueOf(input));
-									current.r.saveData(RRegion.RegionData.SETTINGS);
+									current.r.saveData(Region.RegionData.SETTINGS);
 									Text.send(p, "&fPriority changed to " + Text.color(input));
 									new BukkitRunnable() {
 										public void run() {

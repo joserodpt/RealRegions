@@ -3,7 +3,7 @@ package josegamerpt.realregions.gui;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.regions.RRegion;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -35,12 +35,12 @@ public class WorldGUI {
     static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
             Collections.singletonList("&fClick here to close this menu."));
 
-    private UUID uuid;
-    private HashMap<Integer, RRegion> display = new HashMap<>();
+    private final UUID uuid;
+    private HashMap<Integer, Region> display = new HashMap<>();
     private RWorld r;
 
-    static int pageNumber = 0;
-    static Pagination<RRegion> p;
+    int pageNumber = 0;
+    Pagination<Region> p;
 
     public WorldGUI(Player as, RWorld r) {
         this.uuid = as.getUniqueId();
@@ -53,13 +53,13 @@ public class WorldGUI {
     }
 
     public void load() {
-        ArrayList<RRegion> regions = RealRegions.getInstance().getWorldManager().getRegions(r);
+        ArrayList<Region> regions = RealRegions.getInstance().getWorldManager().getRegionManager().getRegions(r);
 
         p = new Pagination<>(21, regions);
         fillChest(p.getPage(pageNumber));
     }
 
-    public void fillChest(List<RRegion> items) {
+    public void fillChest(List<Region> items) {
         this.inv.clear();
         this.display.clear();
 
@@ -77,7 +77,7 @@ public class WorldGUI {
                     break;
                 default:
                     if (items.size() != 0) {
-                        RRegion wi = items.get(0);
+                        Region wi = items.get(0);
                         this.inv.setItem(i, wi.getItem());
                         this.display.put(i, wi);
                         items.remove(0);
@@ -175,7 +175,7 @@ public class WorldGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            RealRegions.getInstance().getWorldManager().createCubeRegion(input, min, max, current.r);
+                                            RealRegions.getInstance().getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, "&aRegion created.");
                                             new BukkitRunnable() {
                                                 public void run() {
@@ -213,7 +213,7 @@ public class WorldGUI {
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
-                            RRegion a = current.display.get(e.getRawSlot());
+                            Region a = current.display.get(e.getRawSlot());
                             switch (e.getClick()) {
                                 case RIGHT:
                                     a.toggleVisual(p);
@@ -238,9 +238,9 @@ public class WorldGUI {
                                     break;
                                 case DROP:
                                     String nam = a.getDisplayName();
-                                    if (a.getType() == RRegion.RegionType.INFINITE)
+                                    if (a.getType() == Region.RegionType.INFINITE)
                                     {
-                                        Text.send(p, "&fYou cant &cdelete " + nam + " &fbecause its infinite.");
+                                        Text.send(p, "&fYou can't &cdelete " + nam + " &fbecause its infinite.");
                                     } else {
                                         RealRegions.getInstance().getWorldManager().getRegionManager().deleteRegion(a);
                                         Text.send(p, "&fRegion " + nam + " &4deleted");
@@ -256,7 +256,7 @@ public class WorldGUI {
                                     new PlayerInput(p, input -> {
                                         //continue
                                         a.setDisplayName(input);
-                                        a.saveData(RRegion.RegionData.SETTINGS);
+                                        a.saveData(Region.RegionData.SETTINGS);
                                         Text.send(p, "&fRegion displayname changed to " + Text.color(input));
                                         new BukkitRunnable() {
                                             public void run() {

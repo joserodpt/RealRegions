@@ -1,6 +1,6 @@
 package josegamerpt.realregions.utils;
 
-import josegamerpt.realregions.regions.CuboidRRegion;
+import josegamerpt.realregions.regions.CuboidRegion;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -12,9 +12,9 @@ import java.util.List;
 
 public class CubeVisualizer {
 
-    private CuboidRRegion mp;
+    private final CuboidRegion mp;
 
-    public CubeVisualizer(CuboidRRegion mp) {
+    public CubeVisualizer(CuboidRegion mp) {
         this.mp = mp;
     }
 

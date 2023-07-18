@@ -1,7 +1,7 @@
 package josegamerpt.realregions.classes;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.regions.RRegion;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.IO;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
@@ -24,7 +24,7 @@ public class RWorld implements Listener {
 
     public enum Data { ICON, REGIONS }
 
-    private World world;
+    private final World world;
     private File file;
     private FileConfiguration config;
     private Material icon;
@@ -101,7 +101,7 @@ public class RWorld implements Listener {
 
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
-        this.config.set("Regions.Global.Type", RRegion.RegionType.INFINITE.name());
+        this.config.set("Regions.Global.Type", Region.RegionType.INFINITE.name());
         this.config.set("Regions.Global.Display-Name", "&f&lGlobal");
         this.config.set("Regions.Global.Priority", 10);
         this.config.set("Regions.Global.Icon", Material.BEDROCK.name());

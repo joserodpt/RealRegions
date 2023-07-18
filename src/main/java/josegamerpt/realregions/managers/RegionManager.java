@@ -1,13 +1,17 @@
 package josegamerpt.realregions.managers;
 
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.regions.CuboidRRegion;
-import josegamerpt.realregions.regions.RRegion;
+import josegamerpt.realregions.regions.CuboidRegion;
+import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class RegionManager {
 
@@ -18,23 +22,23 @@ public class RegionManager {
     }
 
     public void saveRegions(RWorld w) {
-        wm.getRegions(w).forEach(rRegion -> rRegion.saveData(RRegion.RegionData.ALL));
+        getRegions(w).forEach(rRegion -> rRegion.saveData(Region.RegionData.ALL));
     }
 
-    public ArrayList<RRegion> loadRegions(RWorld w) {
-        ArrayList<RRegion> loaded_regions = new ArrayList<>();
+    public ArrayList<Region> loadRegions(RWorld w) {
+        ArrayList<Region> loaded_regions = new ArrayList<>();
         for (String r : w.getConfig().getConfigurationSection("Regions").getKeys(false)) {
-            RRegion.RegionType rt = RRegion.RegionType.valueOf(w.getConfig().getString("Regions." + r + ".Type"));
+            Region.RegionType rt = Region.RegionType.valueOf(w.getConfig().getString("Regions." + r + ".Type"));
             String n = w.getConfig().getString("Regions." + r + ".Display-Name");
-            RRegion reg = null;
+            Region reg = null;
 
             switch (rt)
             {
                 case INFINITE:
-                    reg = new RRegion(r, n, w, Material.valueOf(w.getConfig().getString("Regions." + r + ".Icon")), w.getConfig().getInt("Regions." + r + ".Priority"), RRegion.RegionType.INFINITE);
+                    reg = new Region(r, n, w, Material.valueOf(w.getConfig().getString("Regions." + r + ".Icon")), w.getConfig().getInt("Regions." + r + ".Priority"), Region.RegionType.INFINITE);
                     break;
                 case CUBOID:
-                    reg = new CuboidRRegion(Text.textToLoc(w.getConfig().getString("Regions." + r + ".POS.1"), w.getWorld()),
+                    reg = new CuboidRegion(Text.textToLoc(w.getConfig().getString("Regions." + r + ".POS.1"), w.getWorld()),
                             Text.textToLoc(w.getConfig().getString("Regions." + r + ".POS.2"),  w.getWorld()),
                             ChatColor.stripColor(r), w.getConfig().getString("Regions." + r + ".Display-Name"), w,
                             Material.valueOf(w.getConfig().getString("Regions." + r + ".Icon")), w.getConfig().getInt("Regions." + r + ".Priority"));
@@ -65,9 +69,50 @@ public class RegionManager {
         return loaded_regions;
     }
 
-    public void deleteRegion(RRegion a) {
-        wm.getRegions(a.getRWorld()).remove(a);
+    public void deleteRegion(Region a) {
+        wm.getWorldsAndRegions().get(a.getRWorld()).remove(a);
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
+    }
+
+    public Region getRegion(RWorld w, String name) {
+        return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
+                .filter(region -> region.getRegionName().equals(name))
+                .findFirst()
+                .orElse(null) : null; // World not found in the HashMap
+    }
+
+    public boolean hasRegion(RWorld w, String name) {
+        return wm.getWorldsAndRegions().getOrDefault(w, new ArrayList<>())
+                .stream()
+                .anyMatch(region -> region.getRegionName().equals(name));
+    }
+
+    public ArrayList<Region> getAllRegions() {
+        return wm.getWorldsAndRegions().values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public Region getFirstPriorityRegionContainingLocation(Location l) {
+        return wm.getWorldsAndRegions().values().stream()
+                .flatMap(Collection::stream)
+                .sorted(Comparator.comparingInt(Region::getPriority).reversed())
+                .filter(region -> region.isLocationInRegion(l))
+                .findFirst()
+                .orElse(null);
+
+    }
+
+    public ArrayList<Region> getRegions(RWorld w) {
+        return wm.getWorldsAndRegions().get(w);
+    }
+
+    public void createCubeRegion(String name, Location min, Location max, RWorld r) {
+        CuboidRegion crg = new CuboidRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100);
+        wm.getWorldsAndRegions().get(r).add(crg);
+
+        //save region
+        crg.saveData(Region.RegionData.ALL);
     }
 }
