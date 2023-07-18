@@ -1,94 +1,65 @@
 package josegamerpt.realregions.classes;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.regions.CuboidRegion;
-import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.IO;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.logging.Level;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 //RealRegions World
-public class RWorld {
+public class RWorld implements Listener {
 
     public enum Data { ICON, REGIONS }
 
     private World world;
-    private ArrayList<Region> regions = new ArrayList<>();
     private File file;
     private FileConfiguration config;
     private Material icon;
+    private double worldSizeMB;
 
     public RWorld(World w) {
         this.world = w;
         checkConfig();
-        loadRegions();
         this.icon = Material.valueOf(config.getString("Settings.Icon"));
-    }
 
-    private void loadRegions() {
-        for (String r : config.getConfigurationSection("Regions").getKeys(false)) {
-            Region.Type rt = Region.Type.valueOf(config.getString("Regions." + r + ".Type"));
-            String n = config.getString("Regions." + r + ".Display-Name");
-            CuboidRegion reg = null;
-            if (config.getBoolean("Regions." + r + ".isGlobal")) {
-                reg = new CuboidRegion(r, n, this, Material.valueOf(config.getString("Regions." + r + ".Icon")));
-            } else {
-                switch (rt)
-                {
-                    case CUBOID:
-                        reg = new CuboidRegion(Text.textToLoc(config.getString("Regions." + r + ".POS.1"), this.world),
-                                Text.textToLoc(config.getString("Regions." + r + ".POS.2"), this.world),
-                                ChatColor.stripColor(r), config.getString("Regions." + r + ".Display-Name"), this,
-                                Material.valueOf(config.getString("Regions." + r + ".Icon")), config.getInt("Regions." + r + ".Priority"));
-                        break;
-                }
-            }
+        //register listener for this rworld
 
-            if (reg != null) {
-                reg.blockinteract = config.getBoolean("Regions." + r + ".Block.Interact");
-                reg.containerinteract = config.getBoolean("Regions." + r + ".Container.Interact");
-                reg.blockbreak = config.getBoolean("Regions." + r + ".Block.Break");
-                reg.blockplace = config.getBoolean("Regions." + r + ".Block.Place");
-                reg.pvp = config.getBoolean("Regions." + r + ".PVP");
-                reg.pve = config.getBoolean("Regions." + r + ".PVE");
-                reg.hunger = config.getBoolean("Regions." + r + ".Hunger");
-                reg.takedamage = config.getBoolean("Regions." + r + ".Damage");
-                reg.explosions = config.getBoolean("Regions." + r + ".Explosions");
-                reg.itemdrop = config.getBoolean("Regions." + r + ".Item.Drop");
-                reg.itempickup = config.getBoolean("Regions." + r + ".Item.Pickup");
-                reg.entityspawning = config.getBoolean("Regions." + r + ".Entity-Spawning");
-                reg.enter = config.getBoolean("Regions." + r + ".Enter");
-                reg.accesscrafting = config.getBoolean("Regions." + r + ".Acess.Crafting-Table");
-                reg.accesschests = config.getBoolean("Regions." + r + ".Acess.Chests");
-                reg.accesshoppers = config.getBoolean("Regions." + r + ".Acess.Hoppers");
-                this.regions.add(reg);
+
+        //calculate size for world
+        BukkitRunnable task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                File folder = new File(Bukkit.getWorldContainer() + "/" + getRWorldName());
+                worldSizeMB = IO.toMB(IO.folderSize(folder));
             }
-        }
+        };
+
+        // Start the task
+        task.runTaskLaterAsynchronously(RealRegions.getInstance(), 0);
     }
 
     private void checkConfig() {
-        this.file = new File(RealRegions.getPL().getDataFolder() + "/worlds/", world.getName() + ".yml");
+        this.file = new File(RealRegions.getInstance().getDataFolder() + "/worlds/", world.getName() + ".yml");
         if (!this.file.exists()) {
             this.file.getParentFile().mkdirs();
             try {
                 this.file.createNewFile();
                 setupDefaultConfig();
             } catch (IOException e) {
-                RealRegions.log(Level.SEVERE, "RealRegions threw an error while creating world config for " + world.getName());
+                RealRegions.getInstance().log(Level.SEVERE, "RealRegions threw an error while creating world config for " + world.getName());
                 e.printStackTrace();
             }
         }
@@ -106,7 +77,7 @@ public class RWorld {
         try {
             this.config.save(file);
         } catch (IOException e) {
-            RealRegions.log(Level.OFF,"RealRegions threw an error while saving world config for " + world.getName());
+            RealRegions.getInstance().log(Level.OFF,"RealRegions threw an error while saving world config for " + world.getName());
         }
     }
 
@@ -130,9 +101,8 @@ public class RWorld {
 
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
-        this.config.set("Regions.Global.Type", Region.Type.CUBOID.name());
+        this.config.set("Regions.Global.Type", RRegion.RegionType.INFINITE.name());
         this.config.set("Regions.Global.Display-Name", "&f&lGlobal");
-        this.config.set("Regions.Global.isGlobal", true);
         this.config.set("Regions.Global.Priority", 10);
         this.config.set("Regions.Global.Icon", Material.BEDROCK.name());
         this.config.set("Regions.Global.Block.Interact", true);
@@ -149,9 +119,9 @@ public class RWorld {
         this.config.set("Regions.Global.Entity-Spawning", true);
         this.config.set("Regions.Global.Enter", true);
         this.config.set("Regions.Global.Create-Portal", true);
-        this.config.set("Regions.Global.Acess.Crafting-Table", true);
-        this.config.set("Regions.Global.Acess.Chests", true);
-        this.config.set("Regions.Global.Acess.Hoppers", true);
+        this.config.set("Regions.Global.Access.Crafting-Table", true);
+        this.config.set("Regions.Global.Access.Chests", true);
+        this.config.set("Regions.Global.Access.Hoppers", true);
         saveConfig();
     }
 
@@ -170,21 +140,12 @@ public class RWorld {
         }
     }
 
-    public String getName() {
+    public String getRWorldName() {
         return world.getName();
     }
 
-    public ArrayList<Region> getRegions() {
-        return regions;
-    }
-
-    public void addRegion(Region r) {
-        this.regions.add(r);
-    }
-
     public ItemStack getItem() {
-        File folder = new File(Bukkit.getWorldContainer() + "/" + world.getName());
-        return Itens.createItem(getIcon(), 1, "&f" + world.getName() + " &7[&b" + IO.toMB(IO.folderSize(folder)) + "mb&7]", Arrays.asList("&5", " &6On this world:", "  &b" + world.getPlayers().size() + " &fplayers.", "  &b" + world.getEntities().size() + " &fentities.", "  &b" + world.getLoadedChunks().length + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
+        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + worldSizeMB + "mb&7]", Arrays.asList("&5", " &6On this world:", "  &b" + world.getPlayers().size() + " &fplayers.", "  &b" + world.getEntities().size() + " &fentities.", "  &b" + world.getLoadedChunks().length + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
     }
 
     private Material getIcon() {
@@ -203,24 +164,8 @@ public class RWorld {
                 saveConfig();
                 break;
             case REGIONS:
-                this.regions.forEach(region -> region.saveData(Region.Data.REGION));
+                RealRegions.getInstance().getWorldManager().getRegionManager().saveRegions(this);
                 break;
         }
-    }
-
-    public void deleteRegion(Region a) {
-        this.regions.remove(a);
-        this.config.set("Regions." + a.getName(), null);
-        saveConfig();
-    }
-
-    public boolean hasRegion(String name) {
-        for (Region region : this.regions) {
-            if (region.getName().equalsIgnoreCase(name))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -39,7 +39,6 @@ public class WorldViewer {
             Collections.singletonList("&fClick here to go back."));
 
     private UUID uuid;
-    private ArrayList<RWorld> worlds;
     private HashMap<Integer, RWorld> display = new HashMap<>();
 
     int pageNumber = 0;
@@ -49,7 +48,7 @@ public class WorldViewer {
     public WorldViewer(Player pl) {
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
         this.uuid = pl.getUniqueId();
-        this.worlds = RealRegions.getWorldManager().getWorlds();
+        ArrayList<RWorld> worlds = RealRegions.getInstance().getWorldManager().getWorlds();
 
         this.p = new Pagination<>(28, worlds);
         fillChest(p.getPage(this.pageNumber));
@@ -177,7 +176,7 @@ public class WorldViewer {
                                             MaterialPicker mp = new MaterialPicker(a, p, PickType.ICON_WORLD);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPL(), 2);
+                                    }.runTaskLater(RealRegions.getInstance(), 2);
                                     break;
                                 default:
                                     p.closeInventory();
@@ -188,7 +187,7 @@ public class WorldViewer {
                                             WorldGUI v = new WorldGUI(p, a);
                                             v.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPL(), 2);
+                                    }.runTaskLater(RealRegions.getInstance(), 2);
                                     break;
                             }
                         }

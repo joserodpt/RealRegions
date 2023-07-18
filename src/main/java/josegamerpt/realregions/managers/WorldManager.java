@@ -1,65 +1,83 @@
 package josegamerpt.realregions.managers;
 
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.regions.CuboidRegion;
-import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.regions.CuboidRRegion;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorldManager {
 
-    private ArrayList<RWorld> worlds = new ArrayList<>();
+    private RegionManager rm = new RegionManager(this);
+
+    private HashMap<RWorld, ArrayList<RRegion>> regions = new HashMap<>();
+
+    public RegionManager getRegionManager() {
+        return rm;
+    }
 
     public ArrayList<RWorld> getWorlds() {
-        return this.worlds;
+        return new ArrayList<>(regions.keySet());
     }
 
-    public void loadWorlds() {Bukkit.getWorlds().forEach(wrld -> this.worlds.add(new RWorld(wrld)));}
+    public void loadWorlds() {
+        for (World w : Bukkit.getWorlds()) {
+            //load rworld
+            RWorld rw = new RWorld(w);
+
+            //load regions
+            regions.put(rw, rm.loadRegions(rw));
+        }
+    }
+
+    public ArrayList<RRegion> getAllRegions() {
+        return regions.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<RRegion> getRegions(RWorld w) {
+        return regions.get(w);
+    }
+
+
 
     public void createCubeRegion(String name, Location min, Location max, RWorld r) {
-        Region r1 = new CuboidRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100);
-        r.addRegion(r1);
-        r1.saveData(Region.Data.REGION);
+        CuboidRRegion crg = new CuboidRRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100);
+        regions.get(r).add(crg);
+
+        //save region
+        crg.saveData(RRegion.RegionData.ALL);
     }
 
-    public ArrayList<Region> getRegions() {
-        ArrayList<Region> r = new ArrayList<>();
-        this.worlds.forEach(rWorld -> r.addAll(rWorld.getRegions()));
-        return r;
+    public RWorld getWorld(World w) {
+        return regions.keySet().stream()
+                .filter(world -> world.getWorld().equals(w))
+                .findFirst()
+                .orElse(null);
     }
 
-    public Region isLocationInRegion(Location l) {
-        ArrayList<Region> rgtmp = new ArrayList<>();
-        for (Region region : getRegions()) {
-            if (region.isLocationInRegion(l)) {
-                rgtmp.add(region);
-            }
-        }
-
-        rgtmp.sort(Comparator.comparing(Region::getPriority));
-        Collections.reverse(rgtmp);
-        return rgtmp.get(0);
+    public RWorld getWorld(String nome) {
+        return regions.keySet().stream()
+                .filter(world -> world.getRWorldName().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElse(null);
     }
 
-    public RWorld getWorld(World world) {
-        for (RWorld rWorld : this.worlds) {
-            if (rWorld.getWorld() == world) {
-                return rWorld;
-            }
-        }
-        return null;
+
+    public RRegion getRegion(RWorld w, String name) {
+        return regions.containsKey(w) ? regions.get(w).stream()
+                .filter(region -> region.getRegionName().equals(name))
+                .findFirst()
+                .orElse(null) : null; // World not found in the HashMap
     }
 
-    public Region getRegion(String name) {
-        for (Region region : getRegions()) {
-            if (region.getName().equalsIgnoreCase(name)) {
-                return region;
-            }
-        }
-        return null;
+    public boolean hasRegion(RWorld w, String name) {
+        return regions.getOrDefault(w, new ArrayList<>())
+                .stream()
+                .anyMatch(region -> region.getRegionName().equals(name));
     }
 }

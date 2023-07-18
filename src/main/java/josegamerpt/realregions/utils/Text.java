@@ -1,23 +1,20 @@
 package josegamerpt.realregions.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import josegamerpt.realregions.RealRegions;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-
 public class Text {
+
+	public static String styleBoolean(boolean a) {
+		return a ? "&a✔ enabled" : "&c❌ disabled";
+	}
 
 	public static String color(final String string) {
 		return ChatColor.translateAlternateColorCodes('&', string);
@@ -41,10 +38,10 @@ public class Text {
 	}
 
 	public static void send(Player p, String string) {
-		p.sendMessage(Text.color(RealRegions.getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(RealRegions.getInstance().getPrefix() + "&r" + string));
 	}
 	public static void send(CommandSender p, String string) {
-		p.sendMessage(Text.color(RealRegions.getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(RealRegions.getInstance().getPrefix() + "&r" + string));
 	}
 
     public static String locToTex(Location pos) {

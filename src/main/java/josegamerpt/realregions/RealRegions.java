@@ -1,99 +1,95 @@
 package josegamerpt.realregions;
 
+import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.commands.RealRegionsCMD;
 import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.gui.*;
-import josegamerpt.realregions.listeners.PlayerListener;
-import josegamerpt.realregions.listeners.WorldListener;
-import josegamerpt.realregions.regions.Region;
-import josegamerpt.realregions.utils.CubeVisualizer;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
 import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
+    static RealRegions pl;
+    private String prefix;
+    private PluginManager pm;
 
-    static WorldManager worldManager = new WorldManager();
+    public PluginManager getPluginManager() {
+        return pm;
+    }
 
-    static Plugin pl;
-    static String prefix;
-    public static Plugin getPL() {
+    private WorldManager worldManager = new WorldManager();
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+
+
+    public static RealRegions getInstance() {
         return pl;
     }
 
-    public static WorldManager getWorldManager() {
-        return worldManager;
-    }
 
     @Override
     public void onEnable() {
         pl = this;
 
-        String star = "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
-                this.getDescription().getVersion());
-        log(Level.INFO,star);
+        log(Level.INFO, "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
+                this.getDescription().getVersion()));
+
         saveDefaultConfig();
         Config.setup(this);
 
-        PluginManager pm = Bukkit.getPluginManager();
+        prefix = Text.color(Config.file().getString("RealRegions.Prefix"));
+
+        pm = Bukkit.getPluginManager();
         pm.registerEvents(WorldViewer.getListener(), this);
         pm.registerEvents(WorldGUI.getListener(), this);
         pm.registerEvents(MaterialPicker.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
         pm.registerEvents(RegionGUI.getListener(), this);
-        pm.registerEvents(new PlayerListener(), this);
-        pm.registerEvents(new WorldListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
         CommandManager cm = new CommandManager(this);
         cm.hideTabComplete(true);
         cm.getCompletionHandler().register("#regions", input ->
-             worldManager.getRegions()
+             worldManager.getAllRegions()
                     .stream()
-                    .map(Region::getName)
+                    .map(RRegion::getRegionName)
                     .collect(Collectors.toList())
+        );
+        cm.getCompletionHandler().register("#mundos", input ->
+                worldManager.getWorlds()
+                        .stream()
+                        .map(RWorld::getRWorldName)
+                        .collect(Collectors.toList())
         );
 
         cm.register(new RealRegionsCMD(this));
 
-        log(Level.INFO,"Loading Regions.");
+        log(Level.INFO,"Loading Worlds and Regions.");
         worldManager.loadWorlds();
-        log(Level.INFO,"Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegions().size() + " regions.");
 
-        prefix = Text.color(Config.file().getString("RealRegions.Prefix"));
+        log(Level.INFO,"Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getAllRegions().size() + " regions.");
 
         log(Level.INFO,"Plugin has been loaded.");
         log(Level.INFO,"Author: JoseGamer_PT | " + this.getDescription().getWebsite());
-        log(Level.INFO,star);
+        log(Level.INFO, "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
+                this.getDescription().getVersion()));
 
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                for (Region r : getWorldManager().getRegions()) {
-                    if (r.canVisualize()) {
-                        CubeVisualizer v = r.getViewingMaster();
-                        v.getCube().forEach(v::spawnParticle);
-                    }
-                }
-            }
-        }.runTaskTimer(this,0, 10);
     }
 
-    public static void log(Level lev, String string) {
+    public void log(Level lev, String string) {
         Bukkit.getLogger().log(lev, string);
     }
 
-    public static String getPrefix() {
+    public String getPrefix() {
         return prefix + " ";
     }
 

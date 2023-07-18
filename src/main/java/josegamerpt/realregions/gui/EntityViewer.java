@@ -44,7 +44,7 @@ public class EntityViewer {
     private RWorld r;
 
     public EntityViewer(Player pl, RWorld r) {
-        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getName() + " &8| Entities"));
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Entities"));
         this.uuid = pl.getUniqueId();
         this.r = r;
         this.eicon = getEnts();
@@ -56,7 +56,7 @@ public class EntityViewer {
     }
 
     public EntityViewer(Player pl, RWorld r, String search) {
-        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getName() + " &8| Search for " + search));
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Search for " + search));
         this.uuid = pl.getUniqueId();
         this.r = r;
         this.eicon = searchEntity(search);

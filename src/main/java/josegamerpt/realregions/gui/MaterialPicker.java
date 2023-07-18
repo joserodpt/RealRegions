@@ -4,8 +4,8 @@ import java.util.*;
 
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.regions.CuboidRegion;
-import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.regions.CuboidRRegion;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -41,7 +41,7 @@ public class MaterialPicker {
 
     private UUID uuid;
     private ArrayList<Material> items;
-    private HashMap<Integer, Material> display = new HashMap<Integer, Material>();
+    private HashMap<Integer, Material> display = new HashMap<>();
 
     int pageNumber = 0;
     Pagination<Material> p;
@@ -55,10 +55,10 @@ public class MaterialPicker {
 
         switch (block) {
             case ICON_REG:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RRegion) m).getDisplayName()));
                 break;
             case ICON_WORLD:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getRWorldName()));
                 break;
         }
 
@@ -77,10 +77,10 @@ public class MaterialPicker {
         switch (block)
         {
             case ICON_REG:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RRegion) m).getDisplayName()));
                 break;
             case ICON_WORLD:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getName()));
+                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getRWorldName()));
                 break;
         }
 
@@ -92,7 +92,7 @@ public class MaterialPicker {
     }
 
     private ArrayList<Material> getIcons() {
-        ArrayList<Material> ms = new ArrayList<Material>();
+        ArrayList<Material> ms = new ArrayList<>();
         for (Material m : Material.values()) {
             if (!m.equals(Material.AIR) && m.isSolid() && m.isBlock() && m.isItem()) {
                 ms.add(m);
@@ -102,7 +102,7 @@ public class MaterialPicker {
     }
 
     private ArrayList<Material> searchMaterial(String s) {
-        ArrayList<Material> ms = new ArrayList<Material>();
+        ArrayList<Material> ms = new ArrayList<>();
         for (Material m : getIcons()) {
             if (m.name().toLowerCase().contains(s.toLowerCase())) {
                 ms.add(m);
@@ -238,10 +238,10 @@ public class MaterialPicker {
                             Material a = current.display.get(e.getRawSlot());
                             if (current.pt.equals(WorldViewer.PickType.ICON_REG)) {
                                 gp.closeInventory();
-                                Region r = ((Region) current.min);
+                                RRegion r = ((RRegion) current.min);
                                 r.setIcon(a);
-                                r.saveData(Region.Data.ICON);
-                                WorldGUI v = new WorldGUI(gp, r.getWorld());
+                                r.saveData(RRegion.RegionData.ICON);
+                                WorldGUI v = new WorldGUI(gp, r.getRWorld());
                                 v.openInventory(gp);
                             }
                             if (current.pt.equals(WorldViewer.PickType.ICON_WORLD)) {
@@ -307,15 +307,15 @@ public class MaterialPicker {
                         WorldViewer wv = new WorldViewer(p);
                         wv.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getPL(), 2);
+                }.runTaskLater(RealRegions.getInstance(), 2);
                 break;
             case ICON_REG:
                 new BukkitRunnable() {
                     public void run() {
-                        WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getWorld());
+                        WorldGUI v = new WorldGUI(p, ((CuboidRRegion) min).getRWorld());
                         v.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getPL(), 2);
+                }.runTaskLater(RealRegions.getInstance(), 2);
                 break;
         }
     }

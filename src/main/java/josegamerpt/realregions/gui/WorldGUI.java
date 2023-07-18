@@ -3,7 +3,7 @@ package josegamerpt.realregions.gui;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
-import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -36,16 +36,15 @@ public class WorldGUI {
             Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
-    private ArrayList<Region> regions;
-    private HashMap<Integer, Region> display = new HashMap<>();
+    private HashMap<Integer, RRegion> display = new HashMap<>();
     private RWorld r;
 
     static int pageNumber = 0;
-    static Pagination<Region> p;
+    static Pagination<RRegion> p;
 
     public WorldGUI(Player as, RWorld r) {
         this.uuid = as.getUniqueId();
-        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getName()));
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getRWorldName()));
 
         this.r = r;
         load();
@@ -54,13 +53,13 @@ public class WorldGUI {
     }
 
     public void load() {
-        this.regions = r.getRegions();
+        ArrayList<RRegion> regions = RealRegions.getInstance().getWorldManager().getRegions(r);
 
-        p = new Pagination<>(21, this.regions);
+        p = new Pagination<>(21, regions);
         fillChest(p.getPage(pageNumber));
     }
 
-    public void fillChest(List<Region> items) {
+    public void fillChest(List<RRegion> items) {
         this.inv.clear();
         this.display.clear();
 
@@ -78,7 +77,7 @@ public class WorldGUI {
                     break;
                 default:
                     if (items.size() != 0) {
-                        Region wi = items.get(0);
+                        RRegion wi = items.get(0);
                         this.inv.setItem(i, wi.getItem());
                         this.display.put(i, wi);
                         items.remove(0);
@@ -121,7 +120,6 @@ public class WorldGUI {
 
     public static Listener getListener() {
         return new Listener() {
-
             @EventHandler
             public void onClick(InventoryClickEvent e) {
                 HumanEntity clicker = e.getWhoClicked();
@@ -147,19 +145,19 @@ public class WorldGUI {
                                         EntityViewer v = new EntityViewer(p, current.r);
                                         v.openInventory(p);
                                     }
-                                }.runTaskLater(RealRegions.getPL(), 2);
+                                }.runTaskLater(RealRegions.getInstance(), 2);
                                 break;
                             case 16:
-                                if (current.r.getName().contains("world"))
+                                if (current.r.getRWorldName().contains("world"))
                                 {
-                                    Text.send(p, "&fYou cant &cunload &fthis world.");
+                                    p.closeInventory();
+                                    Text.send(p, "&fYou can't &cunload &fdefault worlds.");
                                 } else {
                                     Bukkit.unloadWorld(current.r.getWorld(), true);
                                     Text.send(p, "&fWorld &aunloaded.");
                                 }
                                 break;
                             case 41:
-
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
                                     Text.send(p, "&fYou have to be on " + current.r.getWorld().getName() + " to create a region.");
@@ -177,14 +175,14 @@ public class WorldGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            RealRegions.getWorldManager().createCubeRegion(input, min, max, current.r);
+                                            RealRegions.getInstance().getWorldManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, "&aRegion created.");
                                             new BukkitRunnable() {
                                                 public void run() {
                                                     WorldGUI g = new WorldGUI(p, current.r);
                                                     g.openInventory(p);
                                                 }
-                                            }.runTaskLater(RealRegions.getPL(), 2);
+                                            }.runTaskLater(RealRegions.getInstance(), 2);
                                         }, input -> {
                                             WorldGUI wv = new WorldGUI(p, current.r);
                                             wv.openInventory(p);
@@ -215,7 +213,7 @@ public class WorldGUI {
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
-                            Region a = current.display.get(e.getRawSlot());
+                            RRegion a = current.display.get(e.getRawSlot());
                             switch (e.getClick()) {
                                 case RIGHT:
                                     a.toggleVisual(p);
@@ -227,7 +225,7 @@ public class WorldGUI {
                                             RegionGUI fg = new RegionGUI(p, a);
                                             fg.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPL(), 2);
+                                    }.runTaskLater(RealRegions.getInstance(), 2);
                                     break;
                                 case SHIFT_LEFT:
                                     p.closeInventory();
@@ -236,36 +234,36 @@ public class WorldGUI {
                                             MaterialPicker mp = new MaterialPicker(a, p, WorldViewer.PickType.ICON_REG);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPL(), 2);
+                                    }.runTaskLater(RealRegions.getInstance(), 2);
                                     break;
                                 case DROP:
                                     String nam = a.getDisplayName();
-                                    if (a.isGlobal())
+                                    if (a.getType() == RRegion.RegionType.INFINITE)
                                     {
-                                        Text.send(p, "&fYou cant &cdelete " + nam + " &fbecause its global.");
+                                        Text.send(p, "&fYou cant &cdelete " + nam + " &fbecause its infinite.");
                                     } else {
-                                        a.getWorld().deleteRegion(a);
+                                        RealRegions.getInstance().getWorldManager().getRegionManager().deleteRegion(a);
                                         Text.send(p, "&fRegion " + nam + " &4deleted");
                                         new BukkitRunnable() {
                                             public void run() {
-                                                WorldGUI g = new WorldGUI(p, a.getWorld());
+                                                WorldGUI g = new WorldGUI(p, a.getRWorld());
                                                 g.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getPL(), 2);
+                                        }.runTaskLater(RealRegions.getInstance(), 2);
                                     }
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {
                                         //continue
                                         a.setDisplayName(input);
-                                        a.saveData(Region.Data.SETTINGS);
+                                        a.saveData(RRegion.RegionData.SETTINGS);
                                         Text.send(p, "&fRegion displayname changed to " + Text.color(input));
                                         new BukkitRunnable() {
                                             public void run() {
                                                 WorldGUI g = new WorldGUI(p, current.r);
                                                 g.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getPL(), 2);
+                                        }.runTaskLater(RealRegions.getInstance(), 2);
                                     }, input -> {
                                         WorldGUI wv = new WorldGUI(p, current.r);
                                         wv.openInventory(p);

@@ -1,7 +1,7 @@
 package josegamerpt.realregions.gui;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.regions.RRegion;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
@@ -31,9 +31,9 @@ public class RegionGUI {
 			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;
-	private Region r;
+	private RRegion r;
 
-	public RegionGUI(Player as, Region r) {
+	public RegionGUI(Player as, RRegion r) {
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
 
@@ -48,51 +48,51 @@ public class RegionGUI {
 
 		inv.setItem(2, Itens.createItem(Material.DIAMOND_PICKAXE, 1, "&7&lBlock Breaking &r&7[" + getStyle(r.hasBlockBreak()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows block breaking.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Breaking.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Breaking.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Breaking.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Breaking.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(3, Itens.createItem(Material.GRASS_BLOCK, 1, "&7&lBlock Placing &r&7[" + getStyle(r.hasBlockPlace()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows block placing.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Placing.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Placing.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Placing.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Placing.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(4, Itens.createItem(Material.STONE, 1, "&7&lBlock Interaction &r&7[" + getStyle(r.hasBlockInteract()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Block Interaction.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Interaction.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Block-Interaction.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Interaction.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Block-Interaction.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(5, Itens.createItem(Material.DIAMOND_SWORD, 1, "&7&lPVP &r&7[" + getStyle(r.hasPVP()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows PVP (player vs player).", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVP.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVP.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".PVP.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".PVP.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(6, Itens.createItem(Material.IRON_SWORD, 1, "&7&lPVE &r&7[" + getStyle(r.hasPVE()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows PVE (player vs entity).", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVE.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".PVE.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".PVE.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".PVE.Disallow",
 						"&e","Click to change the value.")));
 
 		//row2
 
 		inv.setItem(11, Itens.createItem(Material.CRAFTING_TABLE, 1, "&7&lCrafting &r&7[" + getStyle(r.hasAccessCrafting()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows acess to Crafting Tables.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Crafting.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Crafting.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Crafting.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Crafting.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(12, Itens.createItem(Material.CHEST, 1, "&7&lChests &r&7[" + getStyle(r.hasAccessChests()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows chest interactions.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Chests.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Chests.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Chests.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Chests.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(13, Itens.createItem(Material.HOPPER, 1, "&7&lHoppers &r&7[" + getStyle(r.hasAccessHoppers()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows hopper interactions.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hoppers.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hoppers.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Hoppers.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Hoppers.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(14, Itens.createItem(Material.ENDER_CHEST, 1, "&7&lContainer Interaction &r&7[" + getStyle(r.hasContainerInteract()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows container interactions.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Containers.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Containers.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Containers.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Containers.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(15, Itens.createItem(Material.CREEPER_SPAWN_EGG, 1, "&7&lEntity Spawning &r&7[" + getStyle(r.hasEntitySpawning()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Entity Spawning.", "&e&nPermissions",
@@ -103,8 +103,8 @@ public class RegionGUI {
 
 		inv.setItem(20, Itens.createItem(Material.BARRIER, 1, "&7&lEnter &r&7[" + getStyle(r.hasEnter()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows player access to this region.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Enter.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Enter.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Enter.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(21, Itens.createItem(Material.TNT, 1, "&7&lExplosions &r&7[" + getStyle(r.hasExplosions()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows explosions.", "&e&nPermissions",
@@ -112,25 +112,25 @@ public class RegionGUI {
 						"&e","Click to change the value.")));
 		inv.setItem(22, Itens.createItem(Material.COOKED_BEEF, 1, "&7&lHunger &r&7[" + getStyle(r.hasHunger()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Hunger.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hunger.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Hunger.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Hunger.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Hunger.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(23, Itens.createItem(Material.DROPPER, 1, "&7&lItem Drop &r&7[" + getStyle(r.hasItemDrop()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows item drop.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Drop.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Drop.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Drop.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Drop.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(24, Itens.createItem(Material.HOPPER_MINECART, 1, "&7&lItem Pickup &r&7[" + getStyle(r.hasItemPickup()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Entity Spawning.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Pickup.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Item-Pickup.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Pickup.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Item-Pickup.Disallow",
 						"&e","Click to change the value.")));
 
 		//row4
 		inv.setItem(30, Itens.createItem(Material.FLINT_AND_STEEL, 1, "&7&lTake Damage &r&7[" + getStyle(r.hasTakeDamage()) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Damage.", "&e&nPermissions",
-						"  &aAllow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Damage.Allow",
-						"  &cDisallow&f: RealRegions." + r.getWorld().getName() + "." + r.getName() + ".Damage.Disallow",
+						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Damage.Allow",
+						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Damage.Disallow",
 						"&e","Click to change the value.")));
 		inv.setItem(32, Itens.createItem(Material.SUNFLOWER, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
 				Arrays.asList("&e&nDescription", "  Region Priority over others.",
@@ -183,104 +183,104 @@ public class RegionGUI {
 								{
 									public void run()
 									{
-										WorldGUI mp = new WorldGUI(p, current.r.getWorld());
+										WorldGUI mp = new WorldGUI(p, current.r.getRWorld());
 										mp.openInventory(p);
 									}
-								}.runTaskLater(RealRegions.getPL(), 2);
+								}.runTaskLater(RealRegions.getInstance(), 2);
 								break;
 							case 2:
 								current.r.setBlockBreak(!current.r.hasBlockBreak());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 3:
 								current.r.setBlockPlace(!current.r.hasBlockPlace());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 4:
 								current.r.setBlockInteract(!current.r.hasBlockInteract());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 5:
 								current.r.setPVP(!current.r.hasPVP());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 6:
 								current.r.setPVE(!current.r.hasPVE());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 11:
 								current.r.setAccessCrafting(!current.r.hasAccessCrafting());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 12:
 								current.r.setAccessChests(!current.r.hasAccessChests());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 13:
 								current.r.setAccessHoppers(!current.r.hasAccessHoppers());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 14:
 								current.r.setContainerInteract(!current.r.hasContainerInteract());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 15:
 								current.r.setEntitySpawning(!current.r.hasEntitySpawning());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 20:
 								current.r.setEnter(!current.r.hasEnter());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 21:
 								current.r.setExplosions(!current.r.hasExplosions());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 22:
 								current.r.setHunger(!current.r.hasHunger());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 23:
 								current.r.setItemDrop(!current.r.hasItemDrop());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 24:
 								current.r.setItemPickup(!current.r.hasItemPickup());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 							case 30:
 								current.r.setTakeDamage(!current.r.hasTakeDamage());
-								current.r.saveData(Region.Data.FLAGS);
+								current.r.saveData(RRegion.RegionData.FLAGS);
 								current.load();
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
@@ -297,14 +297,14 @@ public class RegionGUI {
 									}
 
 									current.r.setPriority(Integer.valueOf(input));
-									current.r.saveData(Region.Data.SETTINGS);
+									current.r.saveData(RRegion.RegionData.SETTINGS);
 									Text.send(p, "&fPriority changed to " + Text.color(input));
 									new BukkitRunnable() {
 										public void run() {
 											RegionGUI wv = new RegionGUI(p, current.r);
 											wv.openInventory(p);
 										}
-									}.runTaskLater(RealRegions.getPL(), 2);
+									}.runTaskLater(RealRegions.getInstance(), 2);
 								}, input -> {
 									RegionGUI wv = new RegionGUI(p, current.r);
 									wv.openInventory(p);
