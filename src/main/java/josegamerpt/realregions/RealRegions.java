@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
 
@@ -48,13 +49,20 @@ public class RealRegions extends JavaPlugin {
         pm.registerEvents(WorldGUI.getListener(), this);
         pm.registerEvents(MaterialPicker.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
-        pm.registerEvents(FlagGUI.getListener(), this);
+        pm.registerEvents(RegionGUI.getListener(), this);
         pm.registerEvents(new PlayerListener(), this);
         pm.registerEvents(new WorldListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
         CommandManager cm = new CommandManager(this);
         cm.hideTabComplete(true);
+        cm.getCompletionHandler().register("#regions", input ->
+             worldManager.getRegions()
+                    .stream()
+                    .map(Region::getName)
+                    .collect(Collectors.toList())
+        );
+
         cm.register(new RealRegionsCMD(this));
 
         log(Level.INFO,"Loading Regions.");
@@ -78,7 +86,6 @@ public class RealRegions extends JavaPlugin {
                     }
                 }
             }
-
         }.runTaskTimer(this,0, 10);
     }
 

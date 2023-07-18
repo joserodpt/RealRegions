@@ -1,7 +1,6 @@
 package josegamerpt.realregions.gui;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.enums.PickType;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
@@ -23,6 +22,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.*;
 
 public class WorldViewer {
+
+    public enum PickType {
+        ICON_WORLD, ICON_REG
+    }
 
     private static Map<UUID, WorldViewer> inventories = new HashMap<>();
     private Inventory inv;
@@ -58,7 +61,7 @@ public class WorldViewer {
         this.inv.clear();
         this.display.clear();
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; ++i) {
             this.inv.setItem(i, placeholder);
         }
 

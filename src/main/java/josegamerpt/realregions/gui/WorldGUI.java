@@ -2,7 +2,6 @@ package josegamerpt.realregions.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.enums.PickType;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
@@ -65,7 +64,7 @@ public class WorldGUI {
         this.inv.clear();
         this.display.clear();
 
-        for (int i = 10; i < 33; i++) {
+        for (int i = 10; i < 33; ++i) {
             switch (i)
             {
                 case 18:
@@ -195,6 +194,7 @@ public class WorldGUI {
                                     }
                                 } catch (Exception exception) {
                                     Text.send(p, "You dont have any selection.");
+                                    p.closeInventory();
                                 }
 
                                 break;
@@ -224,7 +224,7 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            FlagGUI fg = new FlagGUI(p, a);
+                                            RegionGUI fg = new RegionGUI(p, a);
                                             fg.openInventory(p);
                                         }
                                     }.runTaskLater(RealRegions.getPL(), 2);
@@ -233,7 +233,7 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            MaterialPicker mp = new MaterialPicker(a, p, PickType.ICON_REG);
+                                            MaterialPicker mp = new MaterialPicker(a, p, WorldViewer.PickType.ICON_REG);
                                             mp.openInventory(p);
                                         }
                                     }.runTaskLater(RealRegions.getPL(), 2);

@@ -1,6 +1,7 @@
 package josegamerpt.realregions.listeners;
 
 import josegamerpt.realregions.RealRegions;
+import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.enums.RRParticle;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Particles;
@@ -22,6 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
@@ -196,9 +198,10 @@ public class PlayerListener implements Listener {
     }
 
     private void cancelMovement(Player p, PlayerMoveEvent event) {
-        cancel(event.getTo(), p, "&cYou cant enter here.");
         Particles.spawnParticle(RRParticle.BARRIER, event.getTo());
-        event.setCancelled(true);
+        p.setVelocity(p.getEyeLocation().getDirection().setY(Config.file().getDouble("RealRegions.Pushback-Movement.Y-Component")).multiply(Config.file().getDouble("RealRegions.Pushback-Movement.Multiplier")));
+
+        cancel(event.getTo(), p, "&cYou cant enter here.");
     }
 
     @EventHandler

@@ -4,6 +4,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.config.Config;
+import josegamerpt.realregions.gui.RegionGUI;
 import josegamerpt.realregions.gui.WorldGUI;
 import josegamerpt.realregions.gui.WorldViewer;
 import josegamerpt.realregions.utils.Text;
@@ -89,6 +90,22 @@ public class RealRegionsCMD extends CommandBase {
             }
         } else {
             Text.send(p, "There is already a region with that name.");
+        }
+    }
+
+    @SubCommand("region")
+    @Alias("reg")
+    @Completion("#regions")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr reg <name>")
+    public void regioncmd(final CommandSender commandSender, final String name) {
+        if (commandSender instanceof Player) {
+            Player p = (Player) commandSender;
+
+            RegionGUI wv = new RegionGUI(p, RealRegions.getWorldManager().getRegion(name));
+            wv.openInventory(p);
+        } else {
+            commandSender.sendMessage("[RealRegions] Only players can run this command.");
         }
     }
 }

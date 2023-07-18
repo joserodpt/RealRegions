@@ -22,9 +22,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
-public class FlagGUI {
+public class RegionGUI {
 
-	private static Map<UUID, FlagGUI> inventories = new HashMap<>();
+	private static Map<UUID, RegionGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
 	static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
@@ -33,7 +33,7 @@ public class FlagGUI {
 	private UUID uuid;
 	private Region r;
 
-	public FlagGUI(Player as, Region r) {
+	public RegionGUI(Player as, Region r) {
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
 
@@ -167,7 +167,7 @@ public class FlagGUI {
 					}
 					UUID uuid = clicker.getUniqueId();
 					if (inventories.containsKey(uuid)) {
-						FlagGUI current = inventories.get(uuid);
+						RegionGUI current = inventories.get(uuid);
 						if (e.getInventory().getHolder() != current.getInventory().getHolder()) {
 							return;
 						}
@@ -291,7 +291,7 @@ public class FlagGUI {
 									if (!StringUtils.isNumeric(input))
 									{
 										Text.send(p, "&fInput is &cnot &fa number.");
-										FlagGUI wv = new FlagGUI(p, current.r);
+										RegionGUI wv = new RegionGUI(p, current.r);
 										wv.openInventory(p);
 										return;
 									}
@@ -301,12 +301,12 @@ public class FlagGUI {
 									Text.send(p, "&fPriority changed to " + Text.color(input));
 									new BukkitRunnable() {
 										public void run() {
-											FlagGUI wv = new FlagGUI(p, current.r);
+											RegionGUI wv = new RegionGUI(p, current.r);
 											wv.openInventory(p);
 										}
 									}.runTaskLater(RealRegions.getPL(), 2);
 								}, input -> {
-									FlagGUI wv = new FlagGUI(p, current.r);
+									RegionGUI wv = new RegionGUI(p, current.r);
 									wv.openInventory(p);
 								});
 								p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);

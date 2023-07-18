@@ -9,6 +9,8 @@ public class Particles {
 
     public static void spawnParticle(RRParticle p, Location l)
     {
+        //TODO: fix
+        /*
         switch (p)
         {
             case FLAME_CANCEL:
@@ -18,6 +20,7 @@ public class Particles {
                 l.getWorld().spawnParticle(Particle.BARRIER, l.getX()+ 0.5D, l.getY() + 1.5D, l.getZ()+ 0.5D, 0, 0.001, 1, 0);
                 break;
         }
+        ?/
+         */
     }
-
 }

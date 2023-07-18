@@ -3,7 +3,6 @@ package josegamerpt.realregions.gui;
 import java.util.*;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.enums.PickType;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.regions.CuboidRegion;
 import josegamerpt.realregions.regions.Region;
@@ -47,9 +46,9 @@ public class MaterialPicker {
     int pageNumber = 0;
     Pagination<Material> p;
     private Object min;
-    private PickType pt;
+    private WorldViewer.PickType pt;
 
-    public MaterialPicker(Object m, Player pl, PickType block) {
+    public MaterialPicker(Object m, Player pl, WorldViewer.PickType block) {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -71,7 +70,7 @@ public class MaterialPicker {
         this.register();
     }
 
-    public MaterialPicker(Object m, Player pl, PickType block, String search) {
+    public MaterialPicker(Object m, Player pl, WorldViewer.PickType block, String search) {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -117,7 +116,7 @@ public class MaterialPicker {
         this.inv.clear();
         this.display.clear();
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; ++i) {
             this.inv.setItem(i, placeholder);
         }
 
@@ -237,7 +236,7 @@ public class MaterialPicker {
 
                         if (current.display.containsKey(e.getRawSlot())) {
                             Material a = current.display.get(e.getRawSlot());
-                            if (current.pt.equals(PickType.ICON_REG)) {
+                            if (current.pt.equals(WorldViewer.PickType.ICON_REG)) {
                                 gp.closeInventory();
                                 Region r = ((Region) current.min);
                                 r.setIcon(a);
@@ -245,7 +244,7 @@ public class MaterialPicker {
                                 WorldGUI v = new WorldGUI(gp, r.getWorld());
                                 v.openInventory(gp);
                             }
-                            if (current.pt.equals(PickType.ICON_WORLD)) {
+                            if (current.pt.equals(WorldViewer.PickType.ICON_WORLD)) {
                                 gp.closeInventory();
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);

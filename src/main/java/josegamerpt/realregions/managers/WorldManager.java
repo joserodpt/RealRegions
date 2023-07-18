@@ -53,4 +53,13 @@ public class WorldManager {
         }
         return null;
     }
+
+    public Region getRegion(String name) {
+        for (Region region : getRegions()) {
+            if (region.getName().equalsIgnoreCase(name)) {
+                return region;
+            }
+        }
+        return null;
+    }
 }
