@@ -26,17 +26,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class MaterialPicker {
 
+    public enum PickType {
+        ICON_WORLD, ICON_REG
+    }
+
     private static Map<UUID, MaterialPicker> inventories = new HashMap<>();
     private Inventory inv;
 
-    static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    static ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    static ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    static ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+    private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to go back."));
-    static ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
+    private ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
             Collections.singletonList("&fClick here to search for a block."));
 
     private UUID uuid;
@@ -46,9 +50,9 @@ public class MaterialPicker {
     int pageNumber = 0;
     Pagination<Material> p;
     private Object min;
-    private WorldViewer.PickType pt;
+    private PickType pt;
 
-    public MaterialPicker(Object m, Player pl, WorldViewer.PickType block) {
+    public MaterialPicker(Object m, Player pl, PickType block) {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -70,7 +74,7 @@ public class MaterialPicker {
         this.register();
     }
 
-    public MaterialPicker(Object m, Player pl, WorldViewer.PickType block, String search) {
+    public MaterialPicker(Object m, Player pl, PickType block, String search) {
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -236,7 +240,7 @@ public class MaterialPicker {
 
                         if (current.display.containsKey(e.getRawSlot())) {
                             Material a = current.display.get(e.getRawSlot());
-                            if (current.pt.equals(WorldViewer.PickType.ICON_REG)) {
+                            if (current.pt.equals(PickType.ICON_REG)) {
                                 gp.closeInventory();
                                 Region r = ((Region) current.min);
                                 r.setIcon(a);
@@ -244,7 +248,7 @@ public class MaterialPicker {
                                 WorldGUI v = new WorldGUI(gp, r.getRWorld());
                                 v.openInventory(gp);
                             }
-                            if (current.pt.equals(WorldViewer.PickType.ICON_WORLD)) {
+                            if (current.pt.equals(PickType.ICON_WORLD)) {
                                 gp.closeInventory();
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);

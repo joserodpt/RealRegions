@@ -8,6 +8,7 @@ import josegamerpt.realregions.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,14 +26,14 @@ public class EntityViewer {
     private static Map<UUID, EntityViewer> inventories = new HashMap<>();
     private Inventory inv;
 
-    static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    static ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    static ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    static ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+    private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to go back."));
-    static ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
+    private ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
             Collections.singletonList("&fClick here to search for a entity."));
 
     private UUID uuid;
@@ -67,6 +68,18 @@ public class EntityViewer {
         this.register();
     }
 
+    public EntityViewer(Player pl, RWorld r, EntityType e) {
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Players"));
+        this.uuid = pl.getUniqueId();
+        this.r = r;
+        this.eicon = searchEntity(e);
+
+        this.p = new Pagination<>(28, this.eicon);
+        fillChest(p.getPage(this.pageNumber));
+
+        this.register();
+    }
+
     private ArrayList<EntityIcon> getEnts() {
         ArrayList<EntityIcon> ms = new ArrayList<>();
         this.r.getWorld().getEntities().forEach(entity -> ms.add(new EntityIcon(entity)));
@@ -77,6 +90,16 @@ public class EntityViewer {
         ArrayList<EntityIcon> ms = new ArrayList<>();
         for (EntityIcon e : getEnts()) {
             if (e.getEntityName().toLowerCase().contains(s.toLowerCase())) {
+                ms.add(e);
+            }
+        }
+        return ms;
+    }
+
+    private ArrayList<EntityIcon> searchEntity(EntityType search) {
+        ArrayList<EntityIcon> ms = new ArrayList<>();
+        for (EntityIcon e : getEnts()) {
+            if (e.getEntity().getType() == search) {
                 ms.add(e);
             }
         }

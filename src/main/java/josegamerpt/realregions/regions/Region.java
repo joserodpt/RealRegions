@@ -155,9 +155,11 @@ public class Region {
         ));
     }
 
-    public void teleport(Player p) {
+    public void teleport(Player p, boolean silent) {
         p.teleport(this.rw.getWorld().getSpawnLocation());
-        Text.send(p, "&fYou teleported to region &b" + this.displayname + "&r &fon &a" + this.rw.getRWorldName());
+        if (!silent) {
+            Text.send(p, "&fYou teleported to region &b" + this.displayname + "&r &fon &a" + this.rw.getRWorldName());
+        }
     }
 
     public void setIcon(Material a) {
@@ -177,7 +179,6 @@ public class Region {
     }
 
     public void toggleVisual(Player p) {
-        p.closeInventory();
         Text.send(p, "&fYou &ccan't &fvisualize this region because its an infinite region.");
     }
 

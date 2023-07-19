@@ -9,6 +9,7 @@ import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,12 +28,12 @@ public class WorldGUI {
     private static Map<UUID, WorldGUI> inventories = new HashMap<>();
     private Inventory inv;
 
-    static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
-    static ItemStack unload = Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world."));
-    static ItemStack entit = Itens.createItem(Material.SPAWNER, 1, "&aEntities", Collections.singletonList("&FClick to manage this worlds entities."));
-    static ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
+    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
+    private ItemStack unload = Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world."));
+    private ItemStack entit = Itens.createItem(Material.SPAWNER, 1, "&aEntities", Collections.singletonList("&FClick to manage this worlds entities."));
+    private ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
 
-    static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+    private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
             Collections.singletonList("&fClick here to close this menu."));
 
     private final UUID uuid;
@@ -147,15 +148,18 @@ public class WorldGUI {
                                     }
                                 }.runTaskLater(RealRegions.getInstance(), 2);
                                 break;
+                            case 34:
+                                p.closeInventory();
+                                new BukkitRunnable() {
+                                    public void run() {
+                                        EntityViewer v = new EntityViewer(p, current.r, EntityType.PLAYER);
+                                        v.openInventory(p);
+                                    }
+                                }.runTaskLater(RealRegions.getInstance(), 2);
+                                break;
                             case 16:
-                                if (current.r.getRWorldName().contains("world"))
-                                {
-                                    p.closeInventory();
-                                    Text.send(p, "&fYou can't &cunload &fdefault worlds.");
-                                } else {
-                                    Bukkit.unloadWorld(current.r.getWorld(), true);
-                                    Text.send(p, "&fWorld &aunloaded.");
-                                }
+                                p.closeInventory();
+                                RealRegions.getInstance().getWorldManager().unloadWorld(p, current.r);
                                 break;
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
@@ -216,6 +220,7 @@ public class WorldGUI {
                             Region a = current.display.get(e.getRawSlot());
                             switch (e.getClick()) {
                                 case RIGHT:
+                                    p.closeInventory();
                                     a.toggleVisual(p);
                                     break;
                                 case LEFT:
@@ -231,26 +236,14 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            MaterialPicker mp = new MaterialPicker(a, p, WorldViewer.PickType.ICON_REG);
+                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_REG);
                                             mp.openInventory(p);
                                         }
                                     }.runTaskLater(RealRegions.getInstance(), 2);
                                     break;
                                 case DROP:
-                                    String nam = a.getDisplayName();
-                                    if (a.getType() == Region.RegionType.INFINITE)
-                                    {
-                                        Text.send(p, "&fYou can't &cdelete " + nam + " &fbecause its infinite.");
-                                    } else {
-                                        RealRegions.getInstance().getWorldManager().getRegionManager().deleteRegion(a);
-                                        Text.send(p, "&fRegion " + nam + " &4deleted");
-                                        new BukkitRunnable() {
-                                            public void run() {
-                                                WorldGUI g = new WorldGUI(p, a.getRWorld());
-                                                g.openInventory(p);
-                                            }
-                                        }.runTaskLater(RealRegions.getInstance(), 2);
-                                    }
+                                    p.closeInventory();
+                                    RealRegions.getInstance().getWorldManager().getRegionManager().deleteRegion(p, a);
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {

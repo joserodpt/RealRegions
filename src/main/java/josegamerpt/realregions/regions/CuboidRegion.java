@@ -27,6 +27,7 @@ public class CuboidRegion extends Region {
         this.cube = new Cube(pos1, pos2);
         this.cv = new CubeVisualizer(this);
 
+        //TODO: make one loop only
         //region tick
         new BukkitRunnable() {
             @Override
@@ -80,7 +81,6 @@ public class CuboidRegion extends Region {
 
     @Override
     public void toggleVisual(Player p) {
-        p.closeInventory();
         super.setBeingVisualized(!super.isBeingVisualized());
         Text.send(p, "&fVisualizing " + super.getDisplayName() + ": " + Text.styleBoolean(super.isBeingVisualized()));
     }
@@ -92,9 +92,11 @@ public class CuboidRegion extends Region {
     }
 
     @Override
-    public void teleport(Player p) {
+    public void teleport(Player p, boolean silent) {
         p.teleport(this.cube.getCenter());
-        Text.send(p, "&fYou teleported to region &b" + super.getDisplayName() + "&r &fon &a" + super.getRWorld().getRWorldName());
+        if (!silent) {
+            Text.send(p, "&fYou teleported to region &b" + super.getDisplayName() + "&r &fon &a" + super.getRWorld().getRWorldName());
+        }
     }
 
     public Cube getCube() {

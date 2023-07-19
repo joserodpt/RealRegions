@@ -4,6 +4,7 @@ import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
+import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,27 +24,22 @@ import java.util.*;
 
 public class WorldViewer {
 
-    public enum PickType {
-        ICON_WORLD, ICON_REG
-    }
-
     private static Map<UUID, WorldViewer> inventories = new HashMap<>();
     private Inventory inv;
 
-    static ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    static ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    static ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    static ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
-            Collections.singletonList("&fClick here to go back."));
+    private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+            Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
     private HashMap<Integer, RWorld> display = new HashMap<>();
 
     int pageNumber = 0;
     Pagination<RWorld> p;
-    private RWorld r;
 
     public WorldViewer(Player pl) {
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
@@ -108,6 +104,8 @@ public class WorldViewer {
         }
 
         this.inv.setItem(49, close);
+
+        this.inv.setItem(51, Itens.createItem(Material.CRAFTING_TABLE, 1, "&fCreate a New World"));
     }
 
     public void openInventory(Player target) {
@@ -158,6 +156,13 @@ public class WorldViewer {
                                 backPage(current);
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
+                            case 51:
+                                new PlayerInput(p, input -> {
+                                    RealRegions.getInstance().getWorldManager().createWorld(p, input);
+                                }, input -> {
+                                    WorldViewer wv = new WorldViewer(p);
+                                    wv.openInventory(p);
+                                });
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
@@ -173,7 +178,7 @@ public class WorldViewer {
                                     {
                                         public void run()
                                         {
-                                            MaterialPicker mp = new MaterialPicker(a, p, PickType.ICON_WORLD);
+                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_WORLD);
                                             mp.openInventory(p);
                                         }
                                     }.runTaskLater(RealRegions.getInstance(), 2);
@@ -237,8 +242,6 @@ public class WorldViewer {
 
     protected void exit(Player p) {
         p.closeInventory();
-        WorldGUI v = new WorldGUI(p, this.r);
-        v.openInventory(p);
     }
 
     public Inventory getInventory() {

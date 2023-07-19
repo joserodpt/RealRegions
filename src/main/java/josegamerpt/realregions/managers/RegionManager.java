@@ -7,6 +7,7 @@ import josegamerpt.realregions.utils.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,10 +70,18 @@ public class RegionManager {
         return loaded_regions;
     }
 
-    public void deleteRegion(Region a) {
+    public void deleteRegion(Player p, Region a) {
+        if (a.getType() == Region.RegionType.INFINITE)
+        {
+            Text.send(p, "&fYou can't &cdelete " + a.getDisplayName() + " &fbecause its infinite.");
+            return;
+        }
+
         wm.getWorldsAndRegions().get(a.getRWorld()).remove(a);
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
+
+        Text.send(p, a.getDisplayName() + " &ahas been deleted. ");
     }
 
     public Region getRegion(RWorld w, String name) {
@@ -80,6 +89,14 @@ public class RegionManager {
                 .filter(region -> region.getRegionName().equals(name))
                 .findFirst()
                 .orElse(null) : null; // World not found in the HashMap
+    }
+
+    public Region getRegion(String name) {
+        return wm.getWorldsAndRegions().values().stream()
+                .flatMap(Collection::stream)
+                .filter(region -> region.getRegionName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
     }
 
     public boolean hasRegion(RWorld w, String name) {

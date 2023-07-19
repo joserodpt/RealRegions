@@ -136,7 +136,7 @@ public class RWorld implements Listener {
     public void teleport(Player p, boolean silent) {
         p.teleport(this.world.getSpawnLocation());
         if (!silent) {
-            Text.send(p, "Teleported to &b" + this.world.getName());
+            Text.send(p, "Teleported to world: &b" + this.world.getName());
         }
     }
 

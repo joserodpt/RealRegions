@@ -27,7 +27,7 @@ public class RegionGUI {
 	private static Map<UUID, RegionGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
-	static ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+	private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
 			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;

@@ -6,7 +6,6 @@ import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.gui.*;
 import josegamerpt.realregions.regions.Region;
-import josegamerpt.realregions.regions.RegionFlags;
 import josegamerpt.realregions.regions.RegionListener;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
@@ -75,12 +74,6 @@ public class RealRegions extends JavaPlugin {
         log(Level.INFO,"Author: JoseGamer_PT | " + this.getDescription().getWebsite());
         log(Level.INFO, "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
-
-        log(Level.INFO, "Bypass permissions:");
-
-        for (RegionFlags value : RegionFlags.values()) {
-            log(Level.INFO, value.name() + " -> " + value.getBypassPermission("world", "region"));
-        }
     }
 
     public void log(Level lev, String string) {
