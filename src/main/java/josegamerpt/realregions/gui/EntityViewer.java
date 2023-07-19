@@ -47,7 +47,7 @@ public class EntityViewer {
     public EntityViewer(Player pl, RWorld r) {
         this.r = r;
 
-        if (r.isUnloaded()) {
+        if (!r.isLoaded()) {
             return;
         }
 
@@ -64,7 +64,7 @@ public class EntityViewer {
     public EntityViewer(Player pl, RWorld r, String search) {
         this.r = r;
 
-        if (r.isUnloaded()) {
+        if (!r.isLoaded()) {
             return;
         }
 
@@ -81,7 +81,7 @@ public class EntityViewer {
     public EntityViewer(Player pl, RWorld r, EntityType e) {
         this.r = r;
 
-        if (r.isUnloaded()) {
+        if (!r.isLoaded()) {
             return;
         }
 
@@ -95,7 +95,7 @@ public class EntityViewer {
         this.register();
     }
 
-    private ArrayList<EntityIcon> getEnts() {
+    private ArrayList<EntityIcon> getEnts() { //TODO: sort entities by distance to player
         ArrayList<EntityIcon> ms = new ArrayList<>();
         this.r.getWorld().getEntities().forEach(entity -> ms.add(new EntityIcon(entity)));
         return ms;
@@ -178,7 +178,7 @@ public class EntityViewer {
     }
 
     public void openInventory(Player target) {
-        if (r.isUnloaded()) {
+        if (!r.isLoaded()) {
             Text.send(target, "&cYou can't open this menu because this world is unloaded.");
             return;
         }

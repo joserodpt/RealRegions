@@ -164,7 +164,7 @@ public class Region {
     }
 
     public void teleport(Player p, boolean silent) {
-        if (this.getRWorld().isUnloaded()) {
+        if (!this.getRWorld().isLoaded()) {
             Text.send(p, "&cYou can't teleport to this region because it belongs to a world that is unloaded.");
             return;
         }

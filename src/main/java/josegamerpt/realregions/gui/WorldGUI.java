@@ -88,9 +88,9 @@ public class WorldGUI {
         }
 
 
-        this.inv.setItem(16, this.r.isUnloaded() ? Itens.createItem(Material.COMMAND_BLOCK, 1, "&aLoad", Collections.singletonList("&FClick to load this world.")) : Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world.")));
-        this.inv.setItem(25,  Itens.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&9On this world: &b" + r.getWorld().getEntities().size(),"","&FClick to manage this worlds entities.")));
-        this.inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
+        this.inv.setItem(16, this.r.isLoaded() ? Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world.")) :  Itens.createItem(Material.COMMAND_BLOCK, 1, "&aLoad", Collections.singletonList("&FClick to load this world.")));
+        this.inv.setItem(25,  Itens.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&9On this world: &b" + (r.getWorld() == null ? "?" : r.getWorld().getEntities().size()),"","&FClick to manage this worlds entities.")));
+        this.inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + (r.getWorld() == null ? "?" : r.getWorld().getPlayers().size()) + " &fplayers")));
 
         this.inv.setItem(41, newr);
 
@@ -159,7 +159,7 @@ public class WorldGUI {
                             case 16:
                                 p.closeInventory();
 
-                                if (current.r.isUnloaded()) {
+                                if (!current.r.isLoaded()) {
                                     RealRegions.getPlugin().getWorldManager().loadWorld(p, current.r.getRWorldName());
                                 } else {
                                     RealRegions.getPlugin().getWorldManager().unloadWorld(p, current.r);

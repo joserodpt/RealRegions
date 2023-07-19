@@ -5,6 +5,8 @@ import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -29,9 +31,9 @@ public class WorldManager {
         return new ArrayList<>(worlds_reg_dic.keySet());
     }
 
-    private void initializeRWorld(World w) {
+    private void initializeRWorld(String worldName, World w) {
         //load rworld
-        RWorld rw = new RWorld(w);
+        RWorld rw = new RWorld(worldName, w);
 
         //load regions
         worlds_reg_dic.put(rw, rm.loadRegions(rw));
@@ -47,26 +49,39 @@ public class WorldManager {
             for (File world : folder.listFiles()) {
                 String worldName = world.getName().replace(".yml", "");
 
-                //check if folder exists
-                File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
+                //temporary load world config file to see if it is to load world
+                FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
+                if (worldConfig.getBoolean("Settings.Load")) {
+                    //to load world, check if folder exists
+                    File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
 
-                //if it doesn't exist, display an warning
-                if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-                    RealRegions.getPlugin().getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
-                } else {
-                    WorldCreator worldCreator = new WorldCreator(worldName);
-                    World w = worldCreator.createWorld();
-                    if (w != null) {
-                        this.initializeRWorld(w);
+                    //if it doesn't exist, display an warning
+                    if (!worldFolder.exists() || !worldFolder.isDirectory()) {
+                        RealRegions.getPlugin().getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
                     } else {
-                        Bukkit.getLogger().severe("Failed to load world: " + worldName);
+                        WorldCreator worldCreator = new WorldCreator(worldName);
+                        World w = worldCreator.createWorld();
+                        if (w != null) {
+                            this.initializeRWorld(worldName, w);
+                        } else {
+                            Bukkit.getLogger().severe("Failed to load world: " + worldName);
+                        }
                     }
+                } else {
+                    //don't load world, but it's registered
+                    //load rworld object but don't load the world
+                    RWorld rw = new RWorld(worldName);
+
+                    //load regions
+                    worlds_reg_dic.put(rw, rm.loadRegions(rw));
                 }
             }
         } else {
             //folder doesn't exist, load default worlds from Bukkit
             RealRegions.getPlugin().getLogger().info("First startup, importing default worlds.");
-            Bukkit.getWorlds().forEach(this::initializeRWorld);
+            for (World world : Bukkit.getWorlds()) {
+                initializeRWorld(world.getName(), world);
+            }
         }
     }
 
@@ -83,7 +98,7 @@ public class WorldManager {
             WorldCreator worldCreator = new WorldCreator(worldName);
             World w = worldCreator.createWorld();
             if (w != null) {
-                this.initializeRWorld(w);
+                this.initializeRWorld(worldName, w);
                 Text.send(p, "&b" + worldName + " &fwas imported &asuccessfully");
             } else {
                 Text.send(p, "&cFailed to load world: " + worldName);
@@ -93,14 +108,15 @@ public class WorldManager {
 
     public void loadWorld(Player p, String worldName) {
         RWorld rw = getWorld(worldName);
-        if (!rw.isUnloaded()) {
+        if (rw.isLoaded()) {
             Text.send(p, "&cWorld is already loaded.");
         } else {
             WorldCreator worldCreator = new WorldCreator(worldName);
             World w = worldCreator.createWorld();
             if (w != null) {
                 rw.setWorld(w);
-                rw.setUnloaded(false);
+                rw.setLoaded(true);
+
             } else {
                 Bukkit.getLogger().severe("Failed to load world: " + worldName);
             }
@@ -110,7 +126,7 @@ public class WorldManager {
     }
 
     public void unloadWorld(RWorld rw, boolean save) {
-        rw.setUnloaded(true);
+        rw.setLoaded(false);
         rw.saveData(RWorld.Data.REGIONS);
 
         World world = rw.getWorld();
@@ -242,7 +258,7 @@ public class WorldManager {
         {
             Text.send(p, "&fYou can't &cunload &fdefault worlds.");
         } else {
-            if (r.isUnloaded()) {
+            if (!r.isLoaded()) {
                 Text.send(p, "&cWorld is already unloaded.");
             } else {
                 Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &eunloaded.");
@@ -261,7 +277,7 @@ public class WorldManager {
         World world = worldCreator.createWorld();
         if (world != null) {
             //registar mundo no real regions
-            this.initializeRWorld(world);
+            this.initializeRWorld(input, world);
 
             Text.send(p, "World " + input + " &acreated!");
         } else {

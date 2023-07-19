@@ -20,21 +20,37 @@ import java.util.Arrays;
 //RealRegions World
 public class RWorld implements Listener {
 
-    public enum Data { ICON, REGIONS }
+    public enum Data { ICON, LOAD,  REGIONS }
 
+    private String worldName;
     private World world;
     private File file;
     private FileConfiguration config;
     private Material icon;
     private double worldSizeMB;
-    private boolean unloaded = false;
+    private boolean loaded = true;
 
-    public RWorld(World w) {
+    public RWorld(String worldName) {
+        this.worldName = worldName;
+
+        //object is loaded but world isn't
+        //this.world = w;
+        this.checkConfig();
+
+        this.setLoaded(false);
+    }
+
+    public RWorld(String worldName, World w) {
+        this.worldName = worldName;
+
         //load RWorld from Bukkit World
         this.world = w;
         this.checkConfig();
-        this.icon = Material.valueOf(config.getString("Settings.Icon"));
 
+        this.setLoaded(true);
+    }
+
+    public void postWorldLoad() {
         //calculate size for world
         BukkitRunnable task = new BukkitRunnable() {
             @Override
@@ -47,32 +63,33 @@ public class RWorld implements Listener {
     }
 
     private void checkConfig() {
-        this.file = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", world.getName() + ".yml");
+        this.file = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
         if (!this.file.exists()) {
             this.file.getParentFile().mkdirs();
             try {
                 this.file.createNewFile();
                 setupDefaultConfig();
             } catch (IOException e) {
-                RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while creating world config for " + world.getName());
+                RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while creating world config for " + this.getRWorldName());
                 e.printStackTrace();
             }
         }
 
         if (this.config == null) {
             this.config = YamlConfiguration.loadConfiguration(file);
+            this.icon = Material.valueOf(config.getString("Settings.Icon"));
         }
     }
 
     public void deleteConfig() {
-        File fileToDelete = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", world.getName() + ".yml");
+        File fileToDelete = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
 
         if (fileToDelete.exists()) {
             if (!fileToDelete.delete()) {
-                RealRegions.getPlugin().getLogger().severe("Failed to delete Configuration file for " + world.getName() + ".");
+                RealRegions.getPlugin().getLogger().severe("Failed to delete Configuration file for " + this.getRWorldName() + ".");
             }
         } else {
-            RealRegions.getPlugin().getLogger().severe("Configuration file for " + world.getName() + " doesn't exist.");
+            RealRegions.getPlugin().getLogger().severe("Configuration file for " + this.getRWorldName() + " doesn't exist.");
         }
 
     }
@@ -85,7 +102,7 @@ public class RWorld implements Listener {
         try {
             this.config.save(file);
         } catch (IOException e) {
-            RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while saving world config for " + world.getName());
+            RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while saving world config for " + this.getRWorldName());
         }
     }
 
@@ -109,6 +126,7 @@ public class RWorld implements Listener {
 
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
+        this.config.set("Settings.Load", true);
 
         //default global region
         this.config.set("Regions.Global.Type", Region.RegionType.INFINITE.name());
@@ -148,23 +166,23 @@ public class RWorld implements Listener {
     }
 
     public void teleport(Player p, boolean silent) {
-        if (isUnloaded()) {
+        if (!isLoaded()) {
             Text.send(p, "&cYou can't teleport to this world because it is unloaded.");
             return;
         }
 
         p.teleport(this.world.getSpawnLocation());
         if (!silent) {
-            Text.send(p, "Teleported to world: &b" + this.world.getName());
+            Text.send(p, "Teleported to world: &b" + this.getRWorldName());
         }
     }
 
     public String getRWorldName() {
-        return world.getName();
+        return this.worldName;
     }
 
     public ItemStack getItem() {
-        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + worldSizeMB + "mb&7]", Arrays.asList("&5", " &6On this world:", "  &b" + world.getPlayers().size() + " &fplayers.", "  &b" + world.getEntities().size() + " &fentities.", "  &b" + world.getLoadedChunks().length + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
+        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.worldSizeMB + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
     }
 
     private Material getIcon() {
@@ -175,12 +193,16 @@ public class RWorld implements Listener {
         this.icon = a;
     }
 
-    public void setUnloaded(boolean b) {
-        this.unloaded = b;
+    public void setLoaded(boolean b) {
+        this.loaded = b;
+
+        this.saveData(Data.LOAD);
+
+        if (b) { postWorldLoad(); }
     }
 
-    public boolean isUnloaded() {
-        return unloaded;
+    public boolean isLoaded() {
+        return this.loaded;
     }
 
     public void saveData(Data dw) {
@@ -188,6 +210,10 @@ public class RWorld implements Listener {
         {
             case ICON:
                 config.set("Settings.Icon", this.icon.name());
+                saveConfig();
+                break;
+            case LOAD:
+                config.set("Settings.Load", this.loaded);
                 saveConfig();
                 break;
             case REGIONS:

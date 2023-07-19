@@ -148,7 +148,7 @@ public class RegionManager {
             @Override
             public void run() {
                 for (Region region : view) {
-                    if (region.canVisualize() && !region.getRWorld().isUnloaded()) {
+                    if (region.canVisualize() && region.getRWorld().isLoaded()) {
                         CubeVisualizer v = ((CuboidRegion) region).getCubeVisualizer();
                         v.getCube().forEach(v::spawnParticle);
                     }

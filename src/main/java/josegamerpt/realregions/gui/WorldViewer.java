@@ -103,6 +103,8 @@ public class WorldViewer {
             slot++;
         }
 
+        //47 -> TODO: sort worlds
+
         this.inv.setItem(49, close);
 
         this.inv.setItem(51, Itens.createItem(Material.CRAFTING_TABLE, 1, "&fCreate a New World"));
@@ -170,6 +172,7 @@ public class WorldViewer {
                             switch (e.getClick())
                             {
                                 case RIGHT:
+                                    p.closeInventory();
                                     a.teleport(p, false);
                                     break;
                                 case MIDDLE:
