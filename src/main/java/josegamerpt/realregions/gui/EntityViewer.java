@@ -45,9 +45,14 @@ public class EntityViewer {
     private RWorld r;
 
     public EntityViewer(Player pl, RWorld r) {
+        this.r = r;
+
+        if (r.isUnloaded()) {
+            return;
+        }
+
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Entities"));
         this.uuid = pl.getUniqueId();
-        this.r = r;
         this.eicon = getEnts();
 
         this.p = new Pagination<>(28, this.eicon);
@@ -57,9 +62,14 @@ public class EntityViewer {
     }
 
     public EntityViewer(Player pl, RWorld r, String search) {
+        this.r = r;
+
+        if (r.isUnloaded()) {
+            return;
+        }
+
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Search for " + search));
         this.uuid = pl.getUniqueId();
-        this.r = r;
         this.eicon = searchEntity(search);
 
         this.p = new Pagination<>(28, this.eicon);
@@ -69,9 +79,14 @@ public class EntityViewer {
     }
 
     public EntityViewer(Player pl, RWorld r, EntityType e) {
+        this.r = r;
+
+        if (r.isUnloaded()) {
+            return;
+        }
+
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Players"));
         this.uuid = pl.getUniqueId();
-        this.r = r;
         this.eicon = searchEntity(e);
 
         this.p = new Pagination<>(28, this.eicon);
@@ -163,6 +178,11 @@ public class EntityViewer {
     }
 
     public void openInventory(Player target) {
+        if (r.isUnloaded()) {
+            Text.send(target, "&cYou can't open this menu because this world is unloaded.");
+            return;
+        }
+
         Inventory inv = getInventory();
         InventoryView openInv = target.getOpenInventory();
         if (openInv != null) {

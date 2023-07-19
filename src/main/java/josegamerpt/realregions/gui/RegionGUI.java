@@ -132,10 +132,13 @@ public class RegionGUI {
 						"  &aAllow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Damage.Allow",
 						"  &cDisallow&f: RealRegions." + r.getRWorld().getRWorldName() + "." + r.getRegionName() + ".Damage.Disallow",
 						"&e","Click to change the value.")));
-		inv.setItem(32, Itens.createItem(Material.SUNFLOWER, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
+		inv.setItem(32, Itens.createItem(Material.EMERALD, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
 				Arrays.asList("&e&nDescription", "  Region Priority over others.",
 						"Click to change the value.")));
+
+		inv.setItem(38, Itens.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
 		inv.setItem(40, close);
+		inv.setItem(42, Itens.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
 	}
 
 	private String getStyle(boolean b) {
@@ -177,6 +180,10 @@ public class RegionGUI {
 
 						switch (e.getRawSlot())
 						{
+							case 38:
+								p.closeInventory();
+								current.r.teleport(p, false);
+								break;
 							case 40:
 								p.closeInventory();
 								new BukkitRunnable()
@@ -186,8 +193,21 @@ public class RegionGUI {
 										WorldGUI mp = new WorldGUI(p, current.r.getRWorld());
 										mp.openInventory(p);
 									}
-								}.runTaskLater(RealRegions.getInstance(), 2);
+								}.runTaskLater(RealRegions.getPlugin(), 2);
 								break;
+							case 42:
+								p.closeInventory();
+								RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(p, current.r);
+								new BukkitRunnable()
+								{
+									public void run()
+									{
+										WorldGUI mp = new WorldGUI(p, current.r.getRWorld());
+										mp.openInventory(p);
+									}
+								}.runTaskLater(RealRegions.getPlugin(), 2);
+								break;
+
 							case 2:
 								current.r.setBlockBreak(!current.r.hasBlockBreak());
 								current.r.saveData(Region.RegionData.FLAGS);
@@ -304,7 +324,7 @@ public class RegionGUI {
 											RegionGUI wv = new RegionGUI(p, current.r);
 											wv.openInventory(p);
 										}
-									}.runTaskLater(RealRegions.getInstance(), 2);
+									}.runTaskLater(RealRegions.getPlugin(), 2);
 								}, input -> {
 									RegionGUI wv = new RegionGUI(p, current.r);
 									wv.openInventory(p);

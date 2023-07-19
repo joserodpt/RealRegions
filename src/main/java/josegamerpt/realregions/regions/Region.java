@@ -1,5 +1,6 @@
 package josegamerpt.realregions.regions;
 
+import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
@@ -63,6 +64,13 @@ public class Region {
 
     public void setBeingVisualized(boolean beingVisualized) {
         this.isBeingVisualized = beingVisualized;
+
+        if (this.isBeingVisualized) {
+            RealRegions.getPlugin().getWorldManager().getRegionManager().getView().add(this);
+        } else {
+            RealRegions.getPlugin().getWorldManager().getRegionManager().getView().remove(this);
+        }
+
     }
 
     public void saveData(Region.RegionData dr) {
@@ -156,6 +164,11 @@ public class Region {
     }
 
     public void teleport(Player p, boolean silent) {
+        if (this.getRWorld().isUnloaded()) {
+            Text.send(p, "&cYou can't teleport to this region because it belongs to a world that is unloaded.");
+            return;
+        }
+
         p.teleport(this.rw.getWorld().getSpawnLocation());
         if (!silent) {
             Text.send(p, "&fYou teleported to region &b" + this.displayname + "&r &fon &a" + this.rw.getRWorldName());
@@ -189,6 +202,10 @@ public class Region {
     public String getRegionName() {
         return this.name;
     }
+    public String getRegionNamePlusWorld() {
+        return this.name + "@" + this.getRWorld().getRWorldName();
+    }
+
 
     public void setDisplayName(String s) {
         this.displayname = s;

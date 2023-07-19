@@ -13,8 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.logging.Level;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,19 +22,18 @@ public class RWorld implements Listener {
 
     public enum Data { ICON, REGIONS }
 
-    private final World world;
+    private World world;
     private File file;
     private FileConfiguration config;
     private Material icon;
     private double worldSizeMB;
+    private boolean unloaded = false;
 
     public RWorld(World w) {
+        //load RWorld from Bukkit World
         this.world = w;
-        checkConfig();
+        this.checkConfig();
         this.icon = Material.valueOf(config.getString("Settings.Icon"));
-
-        //register listener for this rworld
-
 
         //calculate size for world
         BukkitRunnable task = new BukkitRunnable() {
@@ -46,20 +43,18 @@ public class RWorld implements Listener {
                 worldSizeMB = IO.toMB(IO.folderSize(folder));
             }
         };
-
-        // Start the task
-        task.runTaskLaterAsynchronously(RealRegions.getInstance(), 0);
+        task.runTaskLaterAsynchronously(RealRegions.getPlugin(), 0);
     }
 
     private void checkConfig() {
-        this.file = new File(RealRegions.getInstance().getDataFolder() + "/worlds/", world.getName() + ".yml");
+        this.file = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", world.getName() + ".yml");
         if (!this.file.exists()) {
             this.file.getParentFile().mkdirs();
             try {
                 this.file.createNewFile();
                 setupDefaultConfig();
             } catch (IOException e) {
-                RealRegions.getInstance().log(Level.SEVERE, "RealRegions threw an error while creating world config for " + world.getName());
+                RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while creating world config for " + world.getName());
                 e.printStackTrace();
             }
         }
@@ -67,6 +62,19 @@ public class RWorld implements Listener {
         if (this.config == null) {
             this.config = YamlConfiguration.loadConfiguration(file);
         }
+    }
+
+    public void deleteConfig() {
+        File fileToDelete = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", world.getName() + ".yml");
+
+        if (fileToDelete.exists()) {
+            if (!fileToDelete.delete()) {
+                RealRegions.getPlugin().getLogger().severe("Failed to delete Configuration file for " + world.getName() + ".");
+            }
+        } else {
+            RealRegions.getPlugin().getLogger().severe("Configuration file for " + world.getName() + " doesn't exist.");
+        }
+
     }
 
     private void reloadConfig() {
@@ -77,7 +85,7 @@ public class RWorld implements Listener {
         try {
             this.config.save(file);
         } catch (IOException e) {
-            RealRegions.getInstance().log(Level.OFF,"RealRegions threw an error while saving world config for " + world.getName());
+            RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while saving world config for " + world.getName());
         }
     }
 
@@ -101,6 +109,8 @@ public class RWorld implements Listener {
 
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
+
+        //default global region
         this.config.set("Regions.Global.Type", Region.RegionType.INFINITE.name());
         this.config.set("Regions.Global.Display-Name", "&f&lGlobal");
         this.config.set("Regions.Global.Priority", 10);
@@ -133,7 +143,16 @@ public class RWorld implements Listener {
         return this.world;
     }
 
+    public void setWorld(World w) {
+        this.world = w;
+    }
+
     public void teleport(Player p, boolean silent) {
+        if (isUnloaded()) {
+            Text.send(p, "&cYou can't teleport to this world because it is unloaded.");
+            return;
+        }
+
         p.teleport(this.world.getSpawnLocation());
         if (!silent) {
             Text.send(p, "Teleported to world: &b" + this.world.getName());
@@ -156,6 +175,14 @@ public class RWorld implements Listener {
         this.icon = a;
     }
 
+    public void setUnloaded(boolean b) {
+        this.unloaded = b;
+    }
+
+    public boolean isUnloaded() {
+        return unloaded;
+    }
+
     public void saveData(Data dw) {
         switch (dw)
         {
@@ -164,7 +191,7 @@ public class RWorld implements Listener {
                 saveConfig();
                 break;
             case REGIONS:
-                RealRegions.getInstance().getWorldManager().getRegionManager().saveRegions(this);
+                RealRegions.getPlugin().getWorldManager().getRegionManager().saveRegions(this);
                 break;
         }
     }

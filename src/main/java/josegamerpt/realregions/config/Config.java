@@ -2,6 +2,8 @@ package josegamerpt.realregions.config;
 
 import java.io.File;
 import java.io.IOException;
+
+import josegamerpt.realregions.RealRegions;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -19,7 +21,8 @@ public class Config implements Listener {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
+				RealRegions.getPlugin().getLogger().severe("Error crating config.yml file!");
 			}
 		}
 		customFile = YamlConfiguration.loadConfiguration(file);
@@ -33,7 +36,7 @@ public class Config implements Listener {
 		try {
 			customFile.save(file);
 		} catch (IOException e) {
-			System.out.println("Couldn't save " + name + "!");
+			RealRegions.getPlugin().getLogger().severe("Couldn't save " + name + "!");
 		}
 	}
 

@@ -1,13 +1,16 @@
 package josegamerpt.realregions.managers;
 
+import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.regions.CuboidRegion;
 import josegamerpt.realregions.regions.Region;
+import josegamerpt.realregions.utils.CubeVisualizer;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +20,11 @@ import java.util.stream.Collectors;
 public class RegionManager {
 
     private final WorldManager wm;
+    private ArrayList<Region> view = new ArrayList<>();
+
+    public ArrayList<Region> getView() {
+        return view;
+    }
 
     public RegionManager(WorldManager wm) {
         this.wm = wm;
@@ -81,22 +89,23 @@ public class RegionManager {
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
 
-        Text.send(p, a.getDisplayName() + " &ahas been deleted. ");
+        Text.send(p, "&fRegion " + a.getDisplayName() + " &ahas been deleted. ");
     }
 
-    public Region getRegion(RWorld w, String name) {
-        return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
-                .filter(region -> region.getRegionName().equals(name))
-                .findFirst()
-                .orElse(null) : null; // World not found in the HashMap
-    }
+    public Region getRegionPlusName(String name) {
+        String[] split = name.split("@");
+        String world = split[1];
+        String reg = split[0];
 
-    public Region getRegion(String name) {
-        return wm.getWorldsAndRegions().values().stream()
-                .flatMap(Collection::stream)
-                .filter(region -> region.getRegionName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+        RWorld w = wm.getWorld(world);
+        if (w != null) {
+            return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
+                    .filter(region -> region.getRegionName().equals(reg))
+                    .findFirst()
+                    .orElse(null) : null;
+        } else {
+            return null;
+        }
     }
 
     public boolean hasRegion(RWorld w, String name) {
@@ -132,4 +141,21 @@ public class RegionManager {
         //save region
         crg.saveData(Region.RegionData.ALL);
     }
+
+    public void startVisualizer() {
+        //visualizer loop
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Region region : view) {
+                    if (region.canVisualize() && !region.getRWorld().isUnloaded()) {
+                        CubeVisualizer v = ((CuboidRegion) region).getCubeVisualizer();
+                        v.getCube().forEach(v::spawnParticle);
+                    }
+                }
+            }
+        }.runTaskTimer(RealRegions.getPlugin(),0, 10);
+    }
+
+
 }

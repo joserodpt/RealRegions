@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
@@ -24,14 +23,14 @@ public class RealRegions extends JavaPlugin {
     public WorldManager getWorldManager() {
         return worldManager;
     }
-    public static RealRegions getInstance() {
+    public static RealRegions getPlugin() {
         return pl;
     }
     @Override
     public void onEnable() {
         pl = this;
 
-        log(Level.INFO, "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
+        getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
 
         saveDefaultConfig();
@@ -53,7 +52,7 @@ public class RealRegions extends JavaPlugin {
         cm.getCompletionHandler().register("#regions", input ->
              worldManager.getRegionManager().getAllRegions()
                     .stream()
-                    .map(Region::getRegionName)
+                    .map(Region::getRegionNamePlusWorld)
                     .collect(Collectors.toList())
         );
         cm.getCompletionHandler().register("#mundos", input ->
@@ -65,19 +64,17 @@ public class RealRegions extends JavaPlugin {
 
         cm.register(new RealRegionsCMD(this));
 
-        log(Level.INFO,"Loading Worlds and Regions.");
         worldManager.loadWorlds();
 
-        log(Level.INFO,"Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegionManager().getAllRegions().size() + " regions.");
+        getLogger().info("Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegionManager().getAllRegions().size() + " regions.");
 
-        log(Level.INFO,"Plugin has been loaded.");
-        log(Level.INFO,"Author: JoseGamer_PT | " + this.getDescription().getWebsite());
-        log(Level.INFO, "<------------------ RealRegions PT ------------------>".replace("PT", "| " +
+        //start region visualizer
+        worldManager.getRegionManager().startVisualizer();
+
+        getLogger().info("Plugin has been loaded.");
+        getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
+        getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
-    }
-
-    public void log(Level lev, String string) {
-        Bukkit.getLogger().log(lev, string);
     }
 
     public String getPrefix() {

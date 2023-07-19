@@ -44,7 +44,7 @@ public class WorldViewer {
     public WorldViewer(Player pl) {
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
         this.uuid = pl.getUniqueId();
-        ArrayList<RWorld> worlds = RealRegions.getInstance().getWorldManager().getWorlds();
+        ArrayList<RWorld> worlds = RealRegions.getPlugin().getWorldManager().getWorlds();
 
         this.p = new Pagination<>(28, worlds);
         fillChest(p.getPage(this.pageNumber));
@@ -158,7 +158,7 @@ public class WorldViewer {
                                 break;
                             case 51:
                                 new PlayerInput(p, input -> {
-                                    RealRegions.getInstance().getWorldManager().createWorld(p, input);
+                                    RealRegions.getPlugin().getWorldManager().createWorld(p, input);
                                 }, input -> {
                                     WorldViewer wv = new WorldViewer(p);
                                     wv.openInventory(p);
@@ -181,7 +181,7 @@ public class WorldViewer {
                                             MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_WORLD);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getInstance(), 2);
+                                    }.runTaskLater(RealRegions.getPlugin(), 2);
                                     break;
                                 default:
                                     p.closeInventory();
@@ -192,7 +192,7 @@ public class WorldViewer {
                                             WorldGUI v = new WorldGUI(p, a);
                                             v.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getInstance(), 2);
+                                    }.runTaskLater(RealRegions.getPlugin(), 2);
                                     break;
                             }
                         }

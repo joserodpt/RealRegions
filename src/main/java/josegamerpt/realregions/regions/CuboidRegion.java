@@ -1,6 +1,5 @@
 package josegamerpt.realregions.regions;
 
-import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.classes.Cube;
 import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.utils.CubeVisualizer;
@@ -11,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -26,18 +24,6 @@ public class CuboidRegion extends Region {
         //Cube Region
         this.cube = new Cube(pos1, pos2);
         this.cv = new CubeVisualizer(this);
-
-        //TODO: make one loop only
-        //region tick
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (canVisualize()) {
-                    CubeVisualizer v = getCubeVisualizer();
-                    v.getCube().forEach(v::spawnParticle);
-                }
-            }
-        }.runTaskTimer(RealRegions.getInstance(),0, 10);
     }
 
     @Override
@@ -93,6 +79,11 @@ public class CuboidRegion extends Region {
 
     @Override
     public void teleport(Player p, boolean silent) {
+        if (this.getRWorld().isUnloaded()) {
+            Text.send(p, "&cYou can't teleport to this region because it belongs to a world that is unloaded.");
+            return;
+        }
+
         p.teleport(this.cube.getCenter());
         if (!silent) {
             Text.send(p, "&fYou teleported to region &b" + super.getDisplayName() + "&r &fon &a" + super.getRWorld().getRWorldName());

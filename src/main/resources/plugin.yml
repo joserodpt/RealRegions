@@ -2,6 +2,7 @@ name: RealRegions
 version: ${project.version}
 main: josegamerpt.realregions.RealRegions
 api-version: 1.13
+load: POSTWORLD
 prefix: RealRegions
 authors: [JoseGamer_PT]
 description: New and Beautiful Region Management Plugin.

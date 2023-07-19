@@ -29,8 +29,6 @@ public class WorldGUI {
     private Inventory inv;
 
     private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
-    private ItemStack unload = Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world."));
-    private ItemStack entit = Itens.createItem(Material.SPAWNER, 1, "&aEntities", Collections.singletonList("&FClick to manage this worlds entities."));
     private ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
 
     private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
@@ -54,7 +52,7 @@ public class WorldGUI {
     }
 
     public void load() {
-        ArrayList<Region> regions = RealRegions.getInstance().getWorldManager().getRegionManager().getRegions(r);
+        ArrayList<Region> regions = RealRegions.getPlugin().getWorldManager().getRegionManager().getRegions(r);
 
         p = new Pagination<>(21, regions);
         fillChest(p.getPage(pageNumber));
@@ -89,8 +87,9 @@ public class WorldGUI {
             }
         }
 
-        this.inv.setItem(16, unload);
-        this.inv.setItem(25, entit);
+
+        this.inv.setItem(16, this.r.isUnloaded() ? Itens.createItem(Material.COMMAND_BLOCK, 1, "&aLoad", Collections.singletonList("&FClick to load this world.")) : Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world.")));
+        this.inv.setItem(25,  Itens.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&9On this world: &b" + r.getWorld().getEntities().size(),"","&FClick to manage this worlds entities.")));
         this.inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + r.getWorld().getPlayers().size() + " &fplayers")));
 
         this.inv.setItem(41, newr);
@@ -146,7 +145,7 @@ public class WorldGUI {
                                         EntityViewer v = new EntityViewer(p, current.r);
                                         v.openInventory(p);
                                     }
-                                }.runTaskLater(RealRegions.getInstance(), 2);
+                                }.runTaskLater(RealRegions.getPlugin(), 2);
                                 break;
                             case 34:
                                 p.closeInventory();
@@ -155,11 +154,17 @@ public class WorldGUI {
                                         EntityViewer v = new EntityViewer(p, current.r, EntityType.PLAYER);
                                         v.openInventory(p);
                                     }
-                                }.runTaskLater(RealRegions.getInstance(), 2);
+                                }.runTaskLater(RealRegions.getPlugin(), 2);
                                 break;
                             case 16:
                                 p.closeInventory();
-                                RealRegions.getInstance().getWorldManager().unloadWorld(p, current.r);
+
+                                if (current.r.isUnloaded()) {
+                                    RealRegions.getPlugin().getWorldManager().loadWorld(p, current.r.getRWorldName());
+                                } else {
+                                    RealRegions.getPlugin().getWorldManager().unloadWorld(p, current.r);
+                                }
+
                                 break;
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
@@ -179,14 +184,14 @@ public class WorldGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            RealRegions.getInstance().getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
+                                            RealRegions.getPlugin().getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, "&aRegion created.");
                                             new BukkitRunnable() {
                                                 public void run() {
                                                     WorldGUI g = new WorldGUI(p, current.r);
                                                     g.openInventory(p);
                                                 }
-                                            }.runTaskLater(RealRegions.getInstance(), 2);
+                                            }.runTaskLater(RealRegions.getPlugin(), 2);
                                         }, input -> {
                                             WorldGUI wv = new WorldGUI(p, current.r);
                                             wv.openInventory(p);
@@ -195,7 +200,7 @@ public class WorldGUI {
                                         Text.send(p, "nada");
                                     }
                                 } catch (Exception exception) {
-                                    Text.send(p, "You dont have any selection.");
+                                    Text.send(p, "You don't have any selection.");
                                     p.closeInventory();
                                 }
 
@@ -230,7 +235,7 @@ public class WorldGUI {
                                             RegionGUI fg = new RegionGUI(p, a);
                                             fg.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getInstance(), 2);
+                                    }.runTaskLater(RealRegions.getPlugin(), 2);
                                     break;
                                 case SHIFT_LEFT:
                                     p.closeInventory();
@@ -239,11 +244,11 @@ public class WorldGUI {
                                             MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_REG);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getInstance(), 2);
+                                    }.runTaskLater(RealRegions.getPlugin(), 2);
                                     break;
                                 case DROP:
                                     p.closeInventory();
-                                    RealRegions.getInstance().getWorldManager().getRegionManager().deleteRegion(p, a);
+                                    RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(p, a);
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {
@@ -256,7 +261,7 @@ public class WorldGUI {
                                                 WorldGUI g = new WorldGUI(p, current.r);
                                                 g.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getInstance(), 2);
+                                        }.runTaskLater(RealRegions.getPlugin(), 2);
                                     }, input -> {
                                         WorldGUI wv = new WorldGUI(p, current.r);
                                         wv.openInventory(p);

@@ -38,10 +38,10 @@ public class Text {
 	}
 
 	public static void send(Player p, String string) {
-		p.sendMessage(Text.color(RealRegions.getInstance().getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(RealRegions.getPlugin().getPrefix() + "&r" + string));
 	}
 	public static void send(CommandSender p, String string) {
-		p.sendMessage(Text.color(RealRegions.getInstance().getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(RealRegions.getPlugin().getPrefix() + "&r" + string));
 	}
 
     public static String locToTex(Location pos) {

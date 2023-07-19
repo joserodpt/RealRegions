@@ -311,7 +311,7 @@ public class MaterialPicker {
                         WorldViewer wv = new WorldViewer(p);
                         wv.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getInstance(), 2);
+                }.runTaskLater(RealRegions.getPlugin(), 2);
                 break;
             case ICON_REG:
                 new BukkitRunnable() {
@@ -319,7 +319,7 @@ public class MaterialPicker {
                         WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getRWorld());
                         v.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getInstance(), 2);
+                }.runTaskLater(RealRegions.getPlugin(), 2);
                 break;
         }
     }
