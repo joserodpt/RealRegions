@@ -1,7 +1,7 @@
 package josegamerpt.realregions.gui;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -41,18 +41,32 @@ public class WorldViewer {
     int pageNumber = 0;
     Pagination<RWorld> p;
 
-    public WorldViewer(Player pl) {
+    public enum WorldSort { SIZE, TIME }
+    private WorldSort ws;
+
+    public WorldViewer(Player pl, WorldSort ws) {
+        this.ws = ws;
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
         this.uuid = pl.getUniqueId();
         ArrayList<RWorld> worlds = RealRegions.getPlugin().getWorldManager().getWorlds();
 
+        switch (ws) {
+            case TIME:
+                worlds.sort(Comparator.comparingInt(world -> world.getConfig().getInt("Settings.Unix-Register")));
+                break;
+            case SIZE:
+                worlds.sort(Comparator.comparingDouble(RWorld::getWorldSizeMB));
+                break;
+        }
+
+
         this.p = new Pagination<>(28, worlds);
-        fillChest(p.getPage(this.pageNumber));
+        fillChest(p.getPage(this.pageNumber), ws);
 
         this.register();
     }
 
-    public void fillChest(List<RWorld> items) {
+    public void fillChest(List<RWorld> items, WorldSort ws) {
         this.inv.clear();
         this.display.clear();
 
@@ -103,7 +117,15 @@ public class WorldViewer {
             slot++;
         }
 
-        //47 -> TODO: sort worlds
+        switch (ws)
+        {
+            case SIZE:
+                this.inv.setItem(47, Itens.createItem(Material.CHEST, 1, "&fSorted by &aSize", Collections.singletonList("&fClick here to sort by &bRegistration Date")));
+                break;
+            case TIME:
+                this.inv.setItem(47, Itens.createItem(Material.CLOCK, 1, "&fSorted by &aRegistration Date", Collections.singletonList("&fClick here to sort by &bSize")));
+                break;
+        }
 
         this.inv.setItem(49, close);
 
@@ -145,6 +167,30 @@ public class WorldViewer {
 
                         switch (e.getRawSlot())
                         {
+                            case 47:
+                                p.closeInventory();
+                                switch (current.ws) {
+                                    case TIME:
+                                        new BukkitRunnable()
+                                        {
+                                            public void run()
+                                            {
+                                                WorldViewer v = new WorldViewer(p, WorldSort.SIZE);
+                                                v.openInventory(p);
+                                            }
+                                        }.runTaskLater(RealRegions.getPlugin(), 2);
+                                        break;
+                                    case SIZE:
+                                        new BukkitRunnable()
+                                        {
+                                            public void run()
+                                            {
+                                                WorldViewer v = new WorldViewer(p, WorldSort.TIME);
+                                                v.openInventory(p);
+                                            }
+                                        }.runTaskLater(RealRegions.getPlugin(), 2);
+                                        break;
+                                }
                             case 49:
                                 current.exit(p);
                                 break;
@@ -159,10 +205,8 @@ public class WorldViewer {
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                             case 51:
-                                new PlayerInput(p, input -> {
-                                    RealRegions.getPlugin().getWorldManager().createWorld(p, input);
-                                }, input -> {
-                                    WorldViewer wv = new WorldViewer(p);
+                                new PlayerInput(p, input -> RealRegions.getPlugin().getWorldManager().createWorld(p, input), input -> {
+                                    WorldViewer wv = new WorldViewer(p, current.ws);
                                     wv.openInventory(p);
                                 });
                         }
@@ -208,7 +252,7 @@ public class WorldViewer {
                     asd.pageNumber--;
                 }
 
-                asd.fillChest(asd.p.getPage(asd.pageNumber));
+                asd.fillChest(asd.p.getPage(asd.pageNumber), asd.ws);
             }
 
             private void nextPage(WorldViewer asd) {
@@ -216,7 +260,7 @@ public class WorldViewer {
                     asd.pageNumber++;
                 }
 
-                asd.fillChest(asd.p.getPage(asd.pageNumber));
+                asd.fillChest(asd.p.getPage(asd.pageNumber), asd.ws);
             }
 
             @EventHandler

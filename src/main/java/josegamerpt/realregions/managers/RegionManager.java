@@ -1,7 +1,7 @@
 package josegamerpt.realregions.managers;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.CuboidRegion;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.CubeVisualizer;
@@ -9,7 +9,7 @@ import josegamerpt.realregions.utils.Text;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -78,7 +78,7 @@ public class RegionManager {
         return loaded_regions;
     }
 
-    public void deleteRegion(Player p, Region a) {
+    public void deleteRegion(CommandSender p, Region a) {
         if (a.getType() == Region.RegionType.INFINITE)
         {
             Text.send(p, "&fYou can't &cdelete " + a.getDisplayName() + " &fbecause its infinite.");
@@ -93,17 +93,21 @@ public class RegionManager {
     }
 
     public Region getRegionPlusName(String name) {
-        String[] split = name.split("@");
-        String world = split[1];
-        String reg = split[0];
+        try {
+            String[] split = name.split("@");
+            String world = split[1];
+            String reg = split[0];
 
-        RWorld w = wm.getWorld(world);
-        if (w != null) {
-            return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
-                    .filter(region -> region.getRegionName().equals(reg))
-                    .findFirst()
-                    .orElse(null) : null;
-        } else {
+            RWorld w = wm.getWorld(world);
+            if (w != null) {
+                return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
+                        .filter(region -> region.getRegionName().equals(reg))
+                        .findFirst()
+                        .orElse(null) : null;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
             return null;
         }
     }

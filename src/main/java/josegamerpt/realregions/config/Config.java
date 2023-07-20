@@ -28,7 +28,7 @@ public class Config implements Listener {
 		customFile = YamlConfiguration.loadConfiguration(file);
 	}
 
-	public static FileConfiguration file() {
+	public static FileConfiguration getConfig() {
 		return customFile;
 	}
 

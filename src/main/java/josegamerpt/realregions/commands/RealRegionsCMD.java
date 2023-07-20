@@ -2,7 +2,7 @@ package josegamerpt.realregions.commands;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.gui.EntityViewer;
 import josegamerpt.realregions.gui.RegionGUI;
@@ -19,6 +19,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Command("realregions")
 @Alias("rr")
@@ -32,7 +34,7 @@ public class RealRegionsCMD extends CommandBase {
 
     @Default
     public void defaultCommand(final CommandSender commandSender) {
-        Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "&7Release &a" + RealRegions.getPlugin().getDescription().getVersion()));
+        Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + RealRegions.getPlugin().getDescription().getVersion()));
     }
 
     @SubCommand("reload")
@@ -40,8 +42,12 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     public void reloadcmd(final CommandSender commandSender) {
         Config.reload();
-        rr.setPrefix(Text.color(Config.file().getString("RealRegions.Prefix")));
-        Text.send((Player) commandSender, "&aReloaded.");
+        //reload prefix
+        rr.setPrefix(Text.color(Config.getConfig().getString("RealRegions.Prefix")));
+
+        //reload worlds config
+        RealRegions.getPlugin().getWorldManager().getWorlds().forEach(RWorld::reloadConfig);
+        Text.send(commandSender, "&aReloaded.");
     }
 
     @SubCommand("worlds")
@@ -50,10 +56,13 @@ public class RealRegionsCMD extends CommandBase {
     public void worldscm(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
-            WorldViewer wv = new WorldViewer(p);
+            WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME);
             wv.openInventory(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            for (RWorld world : RealRegions.getPlugin().getWorldManager().getWorlds().stream()
+                    .sorted(Comparator.comparing(RWorld::getRWorldName)).collect(Collectors.toList())) {
+                Text.send(commandSender, "&b" + world.getRWorldName() + " &f- [" + (world.isLoaded() ? "&aLoaded" : "&eUnloaded") + "&f]");
+            }
         }
     }
 
@@ -102,18 +111,12 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name>")
     public void createworldcmd(final CommandSender sender, final String name) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("[RealRegions] Only players can run this command.");
-            return;
-        }
-
-        Player p = (Player) sender;
         if (name == null) {
-            Text.send(p, "World name is empty.");
+            Text.send(sender, "World name is empty.");
             return;
         }
 
-        RealRegions.getPlugin().getWorldManager().createWorld(p, name);
+        RealRegions.getPlugin().getWorldManager().createWorld(sender, name);
     }
 
     @SubCommand("region")
@@ -225,19 +228,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr unload <name>")
     public void unloadcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
-            if (rw == null) {
-                Text.send(p, "There is no world named &c" + name);
-                return;
-            }
-
-            RealRegions.getPlugin().getWorldManager().unloadWorld(p, rw);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+        RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
+        if (rw == null) {
+            Text.send(commandSender, "There is no world named &c" + name);
+            return;
         }
+
+        RealRegions.getPlugin().getWorldManager().unloadWorld(commandSender, rw);
     }
 
     @SubCommand("load")
@@ -245,19 +242,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr load <name>")
     public void loadcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
-            if (rw == null) {
-                Text.send(p, "There is no world named &c" + name);
-                return;
-            }
-
-            RealRegions.getPlugin().getWorldManager().loadWorld(p, name);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+        RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
+        if (rw == null) {
+            Text.send(commandSender, "There is no world named &c" + name);
+            return;
         }
+
+        RealRegions.getPlugin().getWorldManager().loadWorld(commandSender, name);
     }
 
     @SubCommand("unregister")
@@ -265,32 +256,20 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr unregister <name>")
     public void unregistercmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
-            if (rw == null) {
-                Text.send(p, "There is no world named &c" + name);
-                return;
-            }
-
-            RealRegions.getPlugin().getWorldManager().unregisterWorld(p, rw);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+        RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
+        if (rw == null) {
+            Text.send(commandSender, "There is no world named &c" + name);
+            return;
         }
+
+        RealRegions.getPlugin().getWorldManager().unregisterWorld(commandSender, rw);
     }
 
     @SubCommand("import")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr import <name>")
     public void importcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RealRegions.getPlugin().getWorldManager().importWorld(p, name);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
-        }
+        RealRegions.getPlugin().getWorldManager().importWorld(commandSender, name);
     }
 
     @SubCommand("delete")
@@ -299,19 +278,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr deleter <name>")
     public void delregcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            Region rr = RealRegions.getPlugin().getWorldManager().getRegionManager().getRegionPlusName(name);
-            if (rr == null) {
-                Text.send(p, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
-                return;
-            }
-
-            RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(p, rr);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+        Region rr = RealRegions.getPlugin().getWorldManager().getRegionManager().getRegionPlusName(name);
+        if (rr == null) {
+            Text.send(commandSender, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
+            return;
         }
+
+        RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(commandSender, rr);
     }
 
     @SubCommand("entities")
@@ -342,19 +315,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr delw <name>")
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
-            if (rw == null) {
-                Text.send(p, "There is no world named &c" + name);
-                return;
-            }
-
-            RealRegions.getPlugin().getWorldManager().deleteWorld(p, rw, true);
-        } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+        RWorld rw = RealRegions.getPlugin().getWorldManager().getWorld(name);
+        if (rw == null) {
+            Text.send(commandSender, "There is no world named &c" + name);
+            return;
         }
+
+        RealRegions.getPlugin().getWorldManager().deleteWorld(commandSender, rw, true);
     }
 
     @SubCommand("players")

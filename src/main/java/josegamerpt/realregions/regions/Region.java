@@ -1,7 +1,6 @@
 package josegamerpt.realregions.regions;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Location;

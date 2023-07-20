@@ -1,10 +1,11 @@
 package josegamerpt.realregions.managers;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -85,7 +86,7 @@ public class WorldManager {
         }
     }
 
-    public void importWorld(Player p, String worldName) {
+    public void importWorld(CommandSender p, String worldName) {
         //check if folder exists
         File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
 
@@ -106,7 +107,7 @@ public class WorldManager {
         }
     }
 
-    public void loadWorld(Player p, String worldName) {
+    public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
         if (rw.isLoaded()) {
             Text.send(p, "&cWorld is already loaded.");
@@ -116,7 +117,6 @@ public class WorldManager {
             if (w != null) {
                 rw.setWorld(w);
                 rw.setLoaded(true);
-
             } else {
                 Bukkit.getLogger().severe("Failed to load world: " + worldName);
             }
@@ -140,7 +140,7 @@ public class WorldManager {
         RealRegions.getPlugin().getServer().unloadWorld(world, save);
     }
 
-    public void deleteWorld(Player p, RWorld r, boolean removeFile) {
+    public void deleteWorld(CommandSender p, RWorld r, boolean removeFile) {
 
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
@@ -253,7 +253,7 @@ public class WorldManager {
                 .orElse(null);
     }
 
-    public void unloadWorld(Player p, RWorld r) {
+    public void unloadWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
             Text.send(p, "&fYou can't &cunload &fdefault worlds.");
@@ -268,7 +268,7 @@ public class WorldManager {
         }
     }
 
-    public void createWorld(Player p, String input) {
+    public void createWorld(CommandSender p, String input) { //TODO: more create world options, void por ex
         Text.send(p, "&fWorld &a" + input + " &fis being &acreated.");
 
         WorldCreator worldCreator = new WorldCreator(input);
@@ -285,7 +285,7 @@ public class WorldManager {
         }
     }
 
-    public void unregisterWorld(Player p, RWorld r) {
+    public void unregisterWorld(CommandSender p, RWorld r) {
         //remove world config and from plugin world list
         this.unloadWorld(r, false);
         r.deleteConfig();

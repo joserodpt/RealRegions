@@ -1,6 +1,6 @@
 package josegamerpt.realregions;
 
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.commands.RealRegionsCMD;
 import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.config.Config;
@@ -36,7 +36,7 @@ public class RealRegions extends JavaPlugin {
         saveDefaultConfig();
         Config.setup(this);
 
-        prefix = Text.color(Config.file().getString("RealRegions.Prefix"));
+        prefix = Text.color(Config.getConfig().getString("RealRegions.Prefix"));
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new RegionListener(), this);
@@ -78,10 +78,10 @@ public class RealRegions extends JavaPlugin {
     }
 
     public String getPrefix() {
-        return prefix + " ";
+        return this.prefix + " ";
     }
 
     public void setPrefix(String c) {
-        prefix = c;
+        this.prefix = c;
     }
 }

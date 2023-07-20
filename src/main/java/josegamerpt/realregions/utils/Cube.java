@@ -1,4 +1,4 @@
-package josegamerpt.realregions.classes;
+package josegamerpt.realregions.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

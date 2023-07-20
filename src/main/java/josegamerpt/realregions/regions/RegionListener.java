@@ -2,7 +2,6 @@ package josegamerpt.realregions.regions;
 
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.config.Config;
-import josegamerpt.realregions.enums.RRParticle;
 import josegamerpt.realregions.utils.Particles;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Location;
@@ -205,6 +204,12 @@ public class RegionListener implements Listener {
 
     @EventHandler
     public void move(PlayerMoveEvent e) {
+        if (e.getFrom().getBlockX() == e.getTo().getBlockX()
+                && e.getFrom().getBlockY() == e.getTo().getBlockY()
+                && e.getFrom().getBlockZ() == e.getTo().getBlockZ()) {
+            return;
+        }
+
         Location toLocation = e.getTo();
         Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(toLocation);
 
@@ -216,8 +221,10 @@ public class RegionListener implements Listener {
             }
 
             if (!selected.hasEnter()) {
-                Particles.spawnParticle(RRParticle.BARRIER, e.getTo());
-                p.setVelocity(p.getEyeLocation().getDirection().setY(Config.file().getDouble("RealRegions.Pushback-Movement.Y-Component")).multiply(Config.file().getDouble("RealRegions.Pushback-Movement.Multiplier")));
+                Particles.spawnParticle(Particles.RRParticle.LAVA, e.getTo());
+                //OLD: p.setVelocity(p.getEyeLocation().getDirection().setY(-0.7D).multiply(-0.7D));
+
+                p.teleport(e.getFrom());  //TODO: better player knockback?
 
                 cancel(e.getTo(), p, "&cYou can't enter here.");
             }
@@ -313,21 +320,15 @@ public class RegionListener implements Listener {
 
         if (selected != null) {
             Player damager = (Player) event.getDamager();
-            if (damager.isOp()) {
+
+            if (damager.isOp() || damager.hasPermission(RegionFlags.PVP.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
                 return;
             }
 
             //pvp
-            if (selected.hasPVP()) {
-                if (damager.hasPermission("RealRegions." + selected.getRWorld().getRWorldName() + "." + selected.getRegionName() + ".PVP.Disallow")) {
-                    event.setCancelled(true);
-                    Text.send(damager, "&cYou can't PVP here.");
-                }
-            } else {
-                if (!damager.hasPermission("RealRegions." + selected.getRWorld().getRWorldName() + "." + selected.getRegionName() + ".PVP.Allow")) {
-                    event.setCancelled(true);
-                    Text.send(damager, "&cYou can't PVP here.");
-                }
+            if (!selected.hasPVP()) {
+                event.setCancelled(true);
+                Text.send(damager, "&cYou can't PVP here.");
             }
         }
     }
@@ -342,21 +343,14 @@ public class RegionListener implements Listener {
                 return;
 
             Player damager = (Player) event.getDamager();
-            if (damager.isOp()) {
+            if (damager.isOp() || damager.hasPermission(RegionFlags.PVE.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
                 return;
             }
 
             //pve
-            if (selected.hasPVE()) {
-                if (damager.hasPermission("RealRegions." + selected.getRWorld().getRWorldName() + "." + selected.getRegionName() + ".PVE.Disallow")) {
-                    event.setCancelled(true);
-                    Text.send(damager, "&cYou can't PVE here.");
-                }
-            } else {
-                if (!damager.hasPermission("RealRegions." + selected.getRWorld().getRWorldName() + "." + selected.getRegionName() + ".PVE.Allow")) {
-                    event.setCancelled(true);
-                    Text.send(damager, "&cYou can't PVE here.");
-                }
+            if (!selected.hasPVE()) {
+                event.setCancelled(true);
+                Text.send(damager, "&cYou can't PVE here.");
             }
         }
     }
@@ -364,8 +358,10 @@ public class RegionListener implements Listener {
 
     private void cancel(Location l, Player p, String s) {
         Text.send(p, s);
-        Particles.spawnParticle(RRParticle.FLAME_CANCEL, l.getBlock().getLocation());
-        l.getWorld().playSound(l, Sound.BLOCK_ANVIL_BREAK, 1, 50);
-    }
+        Particles.spawnParticle(Particles.RRParticle.FLAME_CANCEL, l.getBlock().getLocation());
 
+        if (Config.getConfig().getBoolean("RealRegions.Effects.Sounds")) {
+            l.getWorld().playSound(l, Sound.BLOCK_ANVIL_BREAK, 1, 50);
+        }
+    }
 }

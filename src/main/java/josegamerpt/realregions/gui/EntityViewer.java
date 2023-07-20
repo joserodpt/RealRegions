@@ -1,10 +1,7 @@
 package josegamerpt.realregions.gui;
 
-import josegamerpt.realregions.classes.*;
-import josegamerpt.realregions.utils.Itens;
-import josegamerpt.realregions.utils.Pagination;
-import josegamerpt.realregions.utils.PlayerInput;
-import josegamerpt.realregions.utils.Text;
+import josegamerpt.realregions.regions.RWorld;
+import josegamerpt.realregions.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -53,7 +50,7 @@ public class EntityViewer {
 
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Entities"));
         this.uuid = pl.getUniqueId();
-        this.eicon = getEnts();
+        this.eicon = getEnts(pl);
 
         this.p = new Pagination<>(28, this.eicon);
         fillChest(this.p.getPage(this.pageNumber));
@@ -70,7 +67,7 @@ public class EntityViewer {
 
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Search for " + search));
         this.uuid = pl.getUniqueId();
-        this.eicon = searchEntity(search);
+        this.eicon = searchEntity(pl, search);
 
         this.p = new Pagination<>(28, this.eicon);
         fillChest(p.getPage(this.pageNumber));
@@ -87,7 +84,7 @@ public class EntityViewer {
 
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color(r.getRWorldName() + " &8| Players"));
         this.uuid = pl.getUniqueId();
-        this.eicon = searchEntity(e);
+        this.eicon = searchEntity(pl, e);
 
         this.p = new Pagination<>(28, this.eicon);
         fillChest(p.getPage(this.pageNumber));
@@ -95,15 +92,18 @@ public class EntityViewer {
         this.register();
     }
 
-    private ArrayList<EntityIcon> getEnts() { //TODO: sort entities by distance to player
+    private ArrayList<EntityIcon> getEnts(Player p) {
         ArrayList<EntityIcon> ms = new ArrayList<>();
-        this.r.getWorld().getEntities().forEach(entity -> ms.add(new EntityIcon(entity)));
+        this.r.getWorld().getEntities().forEach(entity -> ms.add(new EntityIcon(p, entity)));
+
+        ms.sort(Comparator.comparingDouble(EntityIcon::getDistanceRelativeToPlayer));
+
         return ms;
     }
 
-    private ArrayList<EntityIcon> searchEntity(String s) {
+    private ArrayList<EntityIcon> searchEntity(Player p, String s) {
         ArrayList<EntityIcon> ms = new ArrayList<>();
-        for (EntityIcon e : getEnts()) {
+        for (EntityIcon e : getEnts(p)) {
             if (e.getEntityName().toLowerCase().contains(s.toLowerCase())) {
                 ms.add(e);
             }
@@ -111,9 +111,9 @@ public class EntityViewer {
         return ms;
     }
 
-    private ArrayList<EntityIcon> searchEntity(EntityType search) {
+    private ArrayList<EntityIcon> searchEntity(Player p, EntityType search) {
         ArrayList<EntityIcon> ms = new ArrayList<>();
-        for (EntityIcon e : getEnts()) {
+        for (EntityIcon e : getEnts(p)) {
             if (e.getEntity().getType() == search) {
                 ms.add(e);
             }
@@ -219,7 +219,7 @@ public class EntityViewer {
                         {
                             case 4:
                                 new PlayerInput(p, input -> {
-                                    if (current.searchEntity(input).size() == 0) {
+                                    if (current.searchEntity(p, input).size() == 0) {
                                         Text.send(p, "&fNothing found for your search terms.");
 
                                         current.exit(p);
@@ -229,7 +229,7 @@ public class EntityViewer {
                                     df.openInventory(p);
                                 }, input -> {
                                     p.closeInventory();
-                                    WorldViewer wv = new WorldViewer(p);
+                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME);
                                     wv.openInventory(p);
                                 });
                                 break;

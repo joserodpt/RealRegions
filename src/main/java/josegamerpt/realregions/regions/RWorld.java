@@ -1,7 +1,6 @@
-package josegamerpt.realregions.classes;
+package josegamerpt.realregions.regions;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.IO;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
@@ -94,7 +93,7 @@ public class RWorld implements Listener {
 
     }
 
-    private void reloadConfig() {
+    public void reloadConfig() {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
@@ -127,6 +126,7 @@ public class RWorld implements Listener {
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
         this.config.set("Settings.Load", true);
+        this.config.set("Settings.Unix-Register", System.currentTimeMillis() / 1000L);
 
         //default global region
         this.config.set("Regions.Global.Type", Region.RegionType.INFINITE.name());
@@ -182,7 +182,7 @@ public class RWorld implements Listener {
     }
 
     public ItemStack getItem() {
-        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.worldSizeMB + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.", "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
+        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.","", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.config.getInt("Settings.Unix-Register")), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
     }
 
     private Material getIcon() {
@@ -220,5 +220,9 @@ public class RWorld implements Listener {
                 RealRegions.getPlugin().getWorldManager().getRegionManager().saveRegions(this);
                 break;
         }
+    }
+
+    public double getWorldSizeMB() {
+        return worldSizeMB;
     }
 }

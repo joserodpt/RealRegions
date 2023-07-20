@@ -2,7 +2,7 @@ package josegamerpt.realregions.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
@@ -207,7 +207,7 @@ public class WorldGUI {
                                 break;
                             case 43:
                                 p.closeInventory();
-                                WorldViewer asd = new WorldViewer(p);
+                                WorldViewer asd = new WorldViewer(p, WorldViewer.WorldSort.TIME);
                                 asd.openInventory(p);
                                 break;
                             case 38:

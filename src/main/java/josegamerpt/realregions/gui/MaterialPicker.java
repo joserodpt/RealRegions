@@ -3,7 +3,7 @@ package josegamerpt.realregions.gui;
 import java.util.*;
 
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.CuboidRegion;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Itens;
@@ -162,7 +162,7 @@ public class MaterialPicker {
                 if (items.size() != 0) {
                     Material s = items.get(0);
                     this.inv.setItem(slot,
-                            Itens.createItem(s, 1, "§f" + s.name(), Arrays.asList("&fClick to pick this.")));
+                            Itens.createItem(s, 1, "§f" + s.name(), Collections.singletonList("&fClick to pick this.")));
                     this.display.put(slot, s);
                     items.remove(0);
                 }
@@ -219,7 +219,7 @@ public class MaterialPicker {
                                     df.openInventory(gp);
                                 }, input -> {
                                     gp.closeInventory();
-                                    WorldViewer wv = new WorldViewer(gp);
+                                    WorldViewer wv = new WorldViewer(gp, WorldViewer.WorldSort.TIME);
                                     wv.openInventory(gp);
                                 });
                                 break;
@@ -253,7 +253,7 @@ public class MaterialPicker {
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);
                                 r.saveData(RWorld.Data.ICON);
-                                WorldViewer v = new WorldViewer(gp);
+                                WorldViewer v = new WorldViewer(gp, WorldViewer.WorldSort.TIME);
                                 v.openInventory(gp);
                             }
                         }
@@ -308,7 +308,7 @@ public class MaterialPicker {
             case ICON_WORLD:
                 new BukkitRunnable() {
                     public void run() {
-                        WorldViewer wv = new WorldViewer(p);
+                        WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME);
                         wv.openInventory(p);
                     }
                 }.runTaskLater(RealRegions.getPlugin(), 2);

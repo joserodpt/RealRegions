@@ -1,5 +1,6 @@
 RealRegions:
   Prefix: "&fReal&eRegions &7>"
-  Pushback-Movement:
-    Y-Component: -0.7
-    Multiplier: -0.7
+  Date-Format: "yyyy-MM-dd HH:mm:ss"
+  Effects:
+    Particles: true
+    Sounds: true

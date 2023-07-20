@@ -1,7 +1,6 @@
 package josegamerpt.realregions.regions;
 
-import josegamerpt.realregions.classes.Cube;
-import josegamerpt.realregions.classes.RWorld;
+import josegamerpt.realregions.utils.Cube;
 import josegamerpt.realregions.utils.CubeVisualizer;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
