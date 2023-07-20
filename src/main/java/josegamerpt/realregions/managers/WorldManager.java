@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,29 +18,17 @@ import java.nio.file.Files;
 import java.util.*;
 
 public class WorldManager {
-
+    private final RegionManager rm = new RegionManager(this);
     private HashMap<RWorld, ArrayList<Region>> worlds_reg_dic = new HashMap<>();
-
     public HashMap<RWorld, ArrayList<Region>> getWorldsAndRegions() {
         return worlds_reg_dic;
     }
-
-    private final RegionManager rm = new RegionManager(this);
     public RegionManager getRegionManager() {
         return rm;
     }
     public ArrayList<RWorld> getWorlds() {
         return new ArrayList<>(worlds_reg_dic.keySet());
     }
-
-    private void initializeRWorld(String worldName, World w) {
-        //load rworld
-        RWorld rw = new RWorld(worldName, w);
-
-        //load regions
-        worlds_reg_dic.put(rw, rm.loadRegions(rw));
-    }
-
     public void loadWorlds() {
         //check if folder "worlds" exists in RealRegions
         File folder = new File(RealRegions.getPlugin().getDataFolder() + "/worlds");
@@ -52,6 +41,9 @@ public class WorldManager {
 
                 //temporary load world config file to see if it is to load world
                 FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
+
+                RWorld.WorldType wt = RWorld.WorldType.valueOf(worldConfig.getString("Settings.Type"));
+
                 if (worldConfig.getBoolean("Settings.Load")) {
                     //to load world, check if folder exists
                     File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
@@ -63,7 +55,7 @@ public class WorldManager {
                         WorldCreator worldCreator = new WorldCreator(worldName);
                         World w = worldCreator.createWorld();
                         if (w != null) {
-                            this.initializeRWorld(worldName, w);
+                            this.initializeRWorld(worldName, w, wt);
                         } else {
                             Bukkit.getLogger().severe("Failed to load world: " + worldName);
                         }
@@ -71,7 +63,7 @@ public class WorldManager {
                 } else {
                     //don't load world, but it's registered
                     //load rworld object but don't load the world
-                    RWorld rw = new RWorld(worldName);
+                    RWorld rw = new RWorld(worldName, wt);
 
                     //load regions
                     worlds_reg_dic.put(rw, rm.loadRegions(rw));
@@ -81,32 +73,44 @@ public class WorldManager {
             //folder doesn't exist, load default worlds from Bukkit
             RealRegions.getPlugin().getLogger().info("First startup, importing default worlds.");
             for (World world : Bukkit.getWorlds()) {
-                initializeRWorld(world.getName(), world);
+                initializeRWorld(world.getName(), world, RWorld.WorldType.valueOf(world.getEnvironment().name()));
             }
         }
     }
+    public void createWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
+        Text.send(p, "&fWorld &a" + worldName + " &fis being &acreated.");
 
-    public void importWorld(CommandSender p, String worldName) {
-        //check if folder exists
-        File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
+        WorldCreator worldCreator = new WorldCreator(worldName);
 
-        //if it doesn't exist, display an warning
-        if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-            Text.send(p, worldName + " folder &cNOT FOUND in server's directory.");
+        if (wt == RWorld.WorldType.VOID) {
+            worldCreator.environment(World.Environment.NORMAL);
+            worldCreator.generateStructures(false);
+            worldCreator.generator(new VoidWorld());
         } else {
-            Text.send(p, "&fImporting &b" + worldName);
-
-            WorldCreator worldCreator = new WorldCreator(worldName);
-            World w = worldCreator.createWorld();
-            if (w != null) {
-                this.initializeRWorld(worldName, w);
-                Text.send(p, "&b" + worldName + " &fwas imported &asuccessfully");
-            } else {
-                Text.send(p, "&cFailed to load world: " + worldName);
+            try {
+                worldCreator.environment(World.Environment.valueOf(wt.name()));
+            } catch (Exception e) {
+                throw new IllegalStateException("Unexpected value in World Type (is this a bug?): " + wt.name());
             }
         }
-    }
 
+        World world = worldCreator.createWorld();
+        if (world != null) {
+            //registar mundo no real regions
+            this.initializeRWorld(worldName, world, wt);
+
+            Text.send(p, "World " + worldName + " &acreated!");
+        } else {
+            Text.send(p, "&cFailed to create " + worldName + "!");
+        }
+    }
+    private void initializeRWorld(String worldName, World w, RWorld.WorldType wt) {
+        //load rworld
+        RWorld rw = new RWorld(worldName, w, wt);
+
+        //load regions
+        worlds_reg_dic.put(rw, rm.loadRegions(rw));
+    }
     public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
         if (rw.isLoaded()) {
@@ -124,7 +128,6 @@ public class WorldManager {
             Text.send(p, worldName + " &fwas loaded &asuccessfully");
         }
     }
-
     public void unloadWorld(RWorld rw, boolean save) {
         rw.setLoaded(false);
         rw.saveData(RWorld.Data.REGIONS);
@@ -139,7 +142,70 @@ public class WorldManager {
         }
         RealRegions.getPlugin().getServer().unloadWorld(world, save);
     }
+    public void unloadWorld(CommandSender p, RWorld r) {
+        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
+        {
+            Text.send(p, "&fYou can't &cunload &fdefault worlds.");
+        } else {
+            if (!r.isLoaded()) {
+                Text.send(p, "&cWorld is already unloaded.");
+            } else {
+                Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &eunloaded.");
+                unloadWorld(r, true);
+                Text.send(p, "&fWorld &aunloaded.");
+            }
+        }
+    }
+    public void importWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
+        //check if folder exists
+        File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
 
+        //if it doesn't exist, display an warning
+        if (!worldFolder.exists() || !worldFolder.isDirectory()) {
+            Text.send(p, worldName + " folder &cNOT FOUND in server's directory.");
+        } else {
+            Text.send(p, "&fImporting &b" + worldName);
+
+            WorldCreator worldCreator = new WorldCreator(worldName);
+
+            if (wt == RWorld.WorldType.VOID) {
+                worldCreator.environment(World.Environment.NORMAL);
+                worldCreator.generateStructures(false);
+                worldCreator.generator(new VoidWorld());
+            } else {
+                worldCreator.environment(World.Environment.valueOf(wt.name()));
+            }
+
+            World w = worldCreator.createWorld();
+            if (w != null) {
+                this.initializeRWorld(worldName, w, wt);
+                Text.send(p, "&b" + worldName + " &fwas imported &asuccessfully");
+            } else {
+                Text.send(p, "&cFailed to load world: " + worldName);
+            }
+        }
+    }
+    public void unregisterWorld(CommandSender p, RWorld r) {
+        //remove world config and from plugin world list
+        this.unloadWorld(r, false);
+        r.deleteConfig();
+        //remove from world list
+        this.worlds_reg_dic.remove(r);
+
+        Text.send(p, r.getRWorldName() + " has been &eunregistered.");
+    }
+    public RWorld getWorld(World w) {
+        return worlds_reg_dic.keySet().stream()
+                .filter(world -> world.getWorld().equals(w))
+                .findFirst()
+                .orElse(null);
+    }
+    public RWorld getWorld(String nome) {
+        return worlds_reg_dic.keySet().stream()
+                .filter(world -> world.getRWorldName().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElse(null);
+    }
     public void deleteWorld(CommandSender p, RWorld r, boolean removeFile) {
 
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
@@ -166,7 +232,6 @@ public class WorldManager {
             Text.send(p, "&fWorld &b" + r.getRWorldName() + " &cdeleted.");
         }
     }
-
     public void deleteDirectory(final File directory) throws IOException {
         if (!directory.exists()) {
             return;
@@ -181,7 +246,6 @@ public class WorldManager {
             throw new IOException(message);
         }
     }
-
     private void cleanDirectory(final File directory) throws IOException {
         final File[] files = verifiedListFiles(directory);
 
@@ -198,7 +262,6 @@ public class WorldManager {
             throw exception;
         }
     }
-
     public void forceDelete(final File file) throws IOException {
         if (file.isDirectory()) {
             deleteDirectory(file);
@@ -213,14 +276,12 @@ public class WorldManager {
             }
         }
     }
-
     public boolean isSymlink(final File file) {
         if (file == null) {
             throw new NullPointerException("File must no be null");
         }
         return Files.isSymbolicLink(file.toPath());
     }
-
     public File[] verifiedListFiles(File directory) throws IOException {
         if (!directory.exists()) {
             final String message = directory + " does not exist";
@@ -238,60 +299,14 @@ public class WorldManager {
         }
         return files;
     }
-
-    public RWorld getWorld(World w) {
-        return worlds_reg_dic.keySet().stream()
-                .filter(world -> world.getWorld().equals(w))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public RWorld getWorld(String nome) {
-        return worlds_reg_dic.keySet().stream()
-                .filter(world -> world.getRWorldName().equalsIgnoreCase(nome))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public void unloadWorld(CommandSender p, RWorld r) {
-        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
-        {
-            Text.send(p, "&fYou can't &cunload &fdefault worlds.");
-        } else {
-            if (!r.isLoaded()) {
-                Text.send(p, "&cWorld is already unloaded.");
-            } else {
-                Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &eunloaded.");
-                unloadWorld(r, true);
-                Text.send(p, "&fWorld &aunloaded.");
-            }
+    public class VoidWorld extends ChunkGenerator {
+        @Override
+        public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {
+            return createChunkData(world);
         }
-    }
 
-    public void createWorld(CommandSender p, String input) { //TODO: more create world options, void por ex
-        Text.send(p, "&fWorld &a" + input + " &fis being &acreated.");
-
-        WorldCreator worldCreator = new WorldCreator(input);
-        worldCreator.environment(World.Environment.NORMAL);
-
-        World world = worldCreator.createWorld();
-        if (world != null) {
-            //registar mundo no real regions
-            this.initializeRWorld(input, world);
-
-            Text.send(p, "World " + input + " &acreated!");
-        } else {
-            Text.send(p, "&cFailed to create " + input + "!");
+        public Location getFixedSpawnLocation(World world, Random random) {
+            return new Location(world, 0.0D, 128.0D, 0.0D);
         }
-    }
-
-    public void unregisterWorld(CommandSender p, RWorld r) {
-        //remove world config and from plugin world list
-        this.unloadWorld(r, false);
-        r.deleteConfig();
-        //remove from world list
-        this.worlds_reg_dic.remove(r);
-
-        Text.send(p, r.getRWorldName() + " has been &eunregistered.");
     }
 }

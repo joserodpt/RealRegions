@@ -19,18 +19,22 @@ import java.util.Arrays;
 //RealRegions World
 public class RWorld implements Listener {
 
+    public enum WorldType { NORMAL, NETHER, THE_END, VOID }
+
     public enum Data { ICON, LOAD,  REGIONS }
 
     private String worldName;
     private World world;
+    private WorldType wt;
     private File file;
     private FileConfiguration config;
     private Material icon;
     private double worldSizeMB;
     private boolean loaded = true;
 
-    public RWorld(String worldName) {
+    public RWorld(String worldName, WorldType wt) {
         this.worldName = worldName;
+        this.wt = wt;
 
         //object is loaded but world isn't
         //this.world = w;
@@ -39,8 +43,9 @@ public class RWorld implements Listener {
         this.setLoaded(false);
     }
 
-    public RWorld(String worldName, World w) {
+    public RWorld(String worldName, World w, WorldType wt) {
         this.worldName = worldName;
+        this.wt = wt;
 
         //load RWorld from Bukkit World
         this.world = w;
@@ -109,7 +114,7 @@ public class RWorld implements Listener {
         this.config = YamlConfiguration.loadConfiguration(file);
 
         Material m;
-        switch (world.getEnvironment()) {
+        switch (wt) {
             case NORMAL:
                 m = Material.GRASS_BLOCK;
                 break;
@@ -119,12 +124,16 @@ public class RWorld implements Listener {
             case THE_END:
                 m = Material.END_STONE;
                 break;
+            case VOID:
+                m = Material.FEATHER;
+                break;
             default:
-                throw new IllegalStateException("Unexpected value (is this a bug?): " + world.getEnvironment());
+                throw new IllegalStateException("Unexpected value in World Type (is this a bug?): " + world.getEnvironment());
         }
 
         this.icon = m;
         this.config.set("Settings.Icon", this.icon.name());
+        this.config.set("Settings.Type", this.getWorldType().name());
         this.config.set("Settings.Load", true);
         this.config.set("Settings.Unix-Register", System.currentTimeMillis() / 1000L);
 
@@ -163,6 +172,10 @@ public class RWorld implements Listener {
 
     public void setWorld(World w) {
         this.world = w;
+    }
+
+    public WorldType getWorldType() {
+        return this.wt;
     }
 
     public void teleport(Player p, boolean silent) {

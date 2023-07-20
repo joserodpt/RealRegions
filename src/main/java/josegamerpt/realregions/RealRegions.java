@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
@@ -61,6 +62,12 @@ public class RealRegions extends JavaPlugin {
                         .map(RWorld::getRWorldName)
                         .collect(Collectors.toList())
         );
+        cm.getCompletionHandler().register("#worldtype", input ->
+                Arrays.stream(RWorld.WorldType.values())
+                        .map(Enum::name)
+                        .collect(Collectors.toList())
+        );
+
 
         cm.register(new RealRegionsCMD(this));
 

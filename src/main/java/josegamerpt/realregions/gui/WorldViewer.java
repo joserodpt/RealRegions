@@ -205,7 +205,7 @@ public class WorldViewer {
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                             case 51:
-                                new PlayerInput(p, input -> RealRegions.getPlugin().getWorldManager().createWorld(p, input), input -> {
+                                new PlayerInput(p, input -> RealRegions.getPlugin().getWorldManager().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
                                     WorldViewer wv = new WorldViewer(p, current.ws);
                                     wv.openInventory(p);
                                 });

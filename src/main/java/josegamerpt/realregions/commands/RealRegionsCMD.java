@@ -107,16 +107,21 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("createw")
-    @Completion("#range:1-20")
+    @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name>")
-    public void createworldcmd(final CommandSender sender, final String name) {
+    public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
         if (name == null) {
-            Text.send(sender, "World name is empty.");
+            Text.send(commandSender, "World name is empty.");
             return;
         }
 
-        RealRegions.getPlugin().getWorldManager().createWorld(sender, name);
+        try {
+            RealRegions.getPlugin().getWorldManager().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+        } catch (Exception e) {
+            Text.send(commandSender, "&cThere is no world type named " + worldtype);
+        }
+
     }
 
     @SubCommand("region")
@@ -266,10 +271,15 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("import")
+    @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr import <name>")
-    public void importcmd(final CommandSender commandSender, final String name) {
-        RealRegions.getPlugin().getWorldManager().importWorld(commandSender, name);
+    public void importcmd(final CommandSender commandSender, final String name, final String worldtype) {
+        try {
+            RealRegions.getPlugin().getWorldManager().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+        } catch (Exception e) {
+            Text.send(commandSender, "&cThere is no world type named " + worldtype);
+        }
     }
 
     @SubCommand("delete")
