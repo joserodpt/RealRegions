@@ -48,7 +48,7 @@ public class WorldViewer {
         this.ws = ws;
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
         this.uuid = pl.getUniqueId();
-        ArrayList<RWorld> worlds = RealRegions.getPlugin().getWorldManager().getWorlds();
+        List<RWorld> worlds = RealRegions.getPlugin().getWorldManager().getWorlds();
 
         switch (ws) {
             case TIME:
@@ -58,7 +58,6 @@ public class WorldViewer {
                 worlds.sort(Comparator.comparingDouble(RWorld::getWorldSizeMB));
                 break;
         }
-
 
         this.p = new Pagination<>(28, worlds);
         fillChest(p.getPage(this.pageNumber), ws);

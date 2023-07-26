@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.config.Config;
@@ -17,7 +19,7 @@ public class Text {
 
 	public static String convertUnixTimeToDate(long unixTime) {
 		Date date = new Date(unixTime * 1000L); // Convert seconds to milliseconds
-		SimpleDateFormat sdf = new SimpleDateFormat(Config.getConfig().getString("RealRegions.Date-Format")); // Format the date as needed
+		SimpleDateFormat sdf = new SimpleDateFormat(Objects.requireNonNull(Config.getConfig().getString("RealRegions.Date-Format"))); // Format the date as needed
 		return sdf.format(date);
 	}
 
@@ -33,12 +35,10 @@ public class Text {
 		list.forEach(s -> cs.sendMessage(Text.color(s)));
 	}
 
-	public static ArrayList<String> color(List<String> list) {
-		ArrayList<String> color = new ArrayList<>();
-		for (String s : list) {
-			color.add(Text.color("&f" + s));
-		}
-		return color;
+	public static List<String> color(List<String> list) {
+		return list.stream()
+				.map(s -> Text.color("&f" + s))
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	public static String cords(Location l) {

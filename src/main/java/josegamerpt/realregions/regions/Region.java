@@ -134,7 +134,7 @@ public class Region {
         return Itens.createItem(getIcon(), 1, "&f" + getDisplayName() + " &7[&b" + (getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name()) + "&7]", desc);
     }
 
-    void flagsList(List<String> desc, String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16) {
+    public void flagsList(List<String> desc, String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16) {
         desc.addAll(Arrays.asList("",
                 "&6Flags:",
                 " &fAccess Chests: " + s,

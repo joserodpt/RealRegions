@@ -1,18 +1,15 @@
 package josegamerpt.realregions.utils;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class IO {
 
     public static long folderSize(File directory) {
-        long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                length += file.length();
-            else
-                length += folderSize(file);
-        }
-        return length;
+        return Arrays.stream(Objects.requireNonNull(directory.listFiles()))
+                .mapToLong(file -> file.isFile() ? file.length() : folderSize(file))
+                .sum();
     }
 
     public static long toMB(long l)

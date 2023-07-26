@@ -28,7 +28,7 @@ public class RealRegions extends JavaPlugin {
         return pl;
     }
     @Override
-    public void onEnable() {
+    public void onEnable() { //TODO; imports sem *, passar referencia disto em vez de static
         pl = this;
 
         getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +

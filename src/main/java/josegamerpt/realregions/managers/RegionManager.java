@@ -15,14 +15,15 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class RegionManager {
 
     private final WorldManager wm;
-    private ArrayList<Region> view = new ArrayList<>();
+    private List<Region> view = new ArrayList<>();
 
-    public ArrayList<Region> getView() {
+    public List<Region> getView() {
         return view;
     }
 
@@ -34,8 +35,8 @@ public class RegionManager {
         getRegions(w).forEach(rRegion -> rRegion.saveData(Region.RegionData.ALL));
     }
 
-    public ArrayList<Region> loadRegions(RWorld w) {
-        ArrayList<Region> loaded_regions = new ArrayList<>();
+    public List<Region> loadRegions(RWorld w) {
+        List<Region> loaded_regions = new ArrayList<>();
         for (String r : w.getConfig().getConfigurationSection("Regions").getKeys(false)) {
             Region.RegionType rt = Region.RegionType.valueOf(w.getConfig().getString("Regions." + r + ".Type"));
             String n = w.getConfig().getString("Regions." + r + ".Display-Name");
@@ -134,7 +135,7 @@ public class RegionManager {
 
     }
 
-    public ArrayList<Region> getRegions(RWorld w) {
+    public List<Region> getRegions(RWorld w) {
         return wm.getWorldsAndRegions().get(w);
     }
 

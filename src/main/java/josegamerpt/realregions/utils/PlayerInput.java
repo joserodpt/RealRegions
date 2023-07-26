@@ -1,10 +1,6 @@
 package josegamerpt.realregions.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import josegamerpt.realregions.RealRegions;
 import org.bukkit.Bukkit;
@@ -20,7 +16,7 @@ public class PlayerInput implements Listener {
 	private static Map<UUID, PlayerInput> inputs = new HashMap<>();
 	private UUID uuid;
 
-	private ArrayList<String> texts = Text
+	private List<String> texts = Text
 			.color(Arrays.asList("&l&9Type in chat your input", "&fType &4cancel &fto cancel"));
 
 	private InputRunnable runGo;

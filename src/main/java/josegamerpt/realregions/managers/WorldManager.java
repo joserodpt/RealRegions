@@ -19,14 +19,14 @@ import java.util.*;
 
 public class WorldManager {
     private final RegionManager rm = new RegionManager(this);
-    private HashMap<RWorld, ArrayList<Region>> worlds_reg_dic = new HashMap<>();
-    public HashMap<RWorld, ArrayList<Region>> getWorldsAndRegions() {
+    private Map<RWorld, List<Region>> worlds_reg_dic = new HashMap<>();
+    public Map<RWorld, List<Region>> getWorldsAndRegions() {
         return worlds_reg_dic;
     }
     public RegionManager getRegionManager() {
         return rm;
     }
-    public ArrayList<RWorld> getWorlds() {
+    public List<RWorld> getWorlds() {
         return new ArrayList<>(worlds_reg_dic.keySet());
     }
     public void loadWorlds() {
@@ -242,8 +242,7 @@ public class WorldManager {
         }
 
         if (!directory.delete()) {
-            final String message = "Unable to delete directory " + directory;
-            throw new IOException(message);
+            RealRegions.getPlugin().getLogger().warning("Unable to delete directory " + directory);
         }
     }
     private void cleanDirectory(final File directory) throws IOException {
