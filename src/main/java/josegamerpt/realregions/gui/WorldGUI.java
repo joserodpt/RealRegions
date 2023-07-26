@@ -54,7 +54,7 @@ public class WorldGUI {
     public void load() {
         ArrayList<Region> regions = RealRegions.getPlugin().getWorldManager().getRegionManager().getRegions(r);
 
-        p = new Pagination<>(21, regions);
+        p = new Pagination<>(15, regions);
         fillChest(p.getPage(pageNumber));
     }
 
