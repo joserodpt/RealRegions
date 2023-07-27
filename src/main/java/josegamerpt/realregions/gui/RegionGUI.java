@@ -22,7 +22,11 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class RegionGUI {
 
@@ -34,8 +38,10 @@ public class RegionGUI {
 
 	private UUID uuid;
 	private Region r;
+	private RealRegions rr;
 
-	public RegionGUI(Player as, Region r) {
+	public RegionGUI(Player as, Region r, RealRegions rr) {
+		this.rr = rr;
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
 
@@ -193,22 +199,22 @@ public class RegionGUI {
 								{
 									public void run()
 									{
-										WorldGUI mp = new WorldGUI(player, current.r.getRWorld());
+										WorldGUI mp = new WorldGUI(player, current.r.getRWorld(), current.rr);
 										mp.openInventory(player);
 									}
-								}.runTaskLater(RealRegions.getPlugin(), 2);
+								}.runTaskLater(current.rr, 2);
 								break;
 							case 42:
 								player.closeInventory();
-								RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(player, current.r);
+								current.rr.getWorldManager().getRegionManager().deleteRegion(player, current.r);
 								new BukkitRunnable()
 								{
 									public void run()
 									{
-										WorldGUI mp = new WorldGUI(player, current.r.getRWorld());
+										WorldGUI mp = new WorldGUI(player, current.r.getRWorld(), current.rr);
 										mp.openInventory(player);
 									}
-								}.runTaskLater(RealRegions.getPlugin(), 2);
+								}.runTaskLater(current.rr, 2);
 								break;
 
 							case 2:
@@ -384,7 +390,7 @@ public class RegionGUI {
 									if (!StringUtils.isNumeric(input))
 									{
 										Text.send(player, "&fInput is &cnot &fa number.");
-										RegionGUI wv = new RegionGUI(player, current.r);
+										RegionGUI wv = new RegionGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
 									}
@@ -394,12 +400,12 @@ public class RegionGUI {
 									Text.send(player, "&fPriority changed to " + Text.color(input));
 									new BukkitRunnable() {
 										public void run() {
-											RegionGUI wv = new RegionGUI(player, current.r);
+											RegionGUI wv = new RegionGUI(player, current.r, current.rr);
 											wv.openInventory(player);
 										}
-									}.runTaskLater(RealRegions.getPlugin(), 2);
+									}.runTaskLater(current.rr, 2);
 								}, input -> {
-									RegionGUI wv = new RegionGUI(player, current.r);
+									RegionGUI wv = new RegionGUI(player, current.r, current.rr);
 									wv.openInventory(player);
 								});
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);

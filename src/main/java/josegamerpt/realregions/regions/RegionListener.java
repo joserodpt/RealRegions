@@ -14,7 +14,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -23,11 +28,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class RegionListener implements Listener {
+    private RealRegions rr;
+    
+    public RegionListener(RealRegions rr) {
+        this.rr = rr;
+    }
+    
 
     //world listeners
     @EventHandler(priority = EventPriority.HIGH)
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(event.getLocation());
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(event.getLocation());
 
         if (selected != null && !selected.hasEntitySpawning()) {
             event.setCancelled(true);
@@ -37,7 +48,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent e) {
         Location explodeLocation = e.getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(explodeLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(explodeLocation);
 
         if (selected != null && !selected.hasExplosions()) {
             e.setCancelled(true);
@@ -47,7 +58,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Location blockLocation = event.getBlock().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(blockLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(blockLocation);
 
         if (selected != null) {
             Player p = event.getPlayer();
@@ -66,7 +77,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Location blockLocation = event.getBlock().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(blockLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(blockLocation);
 
         if (selected != null) {
             Player p = event.getPlayer();
@@ -85,7 +96,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event) {
         Location entityLocation = event.getEntity().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
 
         if (selected != null) {
             if (!(event.getEntity() instanceof Player))
@@ -106,7 +117,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e) {
         Location itemLocation = e.getItemDrop().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(itemLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(itemLocation);
 
         if (selected != null) {
             Player p = e.getPlayer();
@@ -125,7 +136,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onItemPickup(EntityPickupItemEvent e) {
         Location entityLocation = e.getEntity().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
 
         if (selected != null) {
             if (!(e.getEntity() instanceof Player))
@@ -147,7 +158,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
         Location entityLocation = e.getEntity().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
 
         if (selected != null) {
             if (e.getEntity() instanceof Player) {
@@ -167,7 +178,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void tp(PlayerTeleportEvent e) {
         Location toLocation = e.getTo();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(toLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(toLocation);
 
         if (selected != null) {
             Player p = e.getPlayer();
@@ -211,7 +222,7 @@ public class RegionListener implements Listener {
         }
 
         Location toLocation = e.getTo();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(toLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(toLocation);
 
         if (selected != null) {
             Player p = e.getPlayer();
@@ -237,7 +248,7 @@ public class RegionListener implements Listener {
             return;
         }
         Location clickedBlockLocation = e.getClickedBlock().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(clickedBlockLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(clickedBlockLocation);
 
         if (selected != null) {
             Player p = e.getPlayer();
@@ -316,7 +327,7 @@ public class RegionListener implements Listener {
             return;
 
         Location entityLocation = event.getEntity().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(entityLocation);
 
         if (selected != null) {
             Player damager = (Player) event.getDamager();
@@ -336,7 +347,7 @@ public class RegionListener implements Listener {
     @EventHandler
     private void onDamageEntity(EntityDamageByEntityEvent event) {
         Location damagerLocation = event.getDamager().getLocation();
-        Region selected = RealRegions.getPlugin().getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(damagerLocation);
+        Region selected = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(damagerLocation);
 
         if (selected != null) {
             if (!(event.getDamager() instanceof Player))

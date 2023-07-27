@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.config.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,10 +46,10 @@ public class Text {
 	}
 
 	public static void send(Player p, String string) {
-		p.sendMessage(Text.color(RealRegions.getPlugin().getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.Prefix") + " &r" + string));
 	}
 	public static void send(CommandSender p, String string) {
-		p.sendMessage(Text.color(RealRegions.getPlugin().getPrefix() + "&r" + string));
+		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.RealRegions") + " &r" + string));
 	}
 
     public static String locToTex(Location pos) {

@@ -4,7 +4,9 @@ import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.utils.IO;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -21,7 +23,7 @@ public class RWorld implements Listener {
 
     public enum WorldType { NORMAL, NETHER, THE_END, VOID }
 
-    public enum Data { ICON, LOAD,  REGIONS }
+    public enum Data { ICON, LOAD }
 
     private String worldName;
     private World world;
@@ -228,9 +230,6 @@ public class RWorld implements Listener {
             case LOAD:
                 config.set("Settings.Load", this.loaded);
                 saveConfig();
-                break;
-            case REGIONS:
-                RealRegions.getPlugin().getWorldManager().getRegionManager().saveRegions(this);
                 break;
         }
     }

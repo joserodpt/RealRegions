@@ -1,10 +1,14 @@
 package josegamerpt.realregions;
 
+import josegamerpt.realregions.gui.EntityViewer;
+import josegamerpt.realregions.gui.MaterialPicker;
+import josegamerpt.realregions.gui.RegionGUI;
+import josegamerpt.realregions.gui.WorldGUI;
+import josegamerpt.realregions.gui.WorldViewer;
 import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.commands.RealRegionsCMD;
 import josegamerpt.realregions.managers.WorldManager;
 import josegamerpt.realregions.config.Config;
-import josegamerpt.realregions.gui.*;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.regions.RegionListener;
 import josegamerpt.realregions.utils.PlayerInput;
@@ -18,17 +22,16 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
-    static RealRegions pl;
-    private String prefix;
-    private final WorldManager worldManager = new WorldManager();
+    private final WorldManager worldManager = new WorldManager(this);
     public WorldManager getWorldManager() {
         return worldManager;
     }
+    private static RealRegions pl;
     public static RealRegions getPlugin() {
         return pl;
     }
     @Override
-    public void onEnable() { //TODO; imports sem *, passar referencia disto em vez de static
+    public void onEnable() {
         pl = this;
 
         getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
@@ -37,10 +40,8 @@ public class RealRegions extends JavaPlugin {
         saveDefaultConfig();
         Config.setup(this);
 
-        prefix = Text.color(Config.getConfig().getString("RealRegions.Prefix"));
-
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new RegionListener(), this);
+        pm.registerEvents(new RegionListener(this), this);
         pm.registerEvents(WorldViewer.getListener(), this);
         pm.registerEvents(WorldGUI.getListener(), this);
         pm.registerEvents(MaterialPicker.getListener(), this);
@@ -74,7 +75,6 @@ public class RealRegions extends JavaPlugin {
                         .collect(Collectors.toList())
         );
 
-
         cm.register(new RealRegionsCMD(this));
 
         worldManager.loadWorlds();
@@ -88,13 +88,5 @@ public class RealRegions extends JavaPlugin {
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
         getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
-    }
-
-    public String getPrefix() {
-        return this.prefix + " ";
-    }
-
-    public void setPrefix(String c) {
-        this.prefix = c;
     }
 }

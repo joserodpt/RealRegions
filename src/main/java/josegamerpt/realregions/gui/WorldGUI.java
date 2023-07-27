@@ -8,7 +8,10 @@ import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Pagination;
 import josegamerpt.realregions.utils.PlayerInput;
 import josegamerpt.realregions.utils.Text;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -21,7 +24,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 
 public class WorldGUI {
 
@@ -39,9 +48,11 @@ public class WorldGUI {
     private RWorld r;
 
     int pageNumber = 0;
-    Pagination<Region> p;
+    private Pagination<Region> p;
+    private RealRegions rr;
 
-    public WorldGUI(Player as, RWorld r) {
+    public WorldGUI(Player as, RWorld r, RealRegions rr) {
+        this.rr = rr;
         this.uuid = as.getUniqueId();
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getRWorldName()));
 
@@ -52,7 +63,7 @@ public class WorldGUI {
     }
 
     public void load() {
-        p = new Pagination<>(15, RealRegions.getPlugin().getWorldManager().getRegionManager().getRegions(r));
+        p = new Pagination<>(15, rr.getWorldManager().getRegionManager().getRegions(r));
         fillChest(p.getPage(pageNumber));
     }
 
@@ -140,10 +151,10 @@ public class WorldGUI {
                                 p.closeInventory();
                                 new BukkitRunnable() {
                                     public void run() {
-                                        EntityViewer v = new EntityViewer(p, current.r);
+                                        EntityViewer v = new EntityViewer(p, current.r, current.rr);
                                         v.openInventory(p);
                                     }
-                                }.runTaskLater(RealRegions.getPlugin(), 2);
+                                }.runTaskLater(current.rr, 2);
                                 break;
                             case 34:
                                 p.closeInventory();
@@ -152,15 +163,15 @@ public class WorldGUI {
                                         EntityViewer v = new EntityViewer(p, current.r, EntityType.PLAYER);
                                         v.openInventory(p);
                                     }
-                                }.runTaskLater(RealRegions.getPlugin(), 2);
+                                }.runTaskLater(current.rr, 2);
                                 break;
                             case 16:
                                 p.closeInventory();
 
                                 if (!current.r.isLoaded()) {
-                                    RealRegions.getPlugin().getWorldManager().loadWorld(p, current.r.getRWorldName());
+                                    current.rr.getWorldManager().loadWorld(p, current.r.getRWorldName());
                                 } else {
-                                    RealRegions.getPlugin().getWorldManager().unloadWorld(p, current.r);
+                                    current.rr.getWorldManager().unloadWorld(p, current.r);
                                 }
 
                                 break;
@@ -182,16 +193,16 @@ public class WorldGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            RealRegions.getPlugin().getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
+                                            current.rr.getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, "&aRegion created.");
                                             new BukkitRunnable() {
                                                 public void run() {
-                                                    WorldGUI g = new WorldGUI(p, current.r);
+                                                    WorldGUI g = new WorldGUI(p, current.r, current.rr);
                                                     g.openInventory(p);
                                                 }
-                                            }.runTaskLater(RealRegions.getPlugin(), 2);
+                                            }.runTaskLater(current.rr, 2);
                                         }, input -> {
-                                            WorldGUI wv = new WorldGUI(p, current.r);
+                                            WorldGUI wv = new WorldGUI(p, current.r, current.rr);
                                             wv.openInventory(p);
                                         });
                                     } else {
@@ -205,7 +216,7 @@ public class WorldGUI {
                                 break;
                             case 43:
                                 p.closeInventory();
-                                WorldViewer asd = new WorldViewer(p, WorldViewer.WorldSort.TIME);
+                                WorldViewer asd = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
                                 asd.openInventory(p);
                                 break;
                             case 38:
@@ -230,23 +241,23 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            RegionGUI fg = new RegionGUI(p, a);
+                                            RegionGUI fg = new RegionGUI(p, a, current.rr);
                                             fg.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPlugin(), 2);
+                                    }.runTaskLater(current.rr, 2);
                                     break;
                                 case SHIFT_LEFT:
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_REG);
+                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_REG, current.rr);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPlugin(), 2);
+                                    }.runTaskLater(current.rr, 2);
                                     break;
                                 case DROP:
                                     p.closeInventory();
-                                    RealRegions.getPlugin().getWorldManager().getRegionManager().deleteRegion(p, a);
+                                    current.rr.getWorldManager().getRegionManager().deleteRegion(p, a);
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {
@@ -256,12 +267,12 @@ public class WorldGUI {
                                         Text.send(p, "&fRegion displayname changed to " + Text.color(input));
                                         new BukkitRunnable() {
                                             public void run() {
-                                                WorldGUI g = new WorldGUI(p, current.r);
+                                                WorldGUI g = new WorldGUI(p, current.r, current.rr);
                                                 g.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getPlugin(), 2);
+                                        }.runTaskLater(current.rr, 2);
                                     }, input -> {
-                                        WorldGUI wv = new WorldGUI(p, current.r);
+                                        WorldGUI wv = new WorldGUI(p, current.r, current.rr);
                                         wv.openInventory(p);
                                     });
                                     break;

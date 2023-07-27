@@ -1,7 +1,11 @@
 package josegamerpt.realregions.gui;
 
+import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.regions.RWorld;
-import josegamerpt.realregions.utils.*;
+import josegamerpt.realregions.utils.Itens;
+import josegamerpt.realregions.utils.Pagination;
+import josegamerpt.realregions.utils.PlayerInput;
+import josegamerpt.realregions.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -16,7 +20,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class EntityViewer {
 
@@ -38,10 +48,12 @@ public class EntityViewer {
     private HashMap<Integer, EntityIcon> display = new HashMap<>();
 
     int pageNumber = 0;
-    Pagination<EntityIcon> p;
+    private Pagination<EntityIcon> p;
     private RWorld r;
+    private RealRegions rr;
 
-    public EntityViewer(Player pl, RWorld r) {
+    public EntityViewer(Player pl, RWorld r, RealRegions rr) {
+        this.rr = rr;
         this.r = r;
 
         if (!r.isLoaded()) {
@@ -222,19 +234,19 @@ public class EntityViewer {
                                     if (current.searchEntity(p, input).size() == 0) {
                                         Text.send(p, "&fNothing found for your search terms.");
 
-                                        current.exit(p);
+                                        current.exit(p, current.rr);
                                         return;
                                     }
                                     EntityViewer df = new EntityViewer(p, current.r, input);
                                     df.openInventory(p);
                                 }, input -> {
                                     p.closeInventory();
-                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME);
+                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
                                     wv.openInventory(p);
                                 });
                                 break;
                             case 49:
-                                current.exit(p);
+                                current.exit(p, current.rr);
                                 break;
                             case 26:
                             case 35:
@@ -298,9 +310,9 @@ public class EntityViewer {
         return pageNumber == 0;
     }
 
-    protected void exit(Player p) {
+    protected void exit(Player p, RealRegions rr) {
         p.closeInventory();
-        WorldGUI v = new WorldGUI(p, this.r);
+        WorldGUI v = new WorldGUI(p, this.r, rr);
         v.openInventory(p);
     }
 

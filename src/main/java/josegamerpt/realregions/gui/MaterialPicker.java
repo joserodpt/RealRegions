@@ -1,7 +1,5 @@
 package josegamerpt.realregions.gui;
 
-import java.util.*;
-
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.CuboidRegion;
@@ -23,6 +21,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class MaterialPicker {
 
@@ -51,8 +56,10 @@ public class MaterialPicker {
     Pagination<Material> p;
     private Object min;
     private PickType pt;
+    private RealRegions rr;
 
-    public MaterialPicker(Object m, Player pl, PickType block) {
+    public MaterialPicker(Object m, Player pl, PickType block, RealRegions rr) {
+        this.rr = rr;
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -74,7 +81,8 @@ public class MaterialPicker {
         this.register();
     }
 
-    public MaterialPicker(Object m, Player pl, PickType block, String search) {
+    public MaterialPicker(Object m, Player pl, PickType block, String search, RealRegions rr) {
+        this.rr = rr;
         this.uuid = pl.getUniqueId();
         this.min = m;
         this.pt = block;
@@ -212,19 +220,19 @@ public class MaterialPicker {
                                     if (current.searchMaterial(input).size() == 0) {
                                         Text.send(gp, "&fNothing found for your search terms.");
 
-                                        current.exit(gp);
+                                        current.exit(gp, current.rr);
                                         return;
                                     }
-                                    MaterialPicker df = new MaterialPicker(current.min, gp, current.pt, input);
+                                    MaterialPicker df = new MaterialPicker(current.min, gp, current.pt, input, current.rr);
                                     df.openInventory(gp);
                                 }, input -> {
                                     gp.closeInventory();
-                                    WorldViewer wv = new WorldViewer(gp, WorldViewer.WorldSort.TIME);
+                                    WorldViewer wv = new WorldViewer(gp, WorldViewer.WorldSort.TIME, current.rr);
                                     wv.openInventory(gp);
                                 });
                                 break;
                             case 49:
-                                current.exit(gp);
+                                current.exit(gp, current.rr);
                                 break;
                             case 26:
                             case 35:
@@ -245,7 +253,7 @@ public class MaterialPicker {
                                 Region r = ((Region) current.min);
                                 r.setIcon(a);
                                 r.saveData(Region.RegionData.ICON);
-                                WorldGUI v = new WorldGUI(gp, r.getRWorld());
+                                WorldGUI v = new WorldGUI(gp, r.getRWorld(), current.rr);
                                 v.openInventory(gp);
                             }
                             if (current.pt.equals(PickType.ICON_WORLD)) {
@@ -253,7 +261,7 @@ public class MaterialPicker {
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);
                                 r.saveData(RWorld.Data.ICON);
-                                WorldViewer v = new WorldViewer(gp, WorldViewer.WorldSort.TIME);
+                                WorldViewer v = new WorldViewer(gp, WorldViewer.WorldSort.TIME, current.rr);
                                 v.openInventory(gp);
                             }
                         }
@@ -301,14 +309,14 @@ public class MaterialPicker {
         return pageNumber == 0;
     }
 
-    protected void exit(Player p) {
+    protected void exit(Player p, RealRegions rr) {
         p.closeInventory();
         switch (this.pt)
         {
             case ICON_WORLD:
                 new BukkitRunnable() {
                     public void run() {
-                        WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME);
+                        WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, rr);
                         wv.openInventory(p);
                     }
                 }.runTaskLater(RealRegions.getPlugin(), 2);
@@ -316,7 +324,7 @@ public class MaterialPicker {
             case ICON_REG:
                 new BukkitRunnable() {
                     public void run() {
-                        WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getRWorld());
+                        WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getRWorld(), rr);
                         v.openInventory(p);
                     }
                 }.runTaskLater(RealRegions.getPlugin(), 2);

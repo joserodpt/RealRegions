@@ -4,7 +4,10 @@ import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.utils.Text;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,9 +18,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class WorldManager {
+    private RealRegions rr;
+    public WorldManager(RealRegions rr) {
+        this.rr = rr;
+    }
+    
     private final RegionManager rm = new RegionManager(this);
     private Map<RWorld, List<Region>> worlds_reg_dic = new HashMap<>();
     public Map<RWorld, List<Region>> getWorldsAndRegions() {
@@ -31,10 +43,10 @@ public class WorldManager {
     }
     public void loadWorlds() {
         //check if folder "worlds" exists in RealRegions
-        File folder = new File(RealRegions.getPlugin().getDataFolder() + "/worlds");
+        File folder = new File(rr.getDataFolder() + "/worlds");
 
         if (folder.exists() && folder.isDirectory()) {
-            RealRegions.getPlugin().getLogger().info("Loading worlds and regions.");
+            rr.getLogger().info("Loading worlds and regions.");
 
             for (File world : folder.listFiles()) {
                 String worldName = world.getName().replace(".yml", "");
@@ -50,7 +62,7 @@ public class WorldManager {
 
                     //if it doesn't exist, display an warning
                     if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-                        RealRegions.getPlugin().getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
+                        rr.getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
                     } else {
                         WorldCreator worldCreator = new WorldCreator(worldName);
                         World w = worldCreator.createWorld();
@@ -71,7 +83,7 @@ public class WorldManager {
             }
         } else {
             //folder doesn't exist, load default worlds from Bukkit
-            RealRegions.getPlugin().getLogger().info("First startup, importing default worlds.");
+            rr.getLogger().info("First startup, importing default worlds.");
             for (World world : Bukkit.getWorlds()) {
                 initializeRWorld(world.getName(), world, RWorld.WorldType.valueOf(world.getEnvironment().name()));
             }
@@ -130,7 +142,7 @@ public class WorldManager {
     }
     public void unloadWorld(RWorld rw, boolean save) {
         rw.setLoaded(false);
-        rw.saveData(RWorld.Data.REGIONS);
+        this.getRegionManager().saveRegions(rw);
 
         World world = rw.getWorld();
 
@@ -140,7 +152,7 @@ public class WorldManager {
                 tp.teleport(player, false);
             }
         }
-        RealRegions.getPlugin().getServer().unloadWorld(world, save);
+        rr.getServer().unloadWorld(world, save);
     }
     public void unloadWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
@@ -217,7 +229,7 @@ public class WorldManager {
             this.unloadWorld(r, false);
             r.deleteConfig();
             if (removeFile) {
-                File target = new File(RealRegions.getPlugin().getServer().getWorldContainer().getAbsolutePath(), r.getWorld().getName());
+                File target = new File(rr.getServer().getWorldContainer().getAbsolutePath(), r.getWorld().getName());
                 try {
                     deleteDirectory(target);
                 } catch (IOException e) {
@@ -242,7 +254,7 @@ public class WorldManager {
         }
 
         if (!directory.delete()) {
-            RealRegions.getPlugin().getLogger().warning("Unable to delete directory " + directory);
+            rr.getLogger().warning("Unable to delete directory " + directory);
         }
     }
     private void cleanDirectory(final File directory) throws IOException {

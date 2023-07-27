@@ -1,7 +1,5 @@
 package josegamerpt.realregions.utils;
 
-import java.util.*;
-
 import josegamerpt.realregions.RealRegions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,6 +8,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayerInput implements Listener {
 

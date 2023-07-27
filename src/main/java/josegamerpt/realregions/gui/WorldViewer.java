@@ -20,7 +20,12 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class WorldViewer {
 
@@ -43,12 +48,14 @@ public class WorldViewer {
 
     public enum WorldSort { SIZE, TIME }
     private WorldSort ws;
+    private RealRegions rr;
 
-    public WorldViewer(Player pl, WorldSort ws) {
+    public WorldViewer(Player pl, WorldSort ws, RealRegions rr) {
+        this.rr = rr;
         this.ws = ws;
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));
         this.uuid = pl.getUniqueId();
-        List<RWorld> worlds = RealRegions.getPlugin().getWorldManager().getWorlds();
+        List<RWorld> worlds = rr.getWorldManager().getWorlds();
 
         switch (ws) {
             case TIME:
@@ -174,20 +181,20 @@ public class WorldViewer {
                                         {
                                             public void run()
                                             {
-                                                WorldViewer v = new WorldViewer(p, WorldSort.SIZE);
+                                                WorldViewer v = new WorldViewer(p, WorldSort.SIZE, current.rr);
                                                 v.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getPlugin(), 2);
+                                        }.runTaskLater(current.rr, 2);
                                         break;
                                     case SIZE:
                                         new BukkitRunnable()
                                         {
                                             public void run()
                                             {
-                                                WorldViewer v = new WorldViewer(p, WorldSort.TIME);
+                                                WorldViewer v = new WorldViewer(p, WorldSort.TIME, current.rr);
                                                 v.openInventory(p);
                                             }
-                                        }.runTaskLater(RealRegions.getPlugin(), 2);
+                                        }.runTaskLater(current.rr, 2);
                                         break;
                                 }
                             case 49:
@@ -204,8 +211,8 @@ public class WorldViewer {
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                             case 51:
-                                new PlayerInput(p, input -> RealRegions.getPlugin().getWorldManager().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
-                                    WorldViewer wv = new WorldViewer(p, current.ws);
+                                new PlayerInput(p, input -> current.rr.getWorldManager().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
+                                    WorldViewer wv = new WorldViewer(p, current.ws, current.rr);
                                     wv.openInventory(p);
                                 });
                         }
@@ -224,10 +231,10 @@ public class WorldViewer {
                                     {
                                         public void run()
                                         {
-                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_WORLD);
+                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_WORLD, current.rr);
                                             mp.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPlugin(), 2);
+                                    }.runTaskLater(current.rr, 2);
                                     break;
                                 default:
                                     p.closeInventory();
@@ -235,10 +242,10 @@ public class WorldViewer {
                                     {
                                         public void run()
                                         {
-                                            WorldGUI v = new WorldGUI(p, a);
+                                            WorldGUI v = new WorldGUI(p, a, current.rr);
                                             v.openInventory(p);
                                         }
-                                    }.runTaskLater(RealRegions.getPlugin(), 2);
+                                    }.runTaskLater(current.rr, 2);
                                     break;
                             }
                         }
