@@ -33,6 +33,7 @@ public class RealRegions extends JavaPlugin {
     @Override
     public void onEnable() {
         pl = this;
+        new Metrics(this, 19311);
 
         getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
@@ -83,6 +84,17 @@ public class RealRegions extends JavaPlugin {
 
         //start region visualizer
         worldManager.getRegionManager().startVisualizer();
+
+        /*
+        new UpdateChecker(this, 0).getVersion(version -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                this.getLogger().info("The plugin is updated to the latest version.");
+            } else {
+                this.newUpdate = true;
+                this.getLogger().info("There is a new update available! Version: " + version + " URL");
+            }
+        });
+         */
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
