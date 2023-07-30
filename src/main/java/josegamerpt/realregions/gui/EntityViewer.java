@@ -176,7 +176,7 @@ public class EntityViewer {
         int slot = 0;
         for (ItemStack i : this.inv.getContents()) {
             if (i == null) {
-                if (items.size() != 0) {
+                if (!items.isEmpty()) {
                     EntityIcon e = items.get(0);
                     this.inv.setItem(slot, e.getIcon());
                     this.display.put(slot, e);
@@ -231,7 +231,7 @@ public class EntityViewer {
                         {
                             case 4:
                                 new PlayerInput(p, input -> {
-                                    if (current.searchEntity(p, input).size() == 0) {
+                                    if (current.searchEntity(p, input).isEmpty()) {
                                         Text.send(p, "&fNothing found for your search terms.");
 
                                         current.exit(p, current.rr);

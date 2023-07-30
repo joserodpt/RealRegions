@@ -1,8 +1,8 @@
 package josegamerpt.realregions.gui;
 
-import josegamerpt.realregions.utils.DistanceCalculator;
 import josegamerpt.realregions.utils.Itens;
 import josegamerpt.realregions.utils.Text;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -19,7 +19,7 @@ public class EntityIcon {
     public EntityIcon(Player p, Entity e) {
         this.e = e;
 
-        this.distanceRelativeToPlayer = DistanceCalculator.calculateDistance(p, e);
+        this.distanceRelativeToPlayer = calculateDistance(p, e);
     }
 
     public Double getDistanceRelativeToPlayer() {
@@ -55,5 +55,24 @@ public class EntityIcon {
                 return Itens.createItem(Material.PAINTING, 1, "&f" + this.getEntity().getCustomName() + " &7[&r&f" + getEntityName() + "&7]", Arrays.asList("&8Icon could not be found.", "&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             }
         }
+    }
+
+    private double calculateDistance(Entity entity1, Entity entity2) {
+        if (entity1.getLocation().getWorld() != entity2.getLocation().getWorld()) {
+            return -1;
+        }
+
+        // Get the locations of the two entities
+        Location location1 = entity1.getLocation();
+        Location location2 = entity2.getLocation();
+
+        // Use the distance formula to calculate the distance
+        double dx = location2.getX() - location1.getX();
+        double dy = location2.getY() - location1.getY();
+        double dz = location2.getZ() - location1.getZ();
+
+        double distanceSquared = dx * dx + dy * dy + dz * dz;
+
+        return Math.round(Math.sqrt(distanceSquared) * 100.0) / 100.0;
     }
 }

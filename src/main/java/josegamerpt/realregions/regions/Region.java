@@ -69,7 +69,6 @@ public class Region {
         } else {
             RealRegions.getPlugin().getWorldManager().getRegionManager().getView().remove(this);
         }
-
     }
 
     public void saveData(Region.RegionData dr) {

@@ -84,7 +84,7 @@ public class WorldGUI {
                 case 17:
                     break;
                 default:
-                    if (items.size() != 0) {
+                    if (!items.isEmpty()) {
                         Region wi = items.get(0);
                         this.inv.setItem(i, wi.getItem());
                         this.display.put(i, wi);

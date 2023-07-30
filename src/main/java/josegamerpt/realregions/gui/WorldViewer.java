@@ -113,7 +113,7 @@ public class WorldViewer {
         int slot = 0;
         for (ItemStack i : this.inv.getContents()) {
             if (i == null) {
-                if (items.size() != 0) {
+                if (!items.isEmpty()) {
                     RWorld e = items.get(0);
                     this.inv.setItem(slot, e.getItem());
                     this.display.put(slot, e);

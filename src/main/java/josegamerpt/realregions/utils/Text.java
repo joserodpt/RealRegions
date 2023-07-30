@@ -15,13 +15,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Text {
-
 	public static String convertUnixTimeToDate(long unixTime) {
 		Date date = new Date(unixTime * 1000L); // Convert seconds to milliseconds
 		SimpleDateFormat sdf = new SimpleDateFormat(Objects.requireNonNull(Config.getConfig().getString("RealRegions.Date-Format"))); // Format the date as needed
 		return sdf.format(date);
 	}
-
 	public static String styleBoolean(boolean a) {
 		return a ? "&a✔ enabled" : "&c❌ disabled";
 	}

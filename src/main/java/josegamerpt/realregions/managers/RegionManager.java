@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,18 +101,15 @@ public class RegionManager {
             String reg = split[0];
 
             RWorld w = wm.getWorld(world);
-            if (w != null) {
-                return wm.getWorldsAndRegions().containsKey(w) ? wm.getWorldsAndRegions().get(w).stream()
-                        .filter(region -> region.getRegionName().equals(reg))
-                        .findFirst()
-                        .orElse(null) : null;
-            } else {
-                return null;
-            }
+            return (w != null) ? wm.getWorldsAndRegions().getOrDefault(w, Collections.emptyList()).stream()
+                    .filter(region -> region.getRegionName().equals(reg))
+                    .findFirst()
+                    .orElse(null) : null;
         } catch (Exception e) {
             return null;
         }
     }
+
 
     public boolean hasRegion(RWorld w, String name) {
         return wm.getWorldsAndRegions().getOrDefault(w, new ArrayList<>())
@@ -161,6 +159,4 @@ public class RegionManager {
             }
         }.runTaskTimer(RealRegions.getPlugin(),0, 10);
     }
-
-
 }

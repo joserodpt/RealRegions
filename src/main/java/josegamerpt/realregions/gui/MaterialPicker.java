@@ -22,12 +22,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class MaterialPicker {
 
@@ -49,7 +50,7 @@ public class MaterialPicker {
             Collections.singletonList("&fClick here to search for a block."));
 
     private UUID uuid;
-    private ArrayList<Material> items;
+    private List<Material> items;
     private HashMap<Integer, Material> display = new HashMap<>();
 
     int pageNumber = 0;
@@ -103,24 +104,16 @@ public class MaterialPicker {
         this.register();
     }
 
-    private ArrayList<Material> getIcons() {
-        ArrayList<Material> ms = new ArrayList<>();
-        for (Material m : Material.values()) {
-            if (!m.equals(Material.AIR) && m.isSolid() && m.isBlock() && m.isItem()) {
-                ms.add(m);
-            }
-        }
-        return ms;
+    private List<Material> getIcons() {
+        return Arrays.stream(Material.values())
+                .filter(m -> !m.equals(Material.AIR) && m.isSolid() && m.isBlock() && m.isItem())
+                .collect(Collectors.toList());
     }
 
-    private ArrayList<Material> searchMaterial(String s) {
-        ArrayList<Material> ms = new ArrayList<>();
-        for (Material m : getIcons()) {
-            if (m.name().toLowerCase().contains(s.toLowerCase())) {
-                ms.add(m);
-            }
-        }
-        return ms;
+    private List<Material> searchMaterial(String s) {
+        return getIcons().stream()
+                .filter(m -> m.name().toLowerCase().contains(s.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     public void fillChest(List<Material> items) {
@@ -167,7 +160,7 @@ public class MaterialPicker {
         int slot = 0;
         for (ItemStack i : inv.getContents()) {
             if (i == null) {
-                if (items.size() != 0) {
+                if (!items.isEmpty()) {
                     Material s = items.get(0);
                     this.inv.setItem(slot,
                             Itens.createItem(s, 1, "§f" + s.name(), Collections.singletonList("&fClick to pick this.")));
@@ -217,7 +210,7 @@ public class MaterialPicker {
                         {
                             case 4:
                                 new PlayerInput(gp, input -> {
-                                    if (current.searchMaterial(input).size() == 0) {
+                                    if (current.searchMaterial(input).isEmpty()) {
                                         Text.send(gp, "&fNothing found for your search terms.");
 
                                         current.exit(gp, current.rr);
