@@ -160,7 +160,7 @@ public class WorldGUI {
                                 p.closeInventory();
                                 new BukkitRunnable() {
                                     public void run() {
-                                        EntityViewer v = new EntityViewer(p, current.r, EntityType.PLAYER);
+                                        EntityViewer v = new EntityViewer(p, current.r, EntityType.PLAYER, current.rr);
                                         v.openInventory(p);
                                     }
                                 }.runTaskLater(current.rr, 2);

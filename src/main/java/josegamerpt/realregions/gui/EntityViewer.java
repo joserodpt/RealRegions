@@ -70,7 +70,8 @@ public class EntityViewer {
         this.register();
     }
 
-    public EntityViewer(Player pl, RWorld r, String search) {
+    public EntityViewer(Player pl, RWorld r, String search, RealRegions rr) {
+        this.rr = rr;
         this.r = r;
 
         if (!r.isLoaded()) {
@@ -87,7 +88,8 @@ public class EntityViewer {
         this.register();
     }
 
-    public EntityViewer(Player pl, RWorld r, EntityType e) {
+    public EntityViewer(Player pl, RWorld r, EntityType e, RealRegions rr) {
+        this.rr = rr;
         this.r = r;
 
         if (!r.isLoaded()) {
@@ -237,7 +239,7 @@ public class EntityViewer {
                                         current.exit(p, current.rr);
                                         return;
                                     }
-                                    EntityViewer df = new EntityViewer(p, current.r, input);
+                                    EntityViewer df = new EntityViewer(p, current.r, input, current.rr);
                                     df.openInventory(p);
                                 }, input -> {
                                     p.closeInventory();

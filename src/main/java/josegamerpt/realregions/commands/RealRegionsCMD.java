@@ -353,7 +353,7 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            EntityViewer ev = new EntityViewer(p, rw, EntityType.PLAYER);
+            EntityViewer ev = new EntityViewer(p, rw, EntityType.PLAYER, rr);
             ev.openInventory(p);
         } else {
             commandSender.sendMessage("[RealRegions] Only players can run this command.");
