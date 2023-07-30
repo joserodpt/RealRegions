@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class EntityViewer {
 
@@ -107,32 +108,22 @@ public class EntityViewer {
     }
 
     private ArrayList<EntityIcon> getEnts(Player p) {
-        ArrayList<EntityIcon> ms = new ArrayList<>();
-        this.r.getWorld().getEntities().forEach(entity -> ms.add(new EntityIcon(p, entity)));
-
-        ms.sort(Comparator.comparingDouble(EntityIcon::getDistanceRelativeToPlayer));
-
-        return ms;
+        return this.r.getWorld().getEntities().stream()
+                .map(entity -> new EntityIcon(p, entity))
+                .sorted(Comparator.comparingDouble(EntityIcon::getDistanceRelativeToPlayer))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private ArrayList<EntityIcon> searchEntity(Player p, String s) {
-        ArrayList<EntityIcon> ms = new ArrayList<>();
-        for (EntityIcon e : getEnts(p)) {
-            if (e.getEntityName().toLowerCase().contains(s.toLowerCase())) {
-                ms.add(e);
-            }
-        }
-        return ms;
+        return getEnts(p).stream()
+                .filter(e -> e.getEntityName().toLowerCase().contains(s.toLowerCase()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private ArrayList<EntityIcon> searchEntity(Player p, EntityType search) {
-        ArrayList<EntityIcon> ms = new ArrayList<>();
-        for (EntityIcon e : getEnts(p)) {
-            if (e.getEntity().getType() == search) {
-                ms.add(e);
-            }
-        }
-        return ms;
+        return getEnts(p).stream()
+                .filter(e -> e.getEntity().getType() == search)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void fillChest(List<EntityIcon> items) {

@@ -27,7 +27,7 @@ public class EntityIcon {
     }
 
     public Entity getEntity() {
-        return e;
+        return this.e;
     }
 
     public String getEntityName() {
@@ -35,14 +35,18 @@ public class EntityIcon {
     }
 
     public ItemStack getIcon() {
-        if (this.e.getType() == EntityType.PLAYER) {
+        if (this.getEntity().getType() == EntityType.PLAYER) {
             return Itens.createItem(Material.PLAYER_HEAD, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
+        }
+
+        if (this.getEntity().getType() == EntityType.MINECART_CHEST) {
+            return Itens.createItem(Material.CHEST_MINECART, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
         }
 
         String mat = this.getEntity().getType().name().toUpperCase() + "_SPAWN_EGG";
         try {
             Material m = Material.valueOf(mat);
-            if (this.e.getCustomName() == null)
+            if (this.getEntity().getCustomName() == null)
             {
                 return Itens.createItem(m, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             } else {
