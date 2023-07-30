@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
     private final WorldManager worldManager = new WorldManager(this);
+    private boolean newUpdate;
+
     public WorldManager getWorldManager() {
         return worldManager;
     }
@@ -85,8 +87,8 @@ public class RealRegions extends JavaPlugin {
         //start region visualizer
         worldManager.getRegionManager().startVisualizer();
 
-        /*
-        new UpdateChecker(this, 0).getVersion(version -> {
+
+        new UpdateChecker(this, 111629).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 this.getLogger().info("The plugin is updated to the latest version.");
             } else {
@@ -94,11 +96,15 @@ public class RealRegions extends JavaPlugin {
                 this.getLogger().info("There is a new update available! Version: " + version + " URL");
             }
         });
-         */
+
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
         getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
                 this.getDescription().getVersion()));
+    }
+
+    public boolean hasNewUpdate() {
+        return this.newUpdate;
     }
 }

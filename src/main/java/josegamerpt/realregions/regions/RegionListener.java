@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -33,7 +34,13 @@ public class RegionListener implements Listener {
     public RegionListener(RealRegions rr) {
         this.rr = rr;
     }
-    
+
+    @EventHandler
+    public void onJoin(final PlayerJoinEvent e) {
+        if (e.getPlayer().isOp() && rr.hasNewUpdate()) {
+            Text.send(e.getPlayer(), "&6&LWARNING! &r&fThere is a new update available for Real&eRegions&f! https://www.spigotmc.org/resources/realregions-1-14-to-1-20-1.111629/");
+        }
+    }
 
     //world listeners
     @EventHandler(priority = EventPriority.HIGH)

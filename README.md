@@ -1,5 +1,33 @@
-# RealRegions
-Source-code for the RealRegions plugin.
+<div align="center">
+
+![Logo](https://i.imgur.com/0fvICMG.png)
+## RealRegions
+### GUI based World and Region Management Plugin
+
+[![Build](https://img.shields.io/github/actions/workflow/status/joserodpt/RealMines/maven.yml?branch=master)](https://github.com/JoseGamerPT/RealRegions/actions)
+![Issues](https://img.shields.io/github/issues-raw/JoseGamerPT/RealRegions)
+[![Stars](https://img.shields.io/github/stars/JoseGamerPT/RealRegions)](https://github.com/JoseGamerPT/RealRegions/stargazers)
+[![Chat)](https://img.shields.io/discord/817810368649887744?logo=discord&logoColor=white)](https://discord.gg/t7gfnYZKy8)
+
+<a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/spigot_46h.png" height="35"></a>
+<a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/paper_46h.png" height="35"></a>
+<a href="/#"><img src="https://raw.githubusercontent.com/intergrav/devins-badges/v2/assets/compact/supported/purpur_46h.png" height="35"></a>
+
+</div>
+
+----
+
+## Features
+* YAML Configuration
+* Simple and performant GUI interface.
+* Flag Toggling by GUI.
+* Console Commands also Supported.
+* Bypass any Region Flag with Permissions
+* Create, Import, Unload and Manage Worlds with commands and GUI.
+
+----
+
+## Commands
 
 1. Default Command:
    - Command: `/realregions` or `/rr`
@@ -89,3 +117,16 @@ Source-code for the RealRegions plugin.
     - Command: `/realregions players <name>` or `/rr plrs <name>`
     - Permission: `realregions.admin`
     - Function: Displays a graphical menu showing players present in the specified world.
+
+----
+
+## Requirements
+RealRegions requires [WorldEdit](https://dev.bukkit.org/projects/worldedit) or [FAWE](https://www.spigotmc.org/resources/fastasyncworldedit.13932/) to work.
+
+----
+
+## Links
+* [SpigotMC](https://www.spigotmc.org/resources/realmines-1-14-to-1-19-2.73707/)
+* [Discord Server](https://discord.gg/t7gfnYZKy8)
+* [bStats](https://bstats.org/plugin/bukkit/RealRegions/19311)
+
