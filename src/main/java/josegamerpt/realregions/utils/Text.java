@@ -47,7 +47,7 @@ public class Text {
 		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.Prefix") + " &r" + string));
 	}
 	public static void send(CommandSender p, String string) {
-		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.RealRegions") + " &r" + string));
+		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.Prefix") + " &r" + string));
 	}
 
     public static String locToTex(Location pos) {
