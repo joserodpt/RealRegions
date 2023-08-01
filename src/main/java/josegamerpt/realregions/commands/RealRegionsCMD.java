@@ -290,7 +290,7 @@ public class RealRegionsCMD extends CommandBase {
     @Alias("del")
     @Completion("#regions")
     @Permission("realregions.admin")
-    @WrongUsage("&c/rr deleter <name>")
+    @WrongUsage("&c/rr delete <name>")
     public void delregcmd(final CommandSender commandSender, final String name) {
         Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
         if (reg == null) {

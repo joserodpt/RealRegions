@@ -43,6 +43,24 @@ public class RegionManager {
             String n = w.getConfig().getString("Regions." + r + ".Display-Name");
             Region reg = null;
 
+            //load region flags
+            boolean blockInteract = w.getConfig().getBoolean("Regions." + r + ".Block.Interact");
+            boolean containerInteract = w.getConfig().getBoolean("Regions." + r + ".Container.Interact");
+            boolean blockBreak = w.getConfig().getBoolean("Regions." + r + ".Block.Break");
+            boolean blockPlace = w.getConfig().getBoolean("Regions." + r + ".Block.Place");
+            boolean pvp = w.getConfig().getBoolean("Regions." + r + ".PVP");
+            boolean pve = w.getConfig().getBoolean("Regions." + r + ".PVE");
+            boolean hunger = w.getConfig().getBoolean("Regions." + r + ".Hunger");
+            boolean takeDamage = w.getConfig().getBoolean("Regions." + r + ".Damage");
+            boolean explosions = w.getConfig().getBoolean("Regions." + r + ".Explosions");
+            boolean itemDrop = w.getConfig().getBoolean("Regions." + r + ".Item.Drop");
+            boolean itemPickup = w.getConfig().getBoolean("Regions." + r + ".Item.Pickup");
+            boolean entitySpawning = w.getConfig().getBoolean("Regions." + r + ".Entity-Spawning");
+            boolean enter = w.getConfig().getBoolean("Regions." + r + ".Enter");
+            boolean accessCrafting = w.getConfig().getBoolean("Regions." + r + ".Access.Crafting-Table");
+            boolean accessChests = w.getConfig().getBoolean("Regions." + r + ".Access.Chests");
+            boolean accessHoppers = w.getConfig().getBoolean("Regions." + r + ".Access.Hoppers");
+
             switch (rt)
             {
                 case INFINITE:
@@ -57,22 +75,23 @@ public class RegionManager {
             }
 
             if (reg != null) {
-                reg.blockinteract = w.getConfig().getBoolean("Regions." + r + ".Block.Interact");
-                reg.containerinteract = w.getConfig().getBoolean("Regions." + r + ".Container.Interact");
-                reg.blockbreak = w.getConfig().getBoolean("Regions." + r + ".Block.Break");
-                reg.blockplace = w.getConfig().getBoolean("Regions." + r + ".Block.Place");
-                reg.pvp = w.getConfig().getBoolean("Regions." + r + ".PVP");
-                reg.pve = w.getConfig().getBoolean("Regions." + r + ".PVE");
-                reg.hunger = w.getConfig().getBoolean("Regions." + r + ".Hunger");
-                reg.takedamage = w.getConfig().getBoolean("Regions." + r + ".Damage");
-                reg.explosions = w.getConfig().getBoolean("Regions." + r + ".Explosions");
-                reg.itemdrop = w.getConfig().getBoolean("Regions." + r + ".Item.Drop");
-                reg.itempickup = w.getConfig().getBoolean("Regions." + r + ".Item.Pickup");
-                reg.entityspawning = w.getConfig().getBoolean("Regions." + r + ".Entity-Spawning");
-                reg.enter = w.getConfig().getBoolean("Regions." + r + ".Enter");
-                reg.accesscrafting = w.getConfig().getBoolean("Regions." + r + ".Access.Crafting-Table");
-                reg.accesschests = w.getConfig().getBoolean("Regions." + r + ".Access.Chests");
-                reg.accesshoppers = w.getConfig().getBoolean("Regions." + r + ".Access.Hoppers");
+                reg.blockinteract = blockInteract;
+                reg.containerinteract = containerInteract;
+                reg.blockbreak = blockBreak;
+                reg.blockplace = blockPlace;
+                reg.pvp = pvp;
+                reg.pve = pve;
+                reg.hunger = hunger;
+                reg.takedamage = takeDamage;
+                reg.explosions = explosions;
+                reg.itemdrop = itemDrop;
+                reg.itempickup = itemPickup;
+                reg.entityspawning = entitySpawning;
+                reg.enter = enter;
+                reg.accesscrafting = accessCrafting;
+                reg.accesschests = accessChests;
+                reg.accesshoppers = accessHoppers;
+                reg.saveData(Region.RegionData.FLAGS);
                 loaded_regions.add(reg);
             }
         }
