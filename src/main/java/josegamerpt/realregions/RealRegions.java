@@ -93,7 +93,7 @@ public class RealRegions extends JavaPlugin {
                 this.getLogger().info("The plugin is updated to the latest version.");
             } else {
                 this.newUpdate = true;
-                this.getLogger().info("There is a new update available! Version: " + version + " URL");
+                this.getLogger().warning("There is a new update available! Version: " + version + " -> https://www.spigotmc.org/resources/111629/");
             }
         });
 
