@@ -277,7 +277,7 @@ public class RealRegionsCMD extends CommandBase {
     @SubCommand("import")
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
-    @WrongUsage("&c/rr import <name>")
+    @WrongUsage("&c/rr import <name> <type>")
     public void importcmd(final CommandSender commandSender, final String name, final String worldtype) {
         try {
             rr.getWorldManager().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
