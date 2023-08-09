@@ -1,9 +1,23 @@
-package josegamerpt.realregions.config;
+package josegamerpt.realregions;
+
+/*
+ *  ______           _______           
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealRegions
+ */
 
 import java.io.File;
 import java.io.IOException;
 
-import josegamerpt.realregions.RealRegions;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;

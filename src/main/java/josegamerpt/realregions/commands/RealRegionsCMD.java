@@ -1,9 +1,24 @@
 package josegamerpt.realregions.commands;
 
+/*
+ *  ______           _______           
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import josegamerpt.realregions.RealRegions;
 import josegamerpt.realregions.regions.RWorld;
-import josegamerpt.realregions.config.Config;
+import josegamerpt.realregions.Config;
 import josegamerpt.realregions.gui.EntityViewer;
 import josegamerpt.realregions.gui.RegionGUI;
 import josegamerpt.realregions.gui.WorldGUI;

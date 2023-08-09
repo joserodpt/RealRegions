@@ -1,7 +1,22 @@
 package josegamerpt.realregions.regions;
 
+/*
+ *  ______           _______           
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import josegamerpt.realregions.RealRegions;
-import josegamerpt.realregions.config.Config;
+import josegamerpt.realregions.Config;
 import josegamerpt.realregions.utils.Particles;
 import josegamerpt.realregions.utils.Text;
 import org.bukkit.Location;

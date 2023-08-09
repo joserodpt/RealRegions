@@ -1,5 +1,20 @@
 package josegamerpt.realregions;
 
+/*
+ *  ______           _______           
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import josegamerpt.realregions.gui.EntityViewer;
 import josegamerpt.realregions.gui.MaterialPicker;
 import josegamerpt.realregions.gui.RegionGUI;
@@ -8,7 +23,6 @@ import josegamerpt.realregions.gui.WorldViewer;
 import josegamerpt.realregions.regions.RWorld;
 import josegamerpt.realregions.commands.RealRegionsCMD;
 import josegamerpt.realregions.managers.WorldManager;
-import josegamerpt.realregions.config.Config;
 import josegamerpt.realregions.regions.Region;
 import josegamerpt.realregions.regions.RegionListener;
 import josegamerpt.realregions.utils.PlayerInput;
