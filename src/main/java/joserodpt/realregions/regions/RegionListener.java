@@ -44,7 +44,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class RegionListener implements Listener {
-    private RealRegions rr;
+    private final RealRegions rr;
     
     public RegionListener(RealRegions rr) {
         this.rr = rr;
@@ -286,7 +286,7 @@ public class RegionListener implements Listener {
             if (e.getClickedBlock() == null) {
                 return;
             }
-            if (e.getHand().equals(EquipmentSlot.HAND)) {
+            if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND)) {
                 if (!selected.hasBlockInteract()) {
                     e.setCancelled(true);
                     cancel(clickedBlockLocation, p, "&cYou can't interact with blocks here.");
