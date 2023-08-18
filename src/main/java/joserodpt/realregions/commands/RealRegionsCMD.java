@@ -18,7 +18,7 @@ package joserodpt.realregions.commands;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.RealRegions;
 import joserodpt.realregions.regions.RWorld;
-import joserodpt.realregions.Config;
+import joserodpt.realregions.config.Config;
 import joserodpt.realregions.gui.EntityViewer;
 import joserodpt.realregions.gui.RegionGUI;
 import joserodpt.realregions.gui.WorldGUI;

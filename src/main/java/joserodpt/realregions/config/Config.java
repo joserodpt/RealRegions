@@ -1,4 +1,4 @@
-package joserodpt.realregions;
+package joserodpt.realregions.config;
 
 /*
  *  ______           _______           
@@ -18,6 +18,7 @@ package joserodpt.realregions;
 import java.io.File;
 import java.io.IOException;
 
+import joserodpt.realregions.RealRegions;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -25,10 +26,10 @@ import org.bukkit.plugin.Plugin;
 
 public class Config implements Listener {
 
-	private static File file;
-	private static FileConfiguration customFile;
 	private static String name = "config.yml";
 
+	private static File file;
+	private static FileConfiguration customFile;
 	public static void setup(Plugin p) {
 		file = new File(p.getDataFolder(), name);
 
@@ -42,7 +43,7 @@ public class Config implements Listener {
 		customFile = YamlConfiguration.loadConfiguration(file);
 	}
 
-	public static FileConfiguration getConfig() {
+	public static FileConfiguration file() {
 		return customFile;
 	}
 

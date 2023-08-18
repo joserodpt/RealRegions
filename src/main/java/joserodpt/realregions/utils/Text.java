@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import joserodpt.realregions.Config;
+import joserodpt.realregions.config.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 public class Text {
 	public static String convertUnixTimeToDate(long unixTime) {
 		Date date = new Date(unixTime * 1000L); // Convert seconds to milliseconds
-		SimpleDateFormat sdf = new SimpleDateFormat(Objects.requireNonNull(Config.getConfig().getString("RealRegions.Date-Format"))); // Format the date as needed
+		SimpleDateFormat sdf = new SimpleDateFormat(Objects.requireNonNull(Config.file().getString("RealRegions.Date-Format"))); // Format the date as needed
 		return sdf.format(date);
 	}
 	public static String styleBoolean(boolean a) {
@@ -59,10 +59,10 @@ public class Text {
 	}
 
 	public static void send(Player p, String string) {
-		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.Prefix") + " &r" + string));
+		p.sendMessage(Text.color(Config.file().getString("RealRegions.Prefix") + " &r" + string));
 	}
 	public static void send(CommandSender p, String string) {
-		p.sendMessage(Text.color(Config.getConfig().getString("RealRegions.Prefix") + " &r" + string));
+		p.sendMessage(Text.color(Config.file().getString("RealRegions.Prefix") + " &r" + string));
 	}
 
     public static String locToTex(Location pos) {

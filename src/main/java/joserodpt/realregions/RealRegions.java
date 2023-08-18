@@ -15,6 +15,8 @@ package joserodpt.realregions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realregions.config.Config;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.gui.EntityViewer;
 import joserodpt.realregions.gui.MaterialPicker;
 import joserodpt.realregions.gui.RegionGUI;
@@ -56,6 +58,7 @@ public class RealRegions extends JavaPlugin {
 
         saveDefaultConfig();
         Config.setup(this);
+        Language.setup(this);
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new RegionListener(this), this);

@@ -15,7 +15,7 @@ package joserodpt.realregions.utils;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.Config;
+import joserodpt.realregions.config.Config;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -24,7 +24,7 @@ public class Particles {
 
     public static void spawnParticle(RRParticle p, Location l)
     {
-        if (Config.getConfig().getBoolean("RealRegions.Effects.Particles")) {
+        if (Config.file().getBoolean("RealRegions.Effects.Particles")) {
             switch (p)
             {
                 case FLAME_CANCEL:

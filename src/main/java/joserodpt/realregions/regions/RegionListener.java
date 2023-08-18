@@ -16,7 +16,7 @@ package joserodpt.realregions.regions;
  */
 
 import joserodpt.realregions.RealRegions;
-import joserodpt.realregions.Config;
+import joserodpt.realregions.config.Config;
 import joserodpt.realregions.utils.Particles;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;
@@ -393,7 +393,7 @@ public class RegionListener implements Listener {
         Text.send(p, s);
         Particles.spawnParticle(Particles.RRParticle.FLAME_CANCEL, l.getBlock().getLocation());
 
-        if (Config.getConfig().getBoolean("RealRegions.Effects.Sounds")) {
+        if (Config.file().getBoolean("RealRegions.Effects.Sounds")) {
             l.getWorld().playSound(l, Sound.BLOCK_ANVIL_BREAK, 1, 50);
         }
     }
