@@ -1,12 +1,13 @@
 Version: 1
 Region:
   Created: "&aRegion created."
-  Name-Empty: "Region name is empty."
-  Name-Duplicate: "There is already a region with that name."
-  Not-Selected: "You don't have any selection."
-  Non-Existent-Name: "There is no region named &c%name%. &fMake sure the world and region name are correct."
+  Name-Empty: "&cRegion name is empty."
+  Name-Duplicate: "&cThere is already a region with that name."
+  Not-Selected: "&cYou don't have any selection."
+  Non-Existent-Name: "&cThere is no region named &c%name%. &fMake sure the world and region name are correct."
 World:
-  No-World-Named: "There is no world named &c%world%."
-  Reload: "&aReloaded."
-  Name-Empty: "World name is empty."
+  No-World-Named: "&cThere is no world named &c%world%."
+  Name-Empty: "&cWorld name is empty."
   Invalid-Type: "&cThere is no world type named %type%"
+System:
+  Reloaded: "&aReloaded."

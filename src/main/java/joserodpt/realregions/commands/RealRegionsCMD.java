@@ -67,8 +67,7 @@ public class RealRegionsCMD extends CommandBase {
 
         //reload worlds config
         rr.getWorldManager().getWorlds().forEach(RWorld::reloadConfig);
-        //Text.send(commandSender, "&aReloaded.");
-        Text.send(commandSender, Language.file().getString("World.Reloaded"));
+        Text.send(commandSender, Language.file().getString("System.Reloaded"));
     }
 
     @SubCommand("worlds")
@@ -99,7 +98,6 @@ public class RealRegionsCMD extends CommandBase {
 
         Player p = (Player) sender;
         if (name == null) {
-            //Text.send(p, "Region name is empty.");
             Text.send(p, Language.file().getString("Region.Name-Empty"));
             return;
         }
@@ -116,19 +114,16 @@ public class RealRegionsCMD extends CommandBase {
 
                     rr.getWorldManager().getRegionManager().createCubeRegion(name, min, max, rw);
 
-                    //Text.send(p, "&aRegion created.");
                     Text.send(p, Language.file().getString("Region.Created"));
 
                     WorldGUI g = new WorldGUI(p, rw, rr);
                     g.openInventory(p);
                 }
             } catch (Exception e) {
-                //Text.send(p, "You don't have any selection.");
                 Text.send(p, Language.file().getString("Region.Not-Selected"));
                 e.printStackTrace();
             }
         } else {
-            //Text.send(p, "There is already a region with that name.");
             Text.send(p, Language.file().getString("Region.Name-Duplicate"));
         }
     }
@@ -139,7 +134,6 @@ public class RealRegionsCMD extends CommandBase {
     @WrongUsage("&c/rr createw <name>")
     public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
         if (name == null) {
-            //Text.send(commandSender, "World name is empty.");
             Text.send(commandSender, Language.file().getString("World.Name-Empty"));
             return;
         }
@@ -147,7 +141,6 @@ public class RealRegionsCMD extends CommandBase {
         try {
             rr.getWorldManager().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            //Text.send(commandSender, "&cThere is no world type named " + worldtype);
             Text.send(commandSender, Language.file().getString("World.Invalid-Type").replace("%type%", worldtype));
         }
 
@@ -186,7 +179,6 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rr.getWorldManager().getWorld(name);
             if (rw == null) {
-                //Text.send(p, "There is no world named &c" + name);
                 Text.send(p, Language.file().getString("World.No-World-Named").replace("%world%", name));
                 return;
             }
@@ -208,7 +200,6 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rr.getWorldManager().getWorld(name);
             if (rw == null) {
-                //Text.send(p, "There is no world named &c" + name);
                 Text.send(p, Language.file().getString("World.No-World-Named").replace("%world%", name));
                 return;
             }
@@ -229,7 +220,6 @@ public class RealRegionsCMD extends CommandBase {
 
             Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
             if (reg == null) {
-                //Text.send(p, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
                 Text.send(p, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
                 return;
             }
@@ -250,7 +240,6 @@ public class RealRegionsCMD extends CommandBase {
 
             Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
             if (reg == null) {
-                //Text.send(p, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
                 Text.send(p, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
                 return;
             }
@@ -268,7 +257,6 @@ public class RealRegionsCMD extends CommandBase {
     public void unloadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rr.getWorldManager().getWorld(name);
         if (rw == null) {
-            //Text.send(commandSender, "There is no world named &c" + name);
             Text.send(commandSender, Language.file().getString("World.No-World-Named").replace("%world%", name));
             return;
         }
@@ -283,7 +271,6 @@ public class RealRegionsCMD extends CommandBase {
     public void loadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rr.getWorldManager().getWorld(name);
         if (rw == null) {
-            //Text.send(commandSender, "There is no world named &c" + name);
             Text.send(commandSender, Language.file().getString("World.No-World-Named").replace("%world%", name));
             return;
         }
@@ -298,7 +285,6 @@ public class RealRegionsCMD extends CommandBase {
     public void unregistercmd(final CommandSender commandSender, final String name) {
         RWorld rw = rr.getWorldManager().getWorld(name);
         if (rw == null) {
-            //Text.send(commandSender, "There is no world named &c" + name);
             Text.send(commandSender, Language.file().getString("World.No-World-Named").replace("%world%", name));
             return;
         }
@@ -314,7 +300,6 @@ public class RealRegionsCMD extends CommandBase {
         try {
             rr.getWorldManager().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            //Text.send(commandSender, "&cThere is no world type named " + worldtype);
             Text.send(commandSender, Language.file().getString("World.Invalid-Type").replace("%type%", worldtype));
         }
     }
@@ -327,7 +312,6 @@ public class RealRegionsCMD extends CommandBase {
     public void delregcmd(final CommandSender commandSender, final String name) {
         Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
         if (reg == null) {
-            //Text.send(commandSender, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
             Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
             return;
         }
@@ -346,7 +330,6 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rr.getWorldManager().getWorld(name);
             if (rw == null) {
-                //Text.send(p, "There is no world named &c" + name);
                 Text.send(p, Language.file().getString("World.No-World-Named").replace("%world%", name));
                 return;
             }
@@ -366,7 +349,6 @@ public class RealRegionsCMD extends CommandBase {
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rr.getWorldManager().getWorld(name);
         if (rw == null) {
-            //Text.send(commandSender, "There is no world named &c" + name);
             Text.send(commandSender, Language.file().getString("World.No-World-Named").replace("%world%", name));
             return;
         }
@@ -385,7 +367,6 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rr.getWorldManager().getWorld(name);
             if (rw == null) {
-                //Text.send(p, "There is no world named &c" + name);
                 Text.send(p, Language.file().getString("World.No-World-Named").replace("%world%", name));
                 return;
             }
