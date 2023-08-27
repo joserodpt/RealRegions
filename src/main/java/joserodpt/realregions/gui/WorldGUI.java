@@ -17,6 +17,7 @@ package joserodpt.realregions.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.utils.Itens;
@@ -193,7 +194,8 @@ public class WorldGUI {
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
-                                    Text.send(p, "&fYou have to be on " + current.r.getWorld().getName() + " to create a region.");
+                                    //Text.send(p, "&fYou have to be on " + current.r.getWorld().getName() + " to create a region.");
+                                    Text.send(p, Language.file().getString("Region.Not-In-World").replace("%worldName%", current.r.getWorld().getName()));
                                     return;
                                 }
 
@@ -209,7 +211,8 @@ public class WorldGUI {
                                         new PlayerInput(p, input -> {
                                             //continue
                                             current.rr.getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
-                                            Text.send(p, "&aRegion created.");
+                                            //Text.send(p, "&aRegion created.");
+                                            Text.send(p, Language.file().getString("Region.Created"));
                                             new BukkitRunnable() {
                                                 public void run() {
                                                     WorldGUI g = new WorldGUI(p, current.r, current.rr);
@@ -224,7 +227,8 @@ public class WorldGUI {
                                         Text.send(p, "nada");
                                     }
                                 } catch (Exception exception) {
-                                    Text.send(p, "You don't have any selection.");
+                                    //Text.send(p, "You don't have any selection.");
+                                    Text.send(p, Language.file().getString("Selection.None"));
                                     p.closeInventory();
                                 }
 
@@ -279,7 +283,8 @@ public class WorldGUI {
                                         //continue
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
-                                        Text.send(p, "&fRegion displayname changed to " + Text.color(input));
+                                        //Text.send(p, "&fRegion displayname changed to " + Text.color(input));
+                                        Text.send(p, Language.file().getString("Region.Display-Changed").replace("%input%", Text.color(input)));
                                         new BukkitRunnable() {
                                             public void run() {
                                                 WorldGUI g = new WorldGUI(p, current.r, current.rr);

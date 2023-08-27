@@ -16,6 +16,7 @@ package joserodpt.realregions.gui;
  */
 
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Pagination;
@@ -199,7 +200,8 @@ public class EntityViewer {
 
     public void openInventory(Player target) {
         if (!r.isLoaded()) {
-            Text.send(target, "&cYou can't open this menu because this world is unloaded.");
+            //Text.send(target, "&cYou can't open this menu because this world is unloaded.");
+            Text.send(target, Language.file().getString("Menu.Unloaded-World"));
             return;
         }
 
@@ -240,7 +242,8 @@ public class EntityViewer {
                             case 4:
                                 new PlayerInput(p, input -> {
                                     if (current.searchEntity(p, input).isEmpty()) {
-                                        Text.send(p, "&fNothing found for your search terms.");
+                                        //Text.send(p, "&fNothing found for your search terms.");
+                                        Text.send(p, Language.file().getString("Search.No-Results"));
 
                                         current.exit(p, current.rr);
                                         return;

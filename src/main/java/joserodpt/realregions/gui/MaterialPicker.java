@@ -16,6 +16,7 @@ package joserodpt.realregions.gui;
  */
 
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.Region;
@@ -226,8 +227,8 @@ public class MaterialPicker {
                             case 4:
                                 new PlayerInput(gp, input -> {
                                     if (current.searchMaterial(input).isEmpty()) {
-                                        Text.send(gp, "&fNothing found for your search terms.");
-
+                                        //Text.send(gp, "&fNothing found for your search terms.");
+                                        Text.send(gp, Language.file().getString("Search.No-Results"));
                                         current.exit(gp, current.rr);
                                         return;
                                     }

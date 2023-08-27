@@ -16,6 +16,7 @@ package joserodpt.realregions.managers;
  */
 
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.utils.Text;
@@ -105,7 +106,8 @@ public class WorldManager {
         }
     }
     public void createWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
-        Text.send(p, "&fWorld &a" + worldName + " &fis being &acreated.");
+        //Text.send(p, "&fWorld &a" + worldName + " &fis being &acreated.");
+        Text.send(p, Language.file().getString("World.Being-Created").replace("%name%", worldName));
 
         WorldCreator worldCreator = new WorldCreator(worldName);
 
@@ -126,9 +128,11 @@ public class WorldManager {
             //registar mundo no real regions
             this.initializeRWorld(worldName, world, wt);
 
-            Text.send(p, "World " + worldName + " &acreated!");
+            //Text.send(p, "World " + worldName + " &acreated!");
+            Text.send(p, Language.file().getString("World.Created").replace("%name%", worldName));
         } else {
-            Text.send(p, "&cFailed to create " + worldName + "!");
+            //Text.send(p, "&cFailed to create " + worldName + "!");
+            Text.send(p, Language.file().getString("World.Failed-To-Create").replace("%name%", worldName));
         }
     }
     private void initializeRWorld(String worldName, World w, RWorld.WorldType wt) {
@@ -141,7 +145,9 @@ public class WorldManager {
     public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
         if (rw.isLoaded()) {
-            Text.send(p, "&cWorld is already loaded.");
+            //Text.send(p, "&cWorld is already loaded.");
+            Text.send(p, Language.file().getString("World.Already-Loaded"));
+
         } else {
             WorldCreator worldCreator = new WorldCreator(worldName);
             World w = worldCreator.createWorld();
@@ -152,7 +158,8 @@ public class WorldManager {
                 Bukkit.getLogger().severe("Failed to load world: " + worldName);
             }
 
-            Text.send(p, worldName + " &fwas loaded &asuccessfully");
+            //Text.send(p, worldName + " &fwas loaded &asuccessfully");
+            Text.send(p, Language.file().getString("World.Loaded").replace("%name%", worldName));
         }
     }
     public void unloadWorld(RWorld rw, boolean save) {
@@ -172,14 +179,18 @@ public class WorldManager {
     public void unloadWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
-            Text.send(p, "&fYou can't &cunload &fdefault worlds.");
+            //Text.send(p, "&fYou can't &cunload &fdefault worlds.");
+            Text.send(p, Language.file().getString("World.Unload-Default-Worlds"));
         } else {
             if (!r.isLoaded()) {
-                Text.send(p, "&cWorld is already unloaded.");
+                //Text.send(p, "&cWorld is already unloaded.");
+                Text.send(p, Language.file().getString("World.Already-Unloaded"));
             } else {
-                Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &eunloaded.");
+                //Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &eunloaded.");
+                Text.send(p, Language.file().getString("World.Being-Unloaded").replace("%name%", r.getRWorldName()));
                 unloadWorld(r, true);
-                Text.send(p, "&fWorld &aunloaded.");
+                //Text.send(p, "&fWorld &aunloaded.");
+                Text.send(p, Language.file().getString("World.Unloaded"));
             }
         }
     }
@@ -189,9 +200,11 @@ public class WorldManager {
 
         //if it doesn't exist, display an warning
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-            Text.send(p, worldName + " folder &cNOT FOUND in server's directory.");
+            //Text.send(p, worldName + " folder &cNOT FOUND in server's directory.");
+            Text.send(p, Language.file().getString("Folder.Not-Found").replace("%name%", worldName));
         } else {
-            Text.send(p, "&fImporting &b" + worldName);
+            //Text.send(p, "&fImporting &b" + worldName);
+            Text.send(p, Language.file().getString("World.Being-Imported").replace("%name%", worldName));
 
             WorldCreator worldCreator = new WorldCreator(worldName);
 
@@ -206,9 +219,11 @@ public class WorldManager {
             World w = worldCreator.createWorld();
             if (w != null) {
                 this.initializeRWorld(worldName, w, wt);
-                Text.send(p, "&b" + worldName + " &fwas imported &asuccessfully");
+                //Text.send(p, "&b" + worldName + " &fwas imported &asuccessfully");
+                Text.send(p, Language.file().getString("World.Imported").replace("%name%", worldName));
             } else {
-                Text.send(p, "&cFailed to load world: " + worldName);
+                //Text.send(p, "&cFailed to load world: " + worldName);
+                Text.send(p, Language.file().getString("World.Failed-To-Import").replace("%name%", worldName));
             }
         }
     }
@@ -219,8 +234,10 @@ public class WorldManager {
         //remove from world list
         this.worlds_reg_dic.remove(r);
 
-        Text.send(p, r.getRWorldName() + " has been &eunregistered.");
+        //Text.send(p, r.getRWorldName() + " has been &eunregistered.");
+        Text.send(p, Language.file().getString("World.Unregistered").replace("%name%", r.getRWorldName()));
     }
+
     public RWorld getWorld(World w) {
         return worlds_reg_dic.keySet().stream()
                 .filter(world -> world.getWorld().equals(w))
@@ -237,10 +254,11 @@ public class WorldManager {
 
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
-            Text.send(p, "&fYou can't &cdelete &fdefault worlds.");
+            //Text.send(p, "&fYou can't &cdelete &fdefault worlds.");
+            Text.send(p, Language.file().getString("World.Delete-Default-Worlds"));
         } else {
-            Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &cdeleted.");
-
+            //Text.send(p, "&fWorld &a" + r.getRWorldName() + " &fis being &cdeleted.");
+            Text.send(p, Language.file().getString("World.Being-Deleted").replace("%name%", r.getRWorldName()));
             this.unloadWorld(r, false);
             r.deleteConfig();
             if (removeFile) {
@@ -249,14 +267,17 @@ public class WorldManager {
                     deleteDirectory(target);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Text.send(p, "&cError while removing world files for " + r.getRWorldName());
+                    //Text.send(p, "&cError while removing world files for " + r.getRWorldName());
+                    Text.send(p, Language.file().getString("Folder.Error-Removing-Files").replace("%name%", r.getRWorldName()));
                 }
+
             }
 
             //remove from world list
             this.worlds_reg_dic.remove(r);
 
-            Text.send(p, "&fWorld &b" + r.getRWorldName() + " &cdeleted.");
+            //Text.send(p, "&fWorld &b" + r.getRWorldName() + " &cdeleted.");
+            Text.send(p, Language.file().getString("World.Deleted").replace("%name%", r.getRWorldName()));
         }
     }
     public void deleteDirectory(final File directory) throws IOException {

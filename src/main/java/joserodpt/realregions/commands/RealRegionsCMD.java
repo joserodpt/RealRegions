@@ -124,7 +124,7 @@ public class RealRegionsCMD extends CommandBase {
                 }
             } catch (Exception e) {
                 //Text.send(p, "You don't have any selection.");
-                Text.send(p, Language.file().getString("Region.Not-Selected"));
+                Text.send(p, Language.file().getString("Selection.None"));
                 e.printStackTrace();
             }
         } else {

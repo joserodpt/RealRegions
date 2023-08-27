@@ -16,6 +16,7 @@ package joserodpt.realregions.gui;
  */
 
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.regions.RegionFlags;
 import joserodpt.realregions.utils.Itens;
@@ -404,7 +405,8 @@ public class RegionGUI {
 
 									if (!StringUtils.isNumeric(input))
 									{
-										Text.send(player, "&fInput is &cnot &fa number.");
+										//Text.send(player, "&fInput is &cnot &fa number.");
+										Text.send(player, Language.file().getString("Input.Not-Number"));
 										RegionGUI wv = new RegionGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
@@ -412,7 +414,8 @@ public class RegionGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									Text.send(player, "&fPriority changed to " + Text.color(input));
+									//Text.send(player, "&fPriority changed to " + Text.color(input));
+									Text.send(player, Language.file().getString("Priority.Changed").replace("%input%", Text.color(input)));
 									new BukkitRunnable() {
 										public void run() {
 											RegionGUI wv = new RegionGUI(player, current.r, current.rr);

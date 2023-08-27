@@ -16,6 +16,7 @@ package joserodpt.realregions.managers;
  */
 
 import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.Region;
@@ -117,7 +118,8 @@ public class RegionManager {
     public void deleteRegion(CommandSender p, Region a) {
         if (a.getType() == Region.RegionType.INFINITE)
         {
-            Text.send(p, "&fYou can't &cdelete " + a.getDisplayName() + " &fbecause its infinite.");
+            //Text.send(p, "&fYou can't &cdelete " + a.getDisplayName() + " &fbecause its infinite.");
+            Text.send(p, Language.file().getString("Region.Cant-Delete-Infinite").replace("%name%", a.getDisplayName()));
             return;
         }
 
@@ -125,7 +127,8 @@ public class RegionManager {
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
 
-        Text.send(p, "&fRegion " + a.getDisplayName() + " &ahas been deleted. ");
+        //Text.send(p, "&fRegion " + a.getDisplayName() + " &ahas been deleted. ");
+        Text.send(p, Language.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
     }
 
     public Region getRegionPlusName(String name) {
