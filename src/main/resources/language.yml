@@ -1,56 +1,11 @@
 Version: 1
 Region:
   Created: "&aRegion created."
-  Deleted: "&fRegion %name% &ahas been deleted."
   Name-Empty: "Region name is empty."
   Name-Duplicate: "There is already a region with that name."
   Non-Existent-Name: "There is no region named &c%name%. &fMake sure the world and region name are correct."
-  Not-In-World: "&fYou have to be on %worldName% to create a region."
-  Display-Changed: "&fRegion displayname changed to %input%"
-  Cant-Delete-Infinite: "&fYou can't &cdelete %name% &fbecause it's infinite."
 World:
-  Being-Imported: "&fImporting &b%name%"
-  Imported: "&b%name% &fwas imported &asuccessfully."
-  Failed-To-Import: "&cFailed to load world %name%"
-
-  Being-Created: "&fWorld &a%name% &fis being &acreated."
-  Created: "World %name% &acreated!"
-  Failed-To-Create: "&cFailed to create %name%!"
-
-  Unregistered: "%name% has been &eunregistered."
-
   No-World-Named: "There is no world named &c%world%."
-  Name-Empty: "World name is empty."
-
   Reload: "&aReloaded."
-  Already-Loaded: "&cWorld is already loaded."
-  Already-Unloaded: "&cWorld is already unloaded."
-  Being-Unloaded: "&fWorld &a%name% &fis being &eunloaded."
-  Loaded: "%name% &fwas loaded &asuccessfully."
-  Unloaded: "&fWorld &aunloaded."
-  Unload-Default-Worlds: "&fYou can't &cunload &fdefault worlds."
-
-  Delete-Default-Worlds: "&fYou can't &cdelete &fdefault worlds."
-  Being-Deleted: "&fWorld &a%name% &fis being &cdeleted."
-  Deleted: "&fWorld &b%name% &cdeleted."
+  Name-Empty: "World name is empty."
   Invalid-Type: "&cThere is no world type named %type%"
-
-
-Selection:
-  None: "You don't have any selection."
-
-Menu:
-  Unloaded-World: "&cYou can't open this menu because this world is unloaded."
-
-Search:
-  No-Results: "&fNothing found for your search terms."
-
-Input:
-  Not-Number: "&fInput is &cnot &fa number."
-
-Priority:
-  Changed: "&fPriority changed to %input%"
-
-Folder:
-  Not-Found: "%name% folder &cNOT FOUND in server's directory."
-  Error-Removing-Files: "&cError while removing world files for %name%"
