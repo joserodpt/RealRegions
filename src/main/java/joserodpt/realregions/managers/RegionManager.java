@@ -118,7 +118,6 @@ public class RegionManager {
     public void deleteRegion(CommandSender p, Region a) {
         if (a.getType() == Region.RegionType.INFINITE)
         {
-            //Text.send(p, "&fYou can't &cdelete " + a.getDisplayName() + " &fbecause its infinite.");
             Text.send(p, Language.file().getString("Region.Cant-Delete-Infinite").replace("%name%", a.getDisplayName()));
             return;
         }
@@ -127,7 +126,6 @@ public class RegionManager {
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
 
-        //Text.send(p, "&fRegion " + a.getDisplayName() + " &ahas been deleted. ");
         Text.send(p, Language.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
     }
 

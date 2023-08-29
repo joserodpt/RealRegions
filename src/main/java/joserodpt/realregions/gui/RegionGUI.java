@@ -401,11 +401,8 @@ public class RegionGUI {
 
 							case 32:
 								new PlayerInput(player, input -> {
-									//continue
-
 									if (!StringUtils.isNumeric(input))
 									{
-										//Text.send(player, "&fInput is &cnot &fa number.");
 										Text.send(player, Language.file().getString("Input.Not-Number"));
 										RegionGUI wv = new RegionGUI(player, current.r, current.rr);
 										wv.openInventory(player);
@@ -414,7 +411,6 @@ public class RegionGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									//Text.send(player, "&fPriority changed to " + Text.color(input));
 									Text.send(player, Language.file().getString("Priority.Changed").replace("%input%", Text.color(input)));
 									new BukkitRunnable() {
 										public void run() {

@@ -194,7 +194,6 @@ public class WorldGUI {
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
-                                    //Text.send(p, "&fYou have to be on " + current.r.getWorld().getName() + " to create a region.");
                                     Text.send(p, Language.file().getString("Region.Not-In-World").replace("%worldName%", current.r.getWorld().getName()));
                                     return;
                                 }
@@ -211,7 +210,6 @@ public class WorldGUI {
                                         new PlayerInput(p, input -> {
                                             //continue
                                             current.rr.getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
-                                            //Text.send(p, "&aRegion created.");
                                             Text.send(p, Language.file().getString("Region.Created"));
                                             new BukkitRunnable() {
                                                 public void run() {
@@ -224,10 +222,9 @@ public class WorldGUI {
                                             wv.openInventory(p);
                                         });
                                     } else {
-                                        Text.send(p, "nada");
+                                        Text.send(p, Language.file().getString("Selection.None"));
                                     }
                                 } catch (Exception exception) {
-                                    //Text.send(p, "You don't have any selection.");
                                     Text.send(p, Language.file().getString("Selection.None"));
                                     p.closeInventory();
                                 }
@@ -280,11 +277,9 @@ public class WorldGUI {
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {
-                                        //continue
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
-                                        //Text.send(p, "&fRegion displayname changed to " + Text.color(input));
-                                        Text.send(p, Language.file().getString("Region.Display-Changed").replace("%input%", Text.color(input)));
+                                        Text.send(p, Language.file().getString("Region.Display-Name-Changed").replace("%input%", Text.color(input)));
                                         new BukkitRunnable() {
                                             public void run() {
                                                 WorldGUI g = new WorldGUI(p, current.r, current.rr);

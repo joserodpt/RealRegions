@@ -219,59 +219,58 @@ public class MaterialPicker {
                             return;
                         }
 
-                        Player gp = (Player) clicker;
+                        Player p = (Player) clicker;
                         e.setCancelled(true);
 
                         switch (e.getRawSlot())
                         {
                             case 4:
-                                new PlayerInput(gp, input -> {
+                                new PlayerInput(p, input -> {
                                     if (current.searchMaterial(input).isEmpty()) {
-                                        //Text.send(gp, "&fNothing found for your search terms.");
-                                        Text.send(gp, Language.file().getString("Search.No-Results"));
-                                        current.exit(gp, current.rr);
+                                        Text.send(p, Language.file().getString("Search.No-Results"));
+                                        current.exit(p, current.rr);
                                         return;
                                     }
-                                    MaterialPicker df = new MaterialPicker(current.min, gp, current.pt, input, current.rr);
-                                    df.openInventory(gp);
+                                    MaterialPicker df = new MaterialPicker(current.min, p, current.pt, input, current.rr);
+                                    df.openInventory(p);
                                 }, input -> {
-                                    gp.closeInventory();
-                                    WorldViewer wv = new WorldViewer(gp, WorldViewer.WorldSort.TIME, current.rr);
-                                    wv.openInventory(gp);
+                                    p.closeInventory();
+                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
+                                    wv.openInventory(p);
                                 });
                                 break;
                             case 49:
-                                current.exit(gp, current.rr);
+                                current.exit(p, current.rr);
                                 break;
                             case 26:
                             case 35:
                                 nextPage(current);
-                                gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                             case 18:
                             case 27:
                                 backPage(current);
-                                gp.playSound(gp.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
                             Material a = current.display.get(e.getRawSlot());
                             if (current.pt.equals(PickType.ICON_REG)) {
-                                gp.closeInventory();
+                                p.closeInventory();
                                 Region r = ((Region) current.min);
                                 r.setIcon(a);
                                 r.saveData(Region.RegionData.ICON);
-                                WorldGUI v = new WorldGUI(gp, r.getRWorld(), current.rr);
-                                v.openInventory(gp);
+                                WorldGUI v = new WorldGUI(p, r.getRWorld(), current.rr);
+                                v.openInventory(p);
                             }
                             if (current.pt.equals(PickType.ICON_WORLD)) {
-                                gp.closeInventory();
+                                p.closeInventory();
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);
                                 r.saveData(RWorld.Data.ICON);
-                                WorldViewer v = new WorldViewer(gp, WorldViewer.WorldSort.TIME, current.rr);
-                                v.openInventory(gp);
+                                WorldViewer v = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
+                                v.openInventory(p);
                             }
                         }
                     }
