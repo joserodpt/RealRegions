@@ -104,7 +104,6 @@ public class RealRegions extends JavaPlugin {
         //start region visualizer
         worldManager.getRegionManager().startVisualizer();
 
-
         new UpdateChecker(this, 111629).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
                 this.getLogger().info("The plugin is updated to the latest version.");
@@ -113,7 +112,6 @@ public class RealRegions extends JavaPlugin {
                 this.getLogger().warning("There is a new update available! Version: " + version + " -> https://www.spigotmc.org/resources/111629/");
             }
         });
-
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());

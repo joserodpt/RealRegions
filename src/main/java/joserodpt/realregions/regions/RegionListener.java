@@ -17,6 +17,7 @@ package joserodpt.realregions.regions;
 
 import joserodpt.realregions.RealRegions;
 import joserodpt.realregions.config.Config;
+import joserodpt.realregions.config.Language;
 import joserodpt.realregions.utils.Particles;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;
@@ -91,7 +92,7 @@ public class RegionListener implements Listener {
 
             if (!selected.hasBlockBreak()) {
                 event.setCancelled(true);
-                cancel(blockLocation, p, "&cYou can't break that block here.");
+                cancel(blockLocation, p, Language.file().getString("Region.Cant-Break-Block"));
             }
         }
     }
@@ -110,7 +111,7 @@ public class RegionListener implements Listener {
 
             if (!selected.hasBlockPlace()) {
                 event.setCancelled(true);
-                cancel(blockLocation, p, "&cYou can't place blocks here.");
+                cancel(blockLocation, p, Language.file().getString("Region.Cant-Place-Block"));
             }
         }
     }
@@ -150,7 +151,7 @@ public class RegionListener implements Listener {
 
             if (!selected.hasItemDrop()) {
                 e.setCancelled(true);
-                cancel(itemLocation, p, "&cYou can't drop items here.");
+                cancel(itemLocation, p, Language.file().getString("Region.Cant-Drop-Items"));
             }
         }
     }
@@ -172,7 +173,8 @@ public class RegionListener implements Listener {
 
             if (!selected.hasItemPickup()) {
                 e.setCancelled(true);
-                cancel(entityLocation, p, "&cYou can't pick up items here.");
+
+                cancel(entityLocation, p, Language.file().getString("Region.Cant-Pickup-Items"));
             }
         }
     }
@@ -214,7 +216,7 @@ public class RegionListener implements Listener {
                     if (!selected.hasEnter()) {
                         e.setCancelled(true);
 
-                        cancel(e.getTo(), p, "&cYou can't enter here.");
+                        cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
 
                         p.getInventory().addItem(new ItemStack(Material.CHORUS_FRUIT));
                     }
@@ -228,7 +230,7 @@ public class RegionListener implements Listener {
                     if (!selected.hasEnter()) {
                         e.setCancelled(true);
 
-                        cancel(e.getTo(), p, "&cYou can't enter here.");
+                        cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
                     }
                     break;
             }
@@ -259,7 +261,7 @@ public class RegionListener implements Listener {
 
                 p.teleport(e.getFrom());  //TODO: better player knockback?
 
-                cancel(e.getTo(), p, "&cYou can't enter here.");
+                cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
             }
         }
     }
@@ -289,7 +291,7 @@ public class RegionListener implements Listener {
             if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND)) {
                 if (!selected.hasBlockInteract()) {
                     e.setCancelled(true);
-                    cancel(clickedBlockLocation, p, "&cYou can't interact with blocks here.");
+                    cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Blocks"));
                 }
 
                 Block b = e.getClickedBlock();
@@ -298,7 +300,7 @@ public class RegionListener implements Listener {
                 if (b.getType().name().contains("SHULKER_BOX")) {
                     if (!selected.hasContainerInteract()) {
                         e.setCancelled(true);
-                        cancel(clickedBlockLocation, p, "&cYou can't interact with this container.");
+                        cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
                     }
                     return;
                 }
@@ -311,7 +313,7 @@ public class RegionListener implements Listener {
                     case CHEST:
                         if (!selected.hasContainerInteract()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, "&cYou can't interact with this container.");
+                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
                         }
                         break;
                 }
@@ -321,19 +323,19 @@ public class RegionListener implements Listener {
                     case CRAFTING_TABLE:
                         if (!selected.hasAccessCrafting()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, "&cYou can't interact with crafting tables here.");
+                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Crafting-Tables"));
                         }
                         break;
                     case HOPPER:
                         if (!selected.hasAccessHoppers()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, "&cYou can't interact with hoppers here.");
+                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Hopper"));
                         }
                         break;
                     case CHEST:
                         if (!selected.hasAccessChests()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, "&cYou can't open chests here.");
+                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Open-Chest"));
                         }
                         break;
                 }
@@ -361,7 +363,7 @@ public class RegionListener implements Listener {
             //pvp
             if (!selected.hasPVP()) {
                 event.setCancelled(true);
-                Text.send(damager, "&cYou can't PVP here.");
+                Text.send(damager, Language.file().getString("Region.Cant-PVP"));
             }
         }
     }
@@ -383,7 +385,7 @@ public class RegionListener implements Listener {
             //pve
             if (!selected.hasPVE()) {
                 event.setCancelled(true);
-                Text.send(damager, "&cYou can't PVE here.");
+                Text.send(damager, Language.file().getString("Region.Cant-PVE"));
             }
         }
     }

@@ -47,6 +47,8 @@ import java.util.stream.Collectors;
 @Command("realregions")
 @Alias("rr")
 public class RealRegionsCMD extends CommandBase {
+    
+    private final String onlyPlayers = "[RealRegions] Only players can run this command.";
 
     RealRegions rr;
     public RealRegionsCMD(RealRegions r)
@@ -92,7 +94,7 @@ public class RealRegionsCMD extends CommandBase {
     @WrongUsage("&c/rr create <name>")
     public void create(final CommandSender sender, final String name) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(sender, onlyPlayers);
             return;
         }
 
@@ -165,7 +167,8 @@ public class RealRegionsCMD extends CommandBase {
             RegionGUI wv = new RegionGUI(p, reg, rr);
             wv.openInventory(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
+
         }
     }
 
@@ -187,7 +190,7 @@ public class RealRegionsCMD extends CommandBase {
             WorldGUI wv = new WorldGUI(p, rw, rr);
             wv.openInventory(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
         }
     }
 
@@ -207,7 +210,7 @@ public class RealRegionsCMD extends CommandBase {
 
             rw.teleport(p, false);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
         }
     }
 
@@ -227,7 +230,8 @@ public class RealRegionsCMD extends CommandBase {
 
             reg.teleport(p, false);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
+
         }
     }
 
@@ -247,7 +251,8 @@ public class RealRegionsCMD extends CommandBase {
 
             reg.toggleVisual(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
+
         }
     }
 
@@ -338,7 +343,8 @@ public class RealRegionsCMD extends CommandBase {
             EntityViewer ev = new EntityViewer(p, rw, rr);
             ev.openInventory(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
+
         }
     }
 
@@ -375,7 +381,8 @@ public class RealRegionsCMD extends CommandBase {
             EntityViewer ev = new EntityViewer(p, rw, EntityType.PLAYER, rr);
             ev.openInventory(p);
         } else {
-            commandSender.sendMessage("[RealRegions] Only players can run this command.");
+            Text.send(commandSender, onlyPlayers);
+
         }
     }
 }
