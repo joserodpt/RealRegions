@@ -126,7 +126,7 @@ RealRegions requires [WorldEdit](https://dev.bukkit.org/projects/worldedit) or [
 ----
 
 ## Links
-* [SpigotMC](https://www.spigotmc.org/resources/realmines-1-14-to-1-19-2.73707/)
+* [SpigotMC](https://www.spigotmc.org/resources/realregions-1-14-to-1-20-1.111629/)
 * [Discord Server](https://discord.gg/t7gfnYZKy8)
 * [bStats](https://bstats.org/plugin/bukkit/RealRegions/19311)
 
