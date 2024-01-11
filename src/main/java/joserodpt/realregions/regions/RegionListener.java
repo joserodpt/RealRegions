@@ -392,7 +392,10 @@ public class RegionListener implements Listener {
 
 
     private void cancel(Location l, Player p, String s) {
-        Text.send(p, s);
+        if (!Config.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+            Text.send(p, s);
+        }
+
         Particles.spawnParticle(Particles.RRParticle.FLAME_CANCEL, l.getBlock().getLocation());
 
         if (Config.file().getBoolean("RealRegions.Effects.Sounds")) {

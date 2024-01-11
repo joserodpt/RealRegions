@@ -1,7 +1,8 @@
 RealRegions:
   Prefix: "&fReal&eRegions &7>"
   Date-Format: "yyyy-MM-dd HH:mm:ss"
+  Disable-Alert-Messages: false
   Effects:
     Particles: true
     Sounds: true
-Version: 1
+Version: 2
