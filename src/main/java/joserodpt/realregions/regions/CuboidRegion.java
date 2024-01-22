@@ -21,6 +21,7 @@ import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -80,7 +81,7 @@ public class CuboidRegion extends Region {
     }
 
     @Override
-    public void toggleVisual(Player p) {
+    public void toggleVisual(CommandSender p) {
         super.setBeingVisualized(!super.isBeingVisualized());
         Text.send(p, "&fVisualizing " + super.getDisplayName() + ": " + Text.styleBoolean(super.isBeingVisualized()));
     }

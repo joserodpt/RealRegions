@@ -43,6 +43,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class RegionListener implements Listener {
     private final RealRegions rr;
@@ -92,7 +93,7 @@ public class RegionListener implements Listener {
 
             if (!selected.hasBlockBreak()) {
                 event.setCancelled(true);
-                cancel(blockLocation, p, Language.file().getString("Region.Cant-Break-Block"));
+                cancelEvent(blockLocation, p, Language.file().getString("Region.Cant-Break-Block"));
             }
         }
     }
@@ -111,7 +112,7 @@ public class RegionListener implements Listener {
 
             if (!selected.hasBlockPlace()) {
                 event.setCancelled(true);
-                cancel(blockLocation, p, Language.file().getString("Region.Cant-Place-Block"));
+                cancelEvent(blockLocation, p, Language.file().getString("Region.Cant-Place-Block"));
             }
         }
     }
@@ -151,8 +152,28 @@ public class RegionListener implements Listener {
 
             if (!selected.hasItemDrop()) {
                 e.setCancelled(true);
-                cancel(itemLocation, p, Language.file().getString("Region.Cant-Drop-Items"));
+                cancelEvent(itemLocation, p, Language.file().getString("Region.Cant-Drop-Items"));
+                return;
             }
+
+            //verificar onde é que o tem aterra
+           new BukkitRunnable() {
+                @Override
+                public void run() {
+                if (e.getItemDrop().isOnGround()) {
+                    Region landed = rr.getWorldManager().getRegionManager().getFirstPriorityRegionContainingLocation(e.getItemDrop().getLocation());
+
+                    if (!landed.hasItemDrop()) {
+                        ItemStack tmp = e.getItemDrop().getItemStack();
+                        e.getItemDrop().remove();
+                        p.getInventory().addItem(tmp);
+                        cancelEvent(itemLocation, p, Language.file().getString("Region.Cant-Drop-Items"));
+                    }
+
+                    cancel();
+                    }
+                }
+            }.runTaskTimer(RealRegions.getPlugin(), 1, 1);
         }
     }
 
@@ -174,7 +195,7 @@ public class RegionListener implements Listener {
             if (!selected.hasItemPickup()) {
                 e.setCancelled(true);
 
-                cancel(entityLocation, p, Language.file().getString("Region.Cant-Pickup-Items"));
+                cancelEvent(entityLocation, p, Language.file().getString("Region.Cant-Pickup-Items"));
             }
         }
     }
@@ -216,7 +237,7 @@ public class RegionListener implements Listener {
                     if (!selected.hasEnter()) {
                         e.setCancelled(true);
 
-                        cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
+                        cancelEvent(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
 
                         p.getInventory().addItem(new ItemStack(Material.CHORUS_FRUIT));
                     }
@@ -230,7 +251,7 @@ public class RegionListener implements Listener {
                     if (!selected.hasEnter()) {
                         e.setCancelled(true);
 
-                        cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
+                        cancelEvent(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
                     }
                     break;
             }
@@ -261,7 +282,7 @@ public class RegionListener implements Listener {
 
                 p.teleport(e.getFrom());  //TODO: better player knockback?
 
-                cancel(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
+                cancelEvent(e.getTo(), p, Language.file().getString("Region.Cant-Enter-Here"));
             }
         }
     }
@@ -291,7 +312,7 @@ public class RegionListener implements Listener {
             if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND)) {
                 if (!selected.hasBlockInteract()) {
                     e.setCancelled(true);
-                    cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Blocks"));
+                    cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Blocks"));
                 }
 
                 Block b = e.getClickedBlock();
@@ -300,7 +321,7 @@ public class RegionListener implements Listener {
                 if (b.getType().name().contains("SHULKER_BOX")) {
                     if (!selected.hasContainerInteract()) {
                         e.setCancelled(true);
-                        cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
+                        cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
                     }
                     return;
                 }
@@ -313,7 +334,7 @@ public class RegionListener implements Listener {
                     case CHEST:
                         if (!selected.hasContainerInteract()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
+                            cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Container"));
                         }
                         break;
                 }
@@ -323,19 +344,19 @@ public class RegionListener implements Listener {
                     case CRAFTING_TABLE:
                         if (!selected.hasAccessCrafting()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Crafting-Tables"));
+                            cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Crafting-Tables"));
                         }
                         break;
                     case HOPPER:
                         if (!selected.hasAccessHoppers()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Hopper"));
+                            cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Interact-Hopper"));
                         }
                         break;
                     case CHEST:
                         if (!selected.hasAccessChests()) {
                             e.setCancelled(true);
-                            cancel(clickedBlockLocation, p, Language.file().getString("Region.Cant-Open-Chest"));
+                            cancelEvent(clickedBlockLocation, p, Language.file().getString("Region.Cant-Open-Chest"));
                         }
                         break;
                 }
@@ -391,7 +412,7 @@ public class RegionListener implements Listener {
     }
 
 
-    private void cancel(Location l, Player p, String s) {
+    private void cancelEvent(Location l, Player p, String s) {
         if (!Config.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
             Text.send(p, s);
         }

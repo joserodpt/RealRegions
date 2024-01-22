@@ -20,6 +20,7 @@ import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -204,7 +205,7 @@ public class Region {
         return icon;
     }
 
-    public void toggleVisual(Player p) {
+    public void toggleVisual(CommandSender p) {
         Text.send(p, "&fYou &ccan't &fvisualize this region because its an infinite region.");
     }
 

@@ -240,20 +240,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr view <name>")
     public void viewcmd(final CommandSender commandSender, final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
-            if (reg == null) {
-                Text.send(p, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
-                return;
-            }
-
-            reg.toggleVisual(p);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-
+        Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+        if (reg == null) {
+            Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+            return;
         }
+
+        reg.toggleVisual(commandSender);
     }
 
     @SubCommand("unload")

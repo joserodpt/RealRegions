@@ -122,6 +122,8 @@ public class RegionManager {
             return;
         }
 
+        a.setBeingVisualized(false);
+
         wm.getWorldsAndRegions().get(a.getRWorld()).remove(a);
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
