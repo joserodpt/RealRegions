@@ -129,7 +129,7 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
             //register RealRegions permissions onto RealPermissions
-            RealPermissionsAPI.getInstance().getHookupAPI().addHookup(new ExternalPlugin("RealRegions", "&fReal&aRegions", this.getDescription().getDescription(), Material.PAINTING, Collections.singletonList(
+            RealPermissionsAPI.getInstance().getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, Collections.singletonList(
                     new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))), this.getDescription().getVersion())); }
 
         getLogger().info("Plugin has been loaded.");
