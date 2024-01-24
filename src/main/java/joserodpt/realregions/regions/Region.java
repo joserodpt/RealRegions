@@ -32,8 +32,8 @@ import java.util.List;
 public class Region {
 
     public enum RegionType {CUBOID, INFINITE}
-    public enum RegionData {ALL, ICON, SETTINGS, FLAGS}
-
+    public enum RegionData {ALL, ICON, SETTINGS, FLAGS, BOUNDS}
+    private RegionOrigin regionOrigin = RegionOrigin.REALREGIONS;
     private Material icon;
     private final String name;
     private String displayname;
@@ -72,6 +72,7 @@ public class Region {
             this.saveData(RegionData.ALL);
         }
     }
+
     public Boolean isBeingVisualized()
     {
         return this.isBeingVisualized;
@@ -116,6 +117,8 @@ public class Region {
                 cfg.set("Regions." + this.name + ".Display-Name", this.displayname);
                 cfg.set("Regions." + this.name + ".Priority", this.priority);
                 cfg.set("Regions." + this.name + ".Icon", this.icon.name());
+                if (this.getOrigin() != RegionOrigin.REALREGIONS)
+                    cfg.set("Regions." + this.name + ".Origin", this.getOrigin().name());
                 break;
             case ALL:
                 this.saveData(RegionData.ICON);
@@ -140,10 +143,17 @@ public class Region {
         return RegionType.INFINITE;
     }
 
+    public RegionOrigin getOrigin() {
+        return regionOrigin;
+    }
+
+    public void setOrigin(RegionOrigin regionOrigin) {
+        this.regionOrigin = regionOrigin;
+    }
+
     public ItemStack getItem() {
         List<String> desc = new ArrayList<>();
         desc.add("&fPriority: &b" + this.priority);
-
         desc.addAll(flagsList(Text.styleBoolean(this.accesschests), Text.styleBoolean(this.accesscrafting), Text.styleBoolean(this.accesshoppers), Text.styleBoolean(this.blockbreak), Text.styleBoolean(this.blockinteract), Text.styleBoolean(this.blockplace), Text.styleBoolean(this.containerinteract), Text.styleBoolean(this.entityspawning), Text.styleBoolean(this.enter), Text.styleBoolean(this.explosions), Text.styleBoolean(this.hunger), Text.styleBoolean(this.itemdrop), Text.styleBoolean(this.itempickup), Text.styleBoolean(this.pve), Text.styleBoolean(this.pvp), Text.styleBoolean(this.takedamage)));
 
         return Itens.createItem(getIcon(), 1, "&f" + getDisplayName() + " &7[&b" + (getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name()) + "&7]", desc);

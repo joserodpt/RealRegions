@@ -52,17 +52,14 @@ public class Cube implements Iterable<Block>, Cloneable, ConfigurationSerializab
 		totalBlocks = getVolume();
 	}
 
-	public Location getPOS(int i)
+	public Location getPOS1()
 	{
-		switch (i)
-		{
-			case 1:
-				return this.pos1;
-			case 2:
-				return this.pos2;
-			default:
-				throw new NotImplementedException("Wrong POS number.");
-		}
+		return this.pos1;
+	}
+
+	public Location getPOS2()
+	{
+		return this.pos2;
 	}
 
 	/**

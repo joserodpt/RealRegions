@@ -15,6 +15,7 @@ package joserodpt.realregions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realmines.api.RealMinesAPI;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.gui.EntityViewer;
@@ -22,11 +23,12 @@ import joserodpt.realregions.gui.MaterialPicker;
 import joserodpt.realregions.gui.RegionGUI;
 import joserodpt.realregions.gui.WorldGUI;
 import joserodpt.realregions.gui.WorldViewer;
+import joserodpt.realregions.listeners.RealMinesListener;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.commands.RealRegionsCMD;
 import joserodpt.realregions.managers.WorldManager;
 import joserodpt.realregions.regions.Region;
-import joserodpt.realregions.regions.RegionListener;
+import joserodpt.realregions.listeners.RegionListener;
 import joserodpt.realregions.utils.PlayerInput;
 import joserodpt.realregions.utils.Text;
 import me.mattstudios.mf.base.CommandManager;
@@ -40,6 +42,8 @@ import java.util.stream.Collectors;
 public class RealRegions extends JavaPlugin {
     private final WorldManager worldManager = new WorldManager(this);
     private boolean newUpdate;
+
+    private RealMinesAPI rma = null;
 
     public WorldManager getWorldManager() {
         return worldManager;
@@ -98,6 +102,16 @@ public class RealRegions extends JavaPlugin {
         cm.register(new RealRegionsCMD(this));
 
         worldManager.loadWorlds();
+
+        if (getServer().getPluginManager().getPlugin("RealMines") != null) {
+            rma = RealMinesAPI.getInstance();
+            pm.registerEvents(new RealMinesListener(this), this);
+            getLogger().info("Hooked onto RealMines! Version: " + rma.getVersion());
+            if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
+                worldManager.checkRealMinesRegions(rma.getMineManager().getMines());
+                getLogger().info("Loaded " + rma.getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
+            }
+         }
 
         getLogger().info("Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegionManager().getAllRegions().size() + " regions.");
 

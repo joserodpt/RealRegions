@@ -34,15 +34,15 @@ public class CubeVisualizer {
     }
 
     public List<Location> getCube() {
-        if (mp.getCube().getPOS(1) != null && mp.getCube().getPOS(2) != null && mp.isBeingVisualized()) {
+        if (mp.getCube().getPOS1() != null && mp.getCube().getPOS2() != null && mp.isBeingVisualized()) {
             List<Location> result = new ArrayList<>();
-            World world = mp.getCube().getPOS(1).getWorld();
-            double minX = Math.min(mp.getCube().getPOS(1).getX(), mp.getCube().getPOS(2).getX());
-            double minY = Math.min(mp.getCube().getPOS(1).getY(), mp.getCube().getPOS(2).getY());
-            double minZ = Math.min(mp.getCube().getPOS(1).getZ(), mp.getCube().getPOS(2).getZ());
-            double maxX = Math.max(mp.getCube().getPOS(1).getX() + 1, mp.getCube().getPOS(2).getX() + 1);
-            double maxY = Math.max(mp.getCube().getPOS(1).getY() + 1, mp.getCube().getPOS(2).getY() + 1);
-            double maxZ = Math.max(mp.getCube().getPOS(1).getZ() + 1, mp.getCube().getPOS(2).getZ() + 1);
+            World world = mp.getCube().getPOS1().getWorld();
+            double minX = Math.min(mp.getCube().getPOS1().getX(), mp.getCube().getPOS2().getX());
+            double minY = Math.min(mp.getCube().getPOS1().getY(), mp.getCube().getPOS2().getY());
+            double minZ = Math.min(mp.getCube().getPOS1().getZ(), mp.getCube().getPOS2().getZ());
+            double maxX = Math.max(mp.getCube().getPOS1().getX() + 1, mp.getCube().getPOS2().getX() + 1);
+            double maxY = Math.max(mp.getCube().getPOS1().getY() + 1, mp.getCube().getPOS2().getY() + 1);
+            double maxZ = Math.max(mp.getCube().getPOS1().getZ() + 1, mp.getCube().getPOS2().getZ() + 1);
 
             double dist = 0.5;
             for (double x = minX; x <= maxX; x += dist) {

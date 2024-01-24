@@ -1,4 +1,4 @@
-package joserodpt.realregions.regions;
+package joserodpt.realregions.listeners;
 
 /*
  *  ______           _______           
@@ -18,6 +18,8 @@ package joserodpt.realregions.regions;
 import joserodpt.realregions.RealRegions;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.config.Language;
+import joserodpt.realregions.regions.Region;
+import joserodpt.realregions.regions.RegionFlags;
 import joserodpt.realregions.utils.Particles;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;

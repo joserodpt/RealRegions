@@ -272,8 +272,8 @@ public class WorldGUI {
                                     }.runTaskLater(current.rr, 2);
                                     break;
                                 case DROP:
-                                    p.closeInventory();
                                     current.rr.getWorldManager().getRegionManager().deleteRegion(p, a);
+                                    current.load();
                                     break;
                                 case SHIFT_RIGHT:
                                     new PlayerInput(p, input -> {

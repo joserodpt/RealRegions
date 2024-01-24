@@ -66,10 +66,11 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     public void reloadcmd(final CommandSender commandSender) {
         Config.reload();
+        Language.reload();
 
         //reload worlds config
         rr.getWorldManager().getWorlds().forEach(RWorld::reloadConfig);
-        Text.send(commandSender, Language.file().getString("World.Reloaded"));
+        Text.send(commandSender, Language.file().getString("System.Reloaded"));
     }
 
     @SubCommand("worlds")
@@ -316,6 +317,25 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         rr.getWorldManager().getRegionManager().deleteRegion(commandSender, reg);
+    }
+
+    @SubCommand("setbounds")
+    @Alias("sb")
+    @Completion("#regions")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr setbounds <region>")
+    public void setboundscmd(final CommandSender commandSender, final String name) {
+        if (commandSender instanceof Player) {
+            Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+            if (reg == null) {
+                Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+                return;
+            }
+
+            rr.getWorldManager().getRegionManager().setRegionBounds(reg, (Player) commandSender);
+        } else {
+            Text.send(commandSender, this.onlyPlayers);
+        }
     }
 
     @SubCommand("entities")

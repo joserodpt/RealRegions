@@ -1,4 +1,4 @@
-Version: 1
+Version: 2
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -6,7 +6,7 @@ Region:
   Non-Existent-Name: "There is no region named &c%name%. &fMake sure the world and region name are correct."
   Not-In-World: "&fYou have to be on %worldName% to create a region."
   Display-Name-Changed: "&fRegion displayname changed to %input%."
-  Cant-Delete-Infinite: "&fYou can't &cdelete %name% &because it's infinite."
+  Cant-Delete-Infinite: "&fYou can't &cdelete %name% &bbecause it's infinite."
   Deleted: "&fRegion %name% &ahas been deleted."
   Cant-Break-Block: "&cYou can't break that block here!"
   Cant-Place-Block: "&cYou can't place blocks here!"
@@ -20,6 +20,8 @@ Region:
   Cant-Open-Chest: "&cYou can't open chests here."
   Cant-PVP: "&cYou can't PVP here."
   Cant-PVE: "&cYou can't PVE here."
+  Region-Set-Bounds: "&aNew bounds have set."
+
 World:
   Being-Imported: "&fImporting &b%name%."
   Imported: "&b%name% &fwas imported &asuccessfully."
@@ -33,7 +35,6 @@ World:
   Already-Unloaded: "&cWorld is already unloaded."
   Being-Unloaded: "&fWorld &a%name% &fis being &eunloaded."
   Unloaded: "&fWorld &aunloaded."
-  Reload: "&aReloaded."
   Delete-Default-Worlds: "&fYou can't &cdelete &fdefault worlds."
   Being-Deleted: "&fWorld &a%name% &fis being &cdeleted."
   Deleted: "&fWorld &b%name% &cdeleted."
@@ -41,16 +42,23 @@ World:
   No-World-Named: "There is no world named &c%world%."
   Name-Empty: "World name is empty."
   Invalid-Type: "&cThere is no world type named %type%"
+
 Menu:
   Unloaded-World: "&cYou can't open this menu because this world is unloaded."
+
 Search:
   No-Results: "&fNothing found for your search terms."
+
 Selection:
   None: "You don't have any selection."
+
 Input:
   Not-Number: "&fInput is &cnot &fa number."
+
 Priority:
   Changed: "&fPriority changed to %input%"
-Folder:
+
+System:
+  Reloaded: "&aReloaded."
   Not-Found: "%name% folder &cNOT FOUND in server's directory."
   Error-Removing-Files: "&cError while removing world files for %name%."

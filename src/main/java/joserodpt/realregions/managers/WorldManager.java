@@ -15,10 +15,13 @@ package joserodpt.realregions.managers;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realmines.api.mine.RMine;
 import joserodpt.realregions.RealRegions;
 import joserodpt.realregions.config.Language;
+import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.Region;
+import joserodpt.realregions.utils.Cube;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -329,6 +332,32 @@ public class WorldManager {
         }
         return files;
     }
+
+    public void checkRealMinesRegions(Map<String, RMine> mines) {
+        for (String mineName : mines.keySet()) {
+            RMine mine = mines.get(mineName);
+            RWorld rw = getWorld(mine.getWorld());
+
+            if (!getRegionManager().hasRegion(rw, mineName)) {
+                //create new region
+                getRegionManager().createCubeRegionRealMines(mine, rw);
+            } else {
+                //update region location
+                CuboidRegion r = (CuboidRegion) getRegionManager().getRegionPlusName(mineName + "@" + rw.getRWorldName());
+                if (r != null) {
+                    if (r.getCube().getPOS1() != mine.getPOS1()) {
+                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
+                        continue;
+                    }
+
+                    if (r.getCube().getPOS2() != mine.getPOS2()) {
+                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
+                    }
+                }
+            }
+        }
+    }
+
     public class VoidWorld extends ChunkGenerator {
         @Override
         public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {

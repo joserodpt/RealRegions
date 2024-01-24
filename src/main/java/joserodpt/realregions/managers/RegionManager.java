@@ -15,19 +15,26 @@ package joserodpt.realregions.managers;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import joserodpt.realmines.api.mine.RMine;
 import joserodpt.realregions.RealRegions;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.Region;
+import joserodpt.realregions.regions.RegionOrigin;
+import joserodpt.realregions.utils.Cube;
 import joserodpt.realregions.utils.CubeVisualizer;
 import joserodpt.realregions.utils.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -90,6 +97,12 @@ public class RegionManager {
                     break;
             }
 
+            String orig = w.getConfig().getString("Regions." + r + ".Origin", "-");
+            assert orig != null;
+            if (!orig.equals("-")) {
+                reg.setOrigin(RegionOrigin.valueOf(orig));
+            }
+
             if (reg != null) {
                 reg.blockinteract = blockInteract;
                 reg.containerinteract = containerInteract;
@@ -122,13 +135,21 @@ public class RegionManager {
             return;
         }
 
-        a.setBeingVisualized(false);
+        if (a.getOrigin() != RegionOrigin.REALREGIONS) {
+            Text.send(p, "&fThis region was imported from " + a.getOrigin().getDisplayName() + "&r&7. &cDelete it there.");
+            return;
+        }
 
+        deleteRegion(a);
+
+        Text.send(p, Language.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
+    }
+
+    public void deleteRegion(Region a) {
+        a.setBeingVisualized(false);
         wm.getWorldsAndRegions().get(a.getRWorld()).remove(a);
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
         a.getRWorld().saveConfig();
-
-        Text.send(p, Language.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
     }
 
     public Region getRegionPlusName(String name) {
@@ -182,6 +203,15 @@ public class RegionManager {
         crg.saveData(Region.RegionData.ALL);
     }
 
+    public void createCubeRegionRealMines(RMine mine, RWorld rw) {
+        CuboidRegion crg = new CuboidRegion(mine.getPOS1(), mine.getPOS2(), ChatColor.stripColor(mine.getName()), mine.getDisplayName(), rw, mine.getIcon(), 101);
+        wm.getWorldsAndRegions().get(rw).add(crg);
+        crg.setOrigin(RegionOrigin.REALMINES);
+
+        //save region
+        crg.saveData(Region.RegionData.ALL);
+    }
+
     public void startVisualizer() {
         //visualizer loop
         new BukkitRunnable() {
@@ -195,5 +225,28 @@ public class RegionManager {
                 }
             }
         }.runTaskTimer(RealRegions.getPlugin(),0, 10);
+    }
+
+    public void setRegionBounds(Region reg, Player p) {
+        if (reg.getOrigin() != RegionOrigin.REALREGIONS) {
+            Text.send(p, "&fYou &ccan't redefine &fthe bounds of a region imported by " + reg.getOrigin().getDisplayName());
+            return;
+        }
+
+        final WorldEditPlugin w = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
+        try {
+            final com.sk89q.worldedit.regions.Region r = w.getSession(p.getPlayer()).getSelection(w.getSession(p.getPlayer()).getSelectionWorld());
+
+            if (r != null) {
+                final Location pos1 = new Location(p.getWorld(), r.getMaximumPoint().getBlockX(), r.getMaximumPoint().getBlockY(), r.getMaximumPoint().getBlockZ());
+                final Location pos2 = new Location(p.getWorld(), r.getMinimumPoint().getBlockX(), r.getMinimumPoint().getBlockY(), r.getMinimumPoint().getBlockZ());
+
+                ((CuboidRegion) reg).setCube(new Cube(pos1, pos2));
+                ((CuboidRegion) reg).saveData(Region.RegionData.BOUNDS);
+                Text.send(p, Language.file().getString("Region.Region-Set-Bounds"));
+            }
+        } catch (final Exception e) {
+            Text.send(p, Language.file().getString("Selection.None"));
+        }
     }
 }

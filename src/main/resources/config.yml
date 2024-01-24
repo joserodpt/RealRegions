@@ -5,4 +5,7 @@ RealRegions:
   Effects:
     Particles: true
     Sounds: true
-Version: 2
+  Hooks:
+    RealMines:
+      Import-Mines: true
+Version: 3
