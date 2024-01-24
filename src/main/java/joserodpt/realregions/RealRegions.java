@@ -16,6 +16,9 @@ package joserodpt.realregions;
  */
 
 import joserodpt.realmines.api.RealMinesAPI;
+import joserodpt.realpermissions.api.RealPermissionsAPI;
+import joserodpt.realpermissions.api.pluginhookup.ExternalPlugin;
+import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.gui.EntityViewer;
@@ -33,10 +36,12 @@ import joserodpt.realregions.utils.PlayerInput;
 import joserodpt.realregions.utils.Text;
 import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 public class RealRegions extends JavaPlugin {
@@ -126,6 +131,11 @@ public class RealRegions extends JavaPlugin {
                 this.getLogger().warning("There is a new update available! Version: " + version + " -> https://www.spigotmc.org/resources/111629/");
             }
         });
+
+        if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
+            //register RealRegions permissions onto RealPermissions
+            RealPermissionsAPI.getInstance().getHookupAPI().addHookup(new ExternalPlugin("RealRegions", "&fReal&aRegions", this.getDescription().getDescription(), Material.PAINTING, Collections.singletonList(
+                    new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))), this.getDescription().getVersion())); }
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
