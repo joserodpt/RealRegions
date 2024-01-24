@@ -16,7 +16,7 @@ package joserodpt.realregions.managers;
  */
 
 import joserodpt.realmines.api.mine.RMine;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.RWorld;
@@ -44,8 +44,8 @@ import java.util.Map;
 import java.util.Random;
 
 public class WorldManager {
-    private RealRegions rr;
-    public WorldManager(RealRegions rr) {
+    private RealRegionsPlugin rr;
+    public WorldManager(RealRegionsPlugin rr) {
         this.rr = rr;
     }
     

@@ -15,8 +15,10 @@ package joserodpt.realregions.listeners;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realmines.api.RealMinesAPI;
 import joserodpt.realmines.api.event.RealMinesMineChangeEvent;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realmines.api.event.RealMinesPluginLoadedEvent;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.Region;
@@ -26,9 +28,19 @@ import org.bukkit.event.Listener;
 
 public class RealMinesListener implements Listener {
 
-    private final RealRegions rr;
-    public RealMinesListener(RealRegions realRegions) {
-        this.rr = realRegions;
+    private final RealRegionsPlugin rr;
+    public RealMinesListener(RealRegionsPlugin realRegionsPlugin) {
+        this.rr = realRegionsPlugin;
+    }
+
+    @EventHandler
+    public void realMinesLoadedEvent(RealMinesPluginLoadedEvent e) {
+        rr.rma = RealMinesAPI.getInstance();
+        rr.getLogger().info("Hooked onto RealMines! Version: " + rr.rma.getVersion());
+        if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
+            rr.getWorldManager().checkRealMinesRegions(rr.rma.getMineManager().getMines());
+            rr.getLogger().info("Loaded " + rr.rma.getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
+        }
     }
 
     @EventHandler

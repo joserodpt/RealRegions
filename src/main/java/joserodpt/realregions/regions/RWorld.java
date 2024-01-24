@@ -15,7 +15,7 @@ package joserodpt.realregions.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.utils.IO;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Text;
@@ -79,18 +79,18 @@ public class RWorld implements Listener {
                 worldSizeMB = IO.toMB(IO.folderSize(folder));
             }
         };
-        task.runTaskLaterAsynchronously(RealRegions.getPlugin(), 0);
+        task.runTaskLaterAsynchronously(RealRegionsPlugin.getPlugin(), 0);
     }
 
     private void checkConfig() {
-        this.file = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
+        this.file = new File(RealRegionsPlugin.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
         if (!this.file.exists()) {
             this.file.getParentFile().mkdirs();
             try {
                 this.file.createNewFile();
                 setupDefaultConfig();
             } catch (IOException e) {
-                RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while creating world config for " + this.getRWorldName());
+                RealRegionsPlugin.getPlugin().getLogger().severe("RealRegions threw an error while creating world config for " + this.getRWorldName());
                 e.printStackTrace();
             }
         }
@@ -102,14 +102,14 @@ public class RWorld implements Listener {
     }
 
     public void deleteConfig() {
-        File fileToDelete = new File(RealRegions.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
+        File fileToDelete = new File(RealRegionsPlugin.getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
 
         if (fileToDelete.exists()) {
             if (!fileToDelete.delete()) {
-                RealRegions.getPlugin().getLogger().severe("Failed to delete Configuration file for " + this.getRWorldName() + ".");
+                RealRegionsPlugin.getPlugin().getLogger().severe("Failed to delete Configuration file for " + this.getRWorldName() + ".");
             }
         } else {
-            RealRegions.getPlugin().getLogger().severe("Configuration file for " + this.getRWorldName() + " doesn't exist.");
+            RealRegionsPlugin.getPlugin().getLogger().severe("Configuration file for " + this.getRWorldName() + " doesn't exist.");
         }
 
     }
@@ -122,7 +122,7 @@ public class RWorld implements Listener {
         try {
             this.config.save(file);
         } catch (IOException e) {
-            RealRegions.getPlugin().getLogger().severe("RealRegions threw an error while saving world config for " + this.getRWorldName());
+            RealRegionsPlugin.getPlugin().getLogger().severe("RealRegions threw an error while saving world config for " + this.getRWorldName());
         }
     }
 

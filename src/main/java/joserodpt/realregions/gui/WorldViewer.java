@@ -15,7 +15,7 @@ package joserodpt.realregions.gui;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Pagination;
@@ -63,9 +63,9 @@ public class WorldViewer {
 
     public enum WorldSort { SIZE, TIME }
     private WorldSort ws;
-    private RealRegions rr;
+    private RealRegionsPlugin rr;
 
-    public WorldViewer(Player pl, WorldSort ws, RealRegions rr) {
+    public WorldViewer(Player pl, WorldSort ws, RealRegionsPlugin rr) {
         this.rr = rr;
         this.ws = ws;
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| Worlds"));

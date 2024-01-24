@@ -15,7 +15,7 @@ package joserodpt.realregions.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Location;
@@ -82,9 +82,9 @@ public class Region {
         this.isBeingVisualized = beingVisualized;
 
         if (this.isBeingVisualized) {
-            RealRegions.getPlugin().getWorldManager().getRegionManager().getView().add(this);
+            RealRegionsPlugin.getPlugin().getWorldManager().getRegionManager().getView().add(this);
         } else {
-            RealRegions.getPlugin().getWorldManager().getRegionManager().getView().remove(this);
+            RealRegionsPlugin.getPlugin().getWorldManager().getRegionManager().getView().remove(this);
         }
     }
 

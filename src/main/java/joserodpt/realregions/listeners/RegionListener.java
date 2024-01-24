@@ -15,7 +15,7 @@ package joserodpt.realregions.listeners;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.Region;
@@ -48,9 +48,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class RegionListener implements Listener {
-    private final RealRegions rr;
+    private final RealRegionsPlugin rr;
     
-    public RegionListener(RealRegions rr) {
+    public RegionListener(RealRegionsPlugin rr) {
         this.rr = rr;
     }
 
@@ -175,7 +175,7 @@ public class RegionListener implements Listener {
                     cancel();
                     }
                 }
-            }.runTaskTimer(RealRegions.getPlugin(), 1, 1);
+            }.runTaskTimer(RealRegionsPlugin.getPlugin(), 1, 1);
         }
     }
 

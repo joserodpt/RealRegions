@@ -16,7 +16,7 @@ package joserodpt.realregions.commands;
  */
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.config.Config;
@@ -50,8 +50,8 @@ public class RealRegionsCMD extends CommandBase {
     
     private final String onlyPlayers = "[RealRegions] Only players can run this command.";
 
-    RealRegions rr;
-    public RealRegionsCMD(RealRegions r)
+    RealRegionsPlugin rr;
+    public RealRegionsCMD(RealRegionsPlugin r)
     {
         this.rr = r;
     }

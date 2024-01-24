@@ -15,7 +15,7 @@ package joserodpt.realregions.gui;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.utils.Itens;
@@ -67,9 +67,9 @@ public class EntityViewer {
     int pageNumber = 0;
     private Pagination<EntityIcon> p;
     private RWorld r;
-    private RealRegions rr;
+    private RealRegionsPlugin rr;
 
-    public EntityViewer(Player pl, RWorld r, RealRegions rr) {
+    public EntityViewer(Player pl, RWorld r, RealRegionsPlugin rr) {
         this.rr = rr;
         this.r = r;
 
@@ -87,7 +87,7 @@ public class EntityViewer {
         this.register();
     }
 
-    public EntityViewer(Player pl, RWorld r, String search, RealRegions rr) {
+    public EntityViewer(Player pl, RWorld r, String search, RealRegionsPlugin rr) {
         this.rr = rr;
         this.r = r;
 
@@ -105,7 +105,7 @@ public class EntityViewer {
         this.register();
     }
 
-    public EntityViewer(Player pl, RWorld r, EntityType e, RealRegions rr) {
+    public EntityViewer(Player pl, RWorld r, EntityType e, RealRegionsPlugin rr) {
         this.rr = rr;
         this.r = r;
 
@@ -319,7 +319,7 @@ public class EntityViewer {
         return pageNumber == 0;
     }
 
-    protected void exit(Player p, RealRegions rr) {
+    protected void exit(Player p, RealRegionsPlugin rr) {
         p.closeInventory();
         WorldGUI v = new WorldGUI(p, this.r, rr);
         v.openInventory(p);

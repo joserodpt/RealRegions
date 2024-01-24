@@ -15,7 +15,7 @@ package joserodpt.realregions.gui;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.regions.RegionFlags;
@@ -54,9 +54,9 @@ public class RegionGUI {
 
 	private UUID uuid;
 	private Region r;
-	private RealRegions rr;
+	private RealRegionsPlugin rr;
 
-	public RegionGUI(Player as, Region r, RealRegions rr) {
+	public RegionGUI(Player as, Region r, RealRegionsPlugin rr) {
 		this.rr = rr;
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));

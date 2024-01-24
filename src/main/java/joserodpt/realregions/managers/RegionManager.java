@@ -17,7 +17,7 @@ package joserodpt.realregions.managers;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realmines.api.mine.RMine;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.CuboidRegion;
@@ -34,7 +34,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -224,7 +223,7 @@ public class RegionManager {
                     }
                 }
             }
-        }.runTaskTimer(RealRegions.getPlugin(),0, 10);
+        }.runTaskTimer(RealRegionsPlugin.getPlugin(),0, 10);
     }
 
     public void setRegionBounds(Region reg, Player p) {

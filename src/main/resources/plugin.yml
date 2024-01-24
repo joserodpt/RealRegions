@@ -1,6 +1,6 @@
 name: RealRegions
 version: ${project.version}
-main: joserodpt.realregions.RealRegions
+main: joserodpt.realregions.RealRegionsPlugin
 api-version: 1.13
 load: POSTWORLD
 prefix: RealRegions

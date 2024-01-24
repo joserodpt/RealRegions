@@ -16,7 +16,7 @@ package joserodpt.realregions.gui;
  */
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.Region;
@@ -65,9 +65,9 @@ public class WorldGUI {
 
     int pageNumber = 0;
     private Pagination<Region> p;
-    private RealRegions rr;
+    private RealRegionsPlugin rr;
 
-    public WorldGUI(Player as, RWorld r, RealRegions rr) {
+    public WorldGUI(Player as, RWorld r, RealRegionsPlugin rr) {
         this.rr = rr;
         this.uuid = as.getUniqueId();
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getRWorldName()));

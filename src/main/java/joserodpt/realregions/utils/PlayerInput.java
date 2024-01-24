@@ -15,7 +15,7 @@ package joserodpt.realregions.utils;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +53,7 @@ public class PlayerInput implements Listener {
 			public void run() {
 				p.sendTitle(texts.get(0), texts.get(1), 0, 21, 0);
 			}
-		}.runTaskTimer(RealRegions.getPlugin(), 0L, 20);
+		}.runTaskTimer(RealRegionsPlugin.getPlugin(), 0L, 20);
 
 		this.register();
 	}
@@ -87,19 +87,19 @@ public class PlayerInput implements Listener {
 								Text.send(p, "&cInput cancelled.");
 								current.taskId.cancel();
 								p.sendTitle("", "", 0, 1, 0);
-								Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPlugin(), () -> current.runCancel.run(input), 3);
+								Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegionsPlugin.getPlugin(), () -> current.runCancel.run(input), 3);
 								current.unregister();
 								return;
 							}
 
 							current.taskId.cancel();
-							Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegions.getPlugin(), () -> current.runGo.run(input), 3);
+							Bukkit.getScheduler().scheduleSyncDelayedTask(RealRegionsPlugin.getPlugin(), () -> current.runGo.run(input), 3);
 							p.sendTitle("", "", 0, 1, 0);
 							current.unregister();
 						} catch (Exception e) {
 							Text.send(p, "&cAn error ocourred. Contact JoseGamer_PT on Spigot.com");
-							RealRegions.getPlugin().getLogger().severe("Error ocourred while executing Player Input Request:");
-							RealRegions.getPlugin().getLogger().severe(e.getMessage());
+							RealRegionsPlugin.getPlugin().getLogger().severe("Error ocourred while executing Player Input Request:");
+							RealRegionsPlugin.getPlugin().getLogger().severe(e.getMessage());
 						}
 					}
 				}

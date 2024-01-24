@@ -15,7 +15,7 @@ package joserodpt.realregions.gui;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.CuboidRegion;
@@ -73,9 +73,9 @@ public class MaterialPicker {
     Pagination<Material> p;
     private Object min;
     private PickType pt;
-    private RealRegions rr;
+    private RealRegionsPlugin rr;
 
-    public MaterialPicker(Object m, Player pl, PickType block, RealRegions rr) {
+    public MaterialPicker(Object m, Player pl, PickType block, RealRegionsPlugin rr) {
         this.rr = rr;
         this.uuid = pl.getUniqueId();
         this.min = m;
@@ -98,7 +98,7 @@ public class MaterialPicker {
         this.register();
     }
 
-    public MaterialPicker(Object m, Player pl, PickType block, String search, RealRegions rr) {
+    public MaterialPicker(Object m, Player pl, PickType block, String search, RealRegionsPlugin rr) {
         this.rr = rr;
         this.uuid = pl.getUniqueId();
         this.min = m;
@@ -317,7 +317,7 @@ public class MaterialPicker {
         return pageNumber == 0;
     }
 
-    protected void exit(Player p, RealRegions rr) {
+    protected void exit(Player p, RealRegionsPlugin rr) {
         p.closeInventory();
         switch (this.pt)
         {
@@ -327,7 +327,7 @@ public class MaterialPicker {
                         WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, rr);
                         wv.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getPlugin(), 2);
+                }.runTaskLater(RealRegionsPlugin.getPlugin(), 2);
                 break;
             case ICON_REG:
                 new BukkitRunnable() {
@@ -335,7 +335,7 @@ public class MaterialPicker {
                         WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getRWorld(), rr);
                         v.openInventory(p);
                     }
-                }.runTaskLater(RealRegions.getPlugin(), 2);
+                }.runTaskLater(RealRegionsPlugin.getPlugin(), 2);
                 break;
         }
     }

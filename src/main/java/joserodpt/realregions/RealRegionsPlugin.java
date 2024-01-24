@@ -44,17 +44,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class RealRegions extends JavaPlugin {
+public class RealRegionsPlugin extends JavaPlugin {
     private final WorldManager worldManager = new WorldManager(this);
     private boolean newUpdate;
 
-    private RealMinesAPI rma = null;
+    public RealMinesAPI rma = null;
 
     public WorldManager getWorldManager() {
         return worldManager;
     }
-    private static RealRegions pl;
-    public static RealRegions getPlugin() {
+    private static RealRegionsPlugin pl;
+    public static RealRegionsPlugin getPlugin() {
         return pl;
     }
     @Override
@@ -77,6 +77,7 @@ public class RealRegions extends JavaPlugin {
         pm.registerEvents(PlayerInput.getListener(), this);
         pm.registerEvents(RegionGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
+
 
         CommandManager cm = new CommandManager(this);
 
@@ -109,13 +110,7 @@ public class RealRegions extends JavaPlugin {
         worldManager.loadWorlds();
 
         if (getServer().getPluginManager().getPlugin("RealMines") != null) {
-            rma = RealMinesAPI.getInstance();
             pm.registerEvents(new RealMinesListener(this), this);
-            getLogger().info("Hooked onto RealMines! Version: " + rma.getVersion());
-            if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
-                worldManager.checkRealMinesRegions(rma.getMineManager().getMines());
-                getLogger().info("Loaded " + rma.getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
-            }
          }
 
         getLogger().info("Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegionManager().getAllRegions().size() + " regions.");

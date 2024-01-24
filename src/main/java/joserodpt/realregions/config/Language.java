@@ -21,7 +21,7 @@ import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
-import joserodpt.realregions.RealRegions;
+import joserodpt.realregions.RealRegionsPlugin;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,8 +41,8 @@ public class Language implements Listener {
                     DumperSettings.DEFAULT,
                     UpdaterSettings.builder().setVersioning(new BasicVersioning("Version")).build());
         } catch (final IOException e) {
-            RealRegions.getPlugin().getLogger().severe( "Couldn't setup " + name + "!");
-            RealRegions.getPlugin().getLogger().severe(e.getMessage());
+            RealRegionsPlugin.getPlugin().getLogger().severe( "Couldn't setup " + name + "!");
+            RealRegionsPlugin.getPlugin().getLogger().severe(e.getMessage());
         }
     }
 
@@ -54,7 +54,7 @@ public class Language implements Listener {
         try {
             document.save();
         } catch (final IOException e) {
-            RealRegions.getPlugin().getLogger().severe( "Couldn't save " + name + "!");
+            RealRegionsPlugin.getPlugin().getLogger().severe( "Couldn't save " + name + "!");
         }
     }
 
@@ -62,7 +62,7 @@ public class Language implements Listener {
         try {
             document.reload();
         } catch (final IOException e) {
-            RealRegions.getPlugin().getLogger().severe( "Couldn't reload " + name + "!");
+            RealRegionsPlugin.getPlugin().getLogger().severe( "Couldn't reload " + name + "!");
         }
     }
 }
