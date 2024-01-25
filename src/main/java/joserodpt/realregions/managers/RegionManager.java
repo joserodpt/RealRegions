@@ -139,12 +139,18 @@ public class RegionManager {
             return;
         }
 
+        //remove permissions from RealPermissions
+        if (wm.getPlugin().getRealPermissionsAPI() != null) {
+            wm.getPlugin().getRealPermissionsAPI().getHookupAPI().removePermissionFromHookup(wm.getPlugin().getDescription().getName(), a.getRegionBypassPermissions());
+        }
+
         deleteRegion(a);
 
         Text.send(p, Language.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
     }
 
     public void deleteRegion(Region a) {
+
         a.setBeingVisualized(false);
         wm.getWorldsAndRegions().get(a.getRWorld()).remove(a);
         a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
@@ -200,6 +206,11 @@ public class RegionManager {
 
         //save region
         crg.saveData(Region.RegionData.ALL);
+
+        //send region permissions to RealPermissions
+        if (wm.getPlugin().getRealPermissionsAPI() != null) {
+            wm.getPlugin().getRealPermissionsAPI().getHookupAPI().addPermissionToHookup(wm.getPlugin().getDescription().getName(), crg.getRegionBypassPermissions());
+        }
     }
 
     public void createCubeRegionRealMines(RMine mine, RWorld rw) {

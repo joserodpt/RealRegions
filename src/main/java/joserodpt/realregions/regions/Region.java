@@ -15,6 +15,7 @@ package joserodpt.realregions.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
 import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Text;
@@ -28,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Region {
 
@@ -197,6 +199,14 @@ public class Region {
         if (!silent) {
             Text.send(p, "&fYou teleported to region &b" + this.displayname + "&r &fon &a" + this.rw.getRWorldName());
         }
+    }
+
+    public List<ExternalPluginPermission> getRegionBypassPermissions() {
+        return Arrays.stream(RegionFlags.values())
+                .map(value -> new ExternalPluginPermission(
+                        value.getBypassPermission(this.getRWorld().getRWorldName(), this.getRegionName()),
+                        "Bypass permission for region: " + this.getRegionName() + " in world: " + this.getRWorld().getRWorldName()))
+                .collect(Collectors.toList());
     }
 
     public void setIcon(Material a) {

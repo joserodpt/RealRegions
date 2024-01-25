@@ -44,12 +44,11 @@ import java.util.Map;
 import java.util.Random;
 
 public class WorldManager {
-    private RealRegionsPlugin rr;
+    private final RegionManager rm = new RegionManager(this);
+    private final RealRegionsPlugin rr;
     public WorldManager(RealRegionsPlugin rr) {
         this.rr = rr;
     }
-    
-    private final RegionManager rm = new RegionManager(this);
     private Map<RWorld, List<Region>> worlds_reg_dic = new HashMap<>();
     public Map<RWorld, List<Region>> getWorldsAndRegions() {
         return worlds_reg_dic;
@@ -57,6 +56,11 @@ public class WorldManager {
     public RegionManager getRegionManager() {
         return rm;
     }
+
+    public RealRegionsPlugin getPlugin() {
+        return rr;
+    }
+
     public List<RWorld> getWorlds() {
         return new ArrayList<>(worlds_reg_dic.keySet());
     }

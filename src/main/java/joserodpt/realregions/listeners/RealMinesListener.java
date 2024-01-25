@@ -35,11 +35,11 @@ public class RealMinesListener implements Listener {
 
     @EventHandler
     public void realMinesLoadedEvent(RealMinesPluginLoadedEvent e) {
-        rr.rma = RealMinesAPI.getInstance();
-        rr.getLogger().info("Hooked onto RealMines! Version: " + rr.rma.getVersion());
+        rr.setRealMinesAPI(RealMinesAPI.getInstance());
+        rr.getLogger().info("Hooked onto RealMines! Version: " + rr.getRealMinesAPI().getVersion());
         if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
-            rr.getWorldManager().checkRealMinesRegions(rr.rma.getMineManager().getMines());
-            rr.getLogger().info("Loaded " + rr.rma.getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
+            rr.getWorldManager().checkRealMinesRegions(rr.getRealMinesAPI().getMineManager().getMines());
+            rr.getLogger().info("Loaded " + rr.getRealMinesAPI().getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
         }
     }
 
