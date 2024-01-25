@@ -32,6 +32,7 @@ import joserodpt.realregions.commands.RealRegionsCMD;
 import joserodpt.realregions.managers.WorldManager;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.listeners.RegionListener;
+import joserodpt.realregions.regions.RegionFlags;
 import joserodpt.realregions.utils.PlayerInput;
 import joserodpt.realregions.utils.Text;
 import me.mattstudios.mf.base.CommandManager;
@@ -40,8 +41,10 @@ import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class RealRegionsPlugin extends JavaPlugin {
@@ -129,8 +132,18 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
             //register RealRegions permissions onto RealPermissions
-            RealPermissionsAPI.getInstance().getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, Collections.singletonList(
-                    new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))), this.getDescription().getVersion())); }
+            List<ExternalPluginPermission> perms = new ArrayList<>();
+            perms.add(new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw")));
+
+            for (Region reg : worldManager.getRegionManager().getAllRegions()) {
+                for (RegionFlags value : RegionFlags.values()) {
+                    String perm = value.getBypassPermission(reg.getRWorld().getRWorldName(), reg.getRegionName());
+                    perms.add(new ExternalPluginPermission(perm, "Bypass permission for " + reg.getRegionName() + " in world: " + reg.getRWorld().getRWorldName()));
+                }
+            }
+
+            RealPermissionsAPI.getInstance().getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
+        }
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
