@@ -35,7 +35,7 @@ import java.util.Arrays;
 
 public class RWorld implements Listener {
 
-    public enum WorldType { NORMAL, NETHER, THE_END, VOID }
+    public enum WorldType { NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED }
 
     public enum Data { ICON, LOAD }
 
@@ -47,6 +47,13 @@ public class RWorld implements Listener {
     private Material icon;
     private double worldSizeMB;
     private boolean loaded = true;
+
+    public RWorld(String worldNameImported) {
+        this.worldName = worldNameImported;
+        this.wt = WorldType.UNKNOWN_TO_BE_IMPORTED;
+        this.icon = Material.GRAY_STAINED_GLASS_PANE;
+        this.loaded = false;
+    }
 
     public RWorld(String worldName, WorldType wt) {
         this.worldName = worldName;
@@ -68,6 +75,10 @@ public class RWorld implements Listener {
         this.checkConfig();
 
         this.setLoaded(true);
+    }
+
+    public int getRegistrationDate() {
+        return this.getWorldType() == WorldType.UNKNOWN_TO_BE_IMPORTED ? (int) (System.currentTimeMillis() / 1000L) : this.getConfig().getInt("Settings.Unix-Register");
     }
 
     public void postWorldLoad() {
@@ -211,7 +222,9 @@ public class RWorld implements Listener {
     }
 
     public ItemStack getItem() {
-        return Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.","", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.config.getInt("Settings.Unix-Register")), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
+        return this.getWorldType() == WorldType.UNKNOWN_TO_BE_IMPORTED ?
+                Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&e&lUNIMPORTED&7]", Arrays.asList("&f", "&7Click to import this world."))
+                : Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.","", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.getRegistrationDate()), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world."));
     }
 
     private Material getIcon() {

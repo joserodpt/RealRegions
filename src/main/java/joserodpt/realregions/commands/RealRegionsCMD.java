@@ -21,9 +21,9 @@ import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.gui.EntityViewer;
-import joserodpt.realregions.gui.RegionGUI;
-import joserodpt.realregions.gui.WorldGUI;
-import joserodpt.realregions.gui.WorldViewer;
+import joserodpt.realregions.gui.FlagSelectorGUI;
+import joserodpt.realregions.gui.RegionsListGUI;
+import joserodpt.realregions.gui.WorldsListGUI;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.utils.Text;
 import me.mattstudios.mf.annotations.Alias;
@@ -58,7 +58,13 @@ public class RealRegionsCMD extends CommandBase {
 
     @Default
     public void defaultCommand(final CommandSender commandSender) {
-        Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rr.getDescription().getVersion()));
+        if (commandSender instanceof Player) {
+            Player p = (Player) commandSender;
+            WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rr);
+            wv.openInventory(p);
+        } else {
+            Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rr.getDescription().getVersion()));
+        }
     }
 
     @SubCommand("reload")
@@ -79,7 +85,7 @@ public class RealRegionsCMD extends CommandBase {
     public void worldscm(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
-            WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, rr);
+            WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rr);
             wv.openInventory(p);
         } else {
             for (RWorld world : rr.getWorldManager().getWorlds().stream()
@@ -90,6 +96,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("create")
+    @Alias("c")
     @Completion("#range:1-20")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr create <name>")
@@ -119,7 +126,7 @@ public class RealRegionsCMD extends CommandBase {
 
                     Text.send(p, Language.file().getString("Region.Created"));
 
-                    WorldGUI g = new WorldGUI(p, rw, rr);
+                    RegionsListGUI g = new RegionsListGUI(p, rw, rr);
                     g.openInventory(p);
                 }
             } catch (Exception e) {
@@ -133,6 +140,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("createw")
+    @Alias("cw")
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name>")
@@ -165,7 +173,7 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            RegionGUI wv = new RegionGUI(p, reg, rr);
+            FlagSelectorGUI wv = new FlagSelectorGUI(p, reg, rr);
             wv.openInventory(p);
         } else {
             Text.send(commandSender, onlyPlayers);
@@ -188,7 +196,7 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            WorldGUI wv = new WorldGUI(p, rw, rr);
+            RegionsListGUI wv = new RegionsListGUI(p, rw, rr);
             wv.openInventory(p);
         } else {
             Text.send(commandSender, onlyPlayers);

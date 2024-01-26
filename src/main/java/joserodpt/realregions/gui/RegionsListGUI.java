@@ -48,9 +48,9 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class WorldGUI {
+public class RegionsListGUI {
 
-    private static Map<UUID, WorldGUI> inventories = new HashMap<>();
+    private static Map<UUID, RegionsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
     private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
@@ -67,7 +67,7 @@ public class WorldGUI {
     private Pagination<Region> p;
     private RealRegionsPlugin rr;
 
-    public WorldGUI(Player as, RWorld r, RealRegionsPlugin rr) {
+    public RegionsListGUI(Player as, RWorld r, RealRegionsPlugin rr) {
         this.rr = rr;
         this.uuid = as.getUniqueId();
         this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| &9" + r.getRWorldName()));
@@ -155,7 +155,7 @@ public class WorldGUI {
                     }
                     UUID uuid = clicker.getUniqueId();
                     if (inventories.containsKey(uuid)) {
-                        WorldGUI current = inventories.get(uuid);
+                        RegionsListGUI current = inventories.get(uuid);
                         if (e.getInventory().getHolder() != current.getInventory().getHolder()) {
                             return;
                         }
@@ -213,12 +213,12 @@ public class WorldGUI {
                                             Text.send(p, Language.file().getString("Region.Created"));
                                             new BukkitRunnable() {
                                                 public void run() {
-                                                    WorldGUI g = new WorldGUI(p, current.r, current.rr);
+                                                    RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);
                                                     g.openInventory(p);
                                                 }
                                             }.runTaskLater(current.rr, 2);
                                         }, input -> {
-                                            WorldGUI wv = new WorldGUI(p, current.r, current.rr);
+                                            RegionsListGUI wv = new RegionsListGUI(p, current.r, current.rr);
                                             wv.openInventory(p);
                                         });
                                     } else {
@@ -232,7 +232,7 @@ public class WorldGUI {
                                 break;
                             case 43:
                                 p.closeInventory();
-                                WorldViewer asd = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
+                                WorldsListGUI asd = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, current.rr);
                                 asd.openInventory(p);
                                 break;
                             case 38:
@@ -257,7 +257,7 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            RegionGUI fg = new RegionGUI(p, a, current.rr);
+                                            FlagSelectorGUI fg = new FlagSelectorGUI(p, a, current.rr);
                                             fg.openInventory(p);
                                         }
                                     }.runTaskLater(current.rr, 2);
@@ -266,7 +266,7 @@ public class WorldGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            MaterialPicker mp = new MaterialPicker(a, p, MaterialPicker.PickType.ICON_REG, current.rr);
+                                            MaterialPickerGUI mp = new MaterialPickerGUI(a, p, MaterialPickerGUI.PickType.ICON_REG, current.rr);
                                             mp.openInventory(p);
                                         }
                                     }.runTaskLater(current.rr, 2);
@@ -282,12 +282,12 @@ public class WorldGUI {
                                         Text.send(p, Language.file().getString("Region.Display-Name-Changed").replace("%input%", Text.color(input)));
                                         new BukkitRunnable() {
                                             public void run() {
-                                                WorldGUI g = new WorldGUI(p, current.r, current.rr);
+                                                RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);
                                                 g.openInventory(p);
                                             }
                                         }.runTaskLater(current.rr, 2);
                                     }, input -> {
-                                        WorldGUI wv = new WorldGUI(p, current.r, current.rr);
+                                        RegionsListGUI wv = new RegionsListGUI(p, current.r, current.rr);
                                         wv.openInventory(p);
                                     });
                                     break;
@@ -299,7 +299,7 @@ public class WorldGUI {
                 }
             }
 
-            private void backPage(WorldGUI asd) {
+            private void backPage(RegionsListGUI asd) {
                 if (asd.p.exists(asd.pageNumber - 1)) {
                     asd.pageNumber--;
                 }
@@ -307,7 +307,7 @@ public class WorldGUI {
                 asd.fillChest(asd.p.getPage(asd.pageNumber));
             }
 
-            private void nextPage(WorldGUI asd) {
+            private void nextPage(RegionsListGUI asd) {
                 if (asd.p.exists(asd.pageNumber + 1)) {
                     asd.pageNumber++;
                 }

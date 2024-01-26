@@ -64,6 +64,37 @@ public class WorldManager {
     public List<RWorld> getWorlds() {
         return new ArrayList<>(worlds_reg_dic.keySet());
     }
+
+    public List<RWorld> getWorldsAndPossibleImports() {
+        List<RWorld> ret = new ArrayList<>(this.getWorlds());
+        ret.addAll(this.getPossibleImports());
+        return ret;
+    }
+
+    public List<RWorld> getPossibleImports() {
+        List<RWorld> ret = new ArrayList<>();
+
+        File worldsFolder = Bukkit.getWorldContainer();
+
+        if (worldsFolder.exists() && worldsFolder.isDirectory()) {
+            File[] worldFolders = worldsFolder.listFiles(File::isDirectory);
+            if (worldFolders != null) {
+                for (File worldFolder : worldFolders) {
+                    File levelDatFile = new File(worldFolder, "level.dat");
+                    if (levelDatFile.exists() && levelDatFile.isFile() && this.getWorld(worldFolder.getName()) == null) {
+                        ret.add(new RWorld(worldFolder.getName()));
+                    }
+                }
+            } else {
+                rr.getLogger().warning("Failed to list world folders.");
+            }
+        } else {
+            rr.getLogger().warning("Worlds folder does not exist or is not a directory.");
+        }
+
+        return ret;
+    }
+
     public void loadWorlds() {
         //check if folder "worlds" exists in RealRegions
         File folder = new File(rr.getDataFolder() + "/worlds");

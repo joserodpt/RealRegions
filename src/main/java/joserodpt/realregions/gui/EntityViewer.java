@@ -250,7 +250,7 @@ public class EntityViewer {
                                     df.openInventory(p);
                                 }, input -> {
                                     p.closeInventory();
-                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
+                                    WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, current.rr);
                                     wv.openInventory(p);
                                 });
                                 break;
@@ -321,7 +321,7 @@ public class EntityViewer {
 
     protected void exit(Player p, RealRegionsPlugin rr) {
         p.closeInventory();
-        WorldGUI v = new WorldGUI(p, this.r, rr);
+        RegionsListGUI v = new RegionsListGUI(p, this.r, rr);
         v.openInventory(p);
     }
 

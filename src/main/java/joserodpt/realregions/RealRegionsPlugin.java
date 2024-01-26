@@ -22,10 +22,10 @@ import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
 import joserodpt.realregions.config.Config;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.gui.EntityViewer;
-import joserodpt.realregions.gui.MaterialPicker;
-import joserodpt.realregions.gui.RegionGUI;
-import joserodpt.realregions.gui.WorldGUI;
-import joserodpt.realregions.gui.WorldViewer;
+import joserodpt.realregions.gui.MaterialPickerGUI;
+import joserodpt.realregions.gui.FlagSelectorGUI;
+import joserodpt.realregions.gui.RegionsListGUI;
+import joserodpt.realregions.gui.WorldsListGUI;
 import joserodpt.realregions.listeners.RealMinesListener;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.commands.RealRegionsCMD;
@@ -86,11 +86,11 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new RegionListener(this), this);
-        pm.registerEvents(WorldViewer.getListener(), this);
-        pm.registerEvents(WorldGUI.getListener(), this);
-        pm.registerEvents(MaterialPicker.getListener(), this);
+        pm.registerEvents(WorldsListGUI.getListener(), this);
+        pm.registerEvents(RegionsListGUI.getListener(), this);
+        pm.registerEvents(MaterialPickerGUI.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
-        pm.registerEvents(RegionGUI.getListener(), this);
+        pm.registerEvents(FlagSelectorGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
         CommandManager cm = new CommandManager(this);

@@ -16,10 +16,7 @@ package joserodpt.realregions.gui;
  */
 
 import joserodpt.realregions.RealRegionsPlugin;
-import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
-import joserodpt.realregions.regions.CuboidRegion;
-import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.utils.Itens;
 import joserodpt.realregions.utils.Pagination;
 import joserodpt.realregions.utils.PlayerInput;
@@ -38,21 +35,16 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-public class MaterialPicker {
+public class WorldsListGUI {
 
-    public enum PickType {
-        ICON_WORLD, ICON_REG
-    }
-
-    private static Map<UUID, MaterialPicker> inventories = new HashMap<>();
+    private static Map<UUID, WorldsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
     private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
@@ -61,87 +53,52 @@ public class MaterialPicker {
     private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
     private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
-            Collections.singletonList("&fClick here to go back."));
-    private ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
-            Collections.singletonList("&fClick here to search for a block."));
+            Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
-    private List<Material> items;
-    private HashMap<Integer, Material> display = new HashMap<>();
+    private HashMap<Integer, RWorld> display = new HashMap<>();
 
     int pageNumber = 0;
-    Pagination<Material> p;
-    private Object min;
-    private PickType pt;
+    Pagination<RWorld> p;
+
+    public enum WorldSort { SIZE, REGISTRATION_DATE}
+    private WorldSort ws;
     private RealRegionsPlugin rr;
 
-    public MaterialPicker(Object m, Player pl, PickType block, RealRegionsPlugin rr) {
+    public WorldsListGUI(Player pl, WorldSort ws, RealRegionsPlugin rr) {
         this.rr = rr;
+        this.ws = ws;
+        this.inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8v" + rr.getDescription().getVersion() + " | Worlds"));
         this.uuid = pl.getUniqueId();
-        this.min = m;
-        this.pt = block;
 
-        switch (block) {
-            case ICON_REG:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
-                break;
-            case ICON_WORLD:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getRWorldName()));
-                break;
-        }
-
-        this.items = getIcons();
-
-        this.p = new Pagination<>(28, this.items);
-        fillChest(this.p.getPage(this.pageNumber));
+        load();
 
         this.register();
     }
 
-    public MaterialPicker(Object m, Player pl, PickType block, String search, RealRegionsPlugin rr) {
-        this.rr = rr;
-        this.uuid = pl.getUniqueId();
-        this.min = m;
-        this.pt = block;
-        switch (block)
-        {
-            case ICON_REG:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((Region) m).getDisplayName()));
+    public void load() {
+        List<RWorld> worlds = rr.getWorldManager().getWorldsAndPossibleImports();
+
+        switch (ws) {
+            case REGISTRATION_DATE:
+                worlds.sort(Comparator.comparingInt(RWorld::getRegistrationDate));
                 break;
-            case ICON_WORLD:
-                inv = Bukkit.getServer().createInventory(null, 54, Text.color("Select icon for " + ((RWorld) m).getRWorldName()));
+            case SIZE:
+                worlds.sort(Comparator.comparingDouble(RWorld::getWorldSizeMB));
                 break;
         }
 
-        this.items = searchMaterial(search);
-        this.p = new Pagination<>(28, this.items);
-        fillChest(this.p.getPage(this.pageNumber));
-
-        this.register();
+        this.p = new Pagination<>(28, worlds);
+        fillChest(p.getPage(this.pageNumber), ws);
     }
 
-    private List<Material> getIcons() {
-        return Arrays.stream(Material.values())
-                .filter(m -> !m.equals(Material.AIR) && m.isSolid() && m.isBlock() && m.isItem())
-                .collect(Collectors.toList());
-    }
-
-    private List<Material> searchMaterial(String s) {
-        return getIcons().stream()
-                .filter(m -> m.name().toLowerCase().contains(s.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
-    public void fillChest(List<Material> items) {
-
+    public void fillChest(List<RWorld> items, WorldSort ws) {
         this.inv.clear();
         this.display.clear();
 
         for (int i = 0; i < 9; ++i) {
             this.inv.setItem(i, placeholder);
         }
-
-        this.inv.setItem(4, search);
 
         this.inv.setItem(45, placeholder);
         this.inv.setItem(46, placeholder);
@@ -174,20 +131,31 @@ public class MaterialPicker {
         }
 
         int slot = 0;
-        for (ItemStack i : inv.getContents()) {
+        for (ItemStack i : this.inv.getContents()) {
             if (i == null) {
                 if (!items.isEmpty()) {
-                    Material s = items.get(0);
-                    this.inv.setItem(slot,
-                            Itens.createItem(s, 1, "§f" + s.name(), Collections.singletonList("&fClick to pick this.")));
-                    this.display.put(slot, s);
+                    RWorld e = items.get(0);
+                    this.inv.setItem(slot, e.getItem());
+                    this.display.put(slot, e);
                     items.remove(0);
                 }
             }
             slot++;
         }
 
+        switch (ws)
+        {
+            case SIZE:
+                this.inv.setItem(47, Itens.createItem(Material.CHEST, 1, "&fSorted by &aSize", Collections.singletonList("&fClick here to sort by &bRegistration Date")));
+                break;
+            case REGISTRATION_DATE:
+                this.inv.setItem(47, Itens.createItem(Material.CLOCK, 1, "&fSorted by &aRegistration Date", Collections.singletonList("&fClick here to sort by &bSize")));
+                break;
+        }
+
         this.inv.setItem(49, close);
+
+        this.inv.setItem(51, Itens.createItem(Material.CRAFTING_TABLE, 1, "&fCreate a New World"));
     }
 
     public void openInventory(Player target) {
@@ -214,33 +182,31 @@ public class MaterialPicker {
                     }
                     UUID uuid = clicker.getUniqueId();
                     if (inventories.containsKey(uuid)) {
-                        MaterialPicker current = inventories.get(uuid);
+                        WorldsListGUI current = inventories.get(uuid);
                         if (e.getInventory().getHolder() != current.getInventory().getHolder()) {
                             return;
                         }
 
                         Player p = (Player) clicker;
+
                         e.setCancelled(true);
 
                         switch (e.getRawSlot())
                         {
-                            case 4:
-                                new PlayerInput(p, input -> {
-                                    if (current.searchMaterial(input).isEmpty()) {
-                                        Text.send(p, Language.file().getString("Search.No-Results"));
-                                        current.exit(p, current.rr);
-                                        return;
-                                    }
-                                    MaterialPicker df = new MaterialPicker(current.min, p, current.pt, input, current.rr);
-                                    df.openInventory(p);
-                                }, input -> {
-                                    p.closeInventory();
-                                    WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
-                                    wv.openInventory(p);
-                                });
+                            case 47:
+                                switch (current.ws) {
+                                    case REGISTRATION_DATE:
+                                        current.ws = WorldSort.SIZE;
+                                        break;
+                                    case SIZE:
+                                        current.ws = WorldSort.REGISTRATION_DATE;
+                                        break;
+                                }
+                                p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+                                current.load();
                                 break;
                             case 49:
-                                current.exit(p, current.rr);
+                                current.exit(p);
                                 break;
                             case 26:
                             case 35:
@@ -252,45 +218,69 @@ public class MaterialPicker {
                                 backPage(current);
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
+                            case 51:
+                                new PlayerInput(p, input -> current.rr.getWorldManager().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
+                                    WorldsListGUI wv = new WorldsListGUI(p, current.ws, current.rr);
+                                    wv.openInventory(p);
+                                });
                         }
 
                         if (current.display.containsKey(e.getRawSlot())) {
-                            Material a = current.display.get(e.getRawSlot());
-                            if (current.pt.equals(PickType.ICON_REG)) {
-                                p.closeInventory();
-                                Region r = ((Region) current.min);
-                                r.setIcon(a);
-                                r.saveData(Region.RegionData.ICON);
-                                WorldGUI v = new WorldGUI(p, r.getRWorld(), current.rr);
-                                v.openInventory(p);
-                            }
-                            if (current.pt.equals(PickType.ICON_WORLD)) {
-                                p.closeInventory();
-                                RWorld r = ((RWorld) current.min);
-                                r.setIcon(a);
-                                r.saveData(RWorld.Data.ICON);
-                                WorldViewer v = new WorldViewer(p, WorldViewer.WorldSort.TIME, current.rr);
-                                v.openInventory(p);
+                            RWorld a = current.display.get(e.getRawSlot());
+
+                            if (a.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
+                                current.rr.getWorldManager().importWorld(p, a.getRWorldName(), RWorld.WorldType.NORMAL);
+                                current.load();
+                            } else {
+                                switch (e.getClick())
+                                {
+                                    case RIGHT:
+                                        p.closeInventory();
+                                        a.teleport(p, false);
+                                        break;
+                                    case MIDDLE:
+                                        p.closeInventory();
+                                        new BukkitRunnable()
+                                        {
+                                            public void run()
+                                            {
+                                                MaterialPickerGUI mp = new MaterialPickerGUI(a, p, MaterialPickerGUI.PickType.ICON_WORLD, current.rr);
+                                                mp.openInventory(p);
+                                            }
+                                        }.runTaskLater(current.rr, 2);
+                                        break;
+                                    default:
+                                        p.closeInventory();
+                                        new BukkitRunnable()
+                                        {
+                                            public void run()
+                                            {
+                                                RegionsListGUI v = new RegionsListGUI(p, a, current.rr);
+                                                v.openInventory(p);
+                                            }
+                                        }.runTaskLater(current.rr, 2);
+                                        break;
+                                }
                             }
                         }
                     }
                 }
             }
 
-            private void backPage(MaterialPicker asd) {
+            private void backPage(WorldsListGUI asd) {
                 if (asd.p.exists(asd.pageNumber - 1)) {
                     asd.pageNumber--;
                 }
 
-                asd.fillChest(asd.p.getPage(asd.pageNumber));
+                asd.fillChest(asd.p.getPage(asd.pageNumber), asd.ws);
             }
 
-            private void nextPage(MaterialPicker asd) {
+            private void nextPage(WorldsListGUI asd) {
                 if (asd.p.exists(asd.pageNumber + 1)) {
                     asd.pageNumber++;
                 }
 
-                asd.fillChest(asd.p.getPage(asd.pageNumber));
+                asd.fillChest(asd.p.getPage(asd.pageNumber), asd.ws);
             }
 
             @EventHandler
@@ -317,27 +307,8 @@ public class MaterialPicker {
         return pageNumber == 0;
     }
 
-    protected void exit(Player p, RealRegionsPlugin rr) {
+    protected void exit(Player p) {
         p.closeInventory();
-        switch (this.pt)
-        {
-            case ICON_WORLD:
-                new BukkitRunnable() {
-                    public void run() {
-                        WorldViewer wv = new WorldViewer(p, WorldViewer.WorldSort.TIME, rr);
-                        wv.openInventory(p);
-                    }
-                }.runTaskLater(RealRegionsPlugin.getPlugin(), 2);
-                break;
-            case ICON_REG:
-                new BukkitRunnable() {
-                    public void run() {
-                        WorldGUI v = new WorldGUI(p, ((CuboidRegion) min).getRWorld(), rr);
-                        v.openInventory(p);
-                    }
-                }.runTaskLater(RealRegionsPlugin.getPlugin(), 2);
-                break;
-        }
     }
 
     public Inventory getInventory() {

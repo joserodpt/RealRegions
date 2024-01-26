@@ -44,9 +44,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class RegionGUI {
+public class FlagSelectorGUI {
 
-	private static Map<UUID, RegionGUI> inventories = new HashMap<>();
+	private static Map<UUID, FlagSelectorGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
 	private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
@@ -56,7 +56,7 @@ public class RegionGUI {
 	private Region r;
 	private RealRegionsPlugin rr;
 
-	public RegionGUI(Player as, Region r, RealRegionsPlugin rr) {
+	public FlagSelectorGUI(Player as, Region r, RealRegionsPlugin rr) {
 		this.rr = rr;
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
@@ -196,7 +196,7 @@ public class RegionGUI {
 					}
 					UUID uuid = clicker.getUniqueId();
 					if (inventories.containsKey(uuid)) {
-						RegionGUI current = inventories.get(uuid);
+						FlagSelectorGUI current = inventories.get(uuid);
 						if (event.getInventory().getHolder() != current.getInventory().getHolder()) {
 							return;
 						}
@@ -215,7 +215,7 @@ public class RegionGUI {
 								{
 									public void run()
 									{
-										WorldGUI mp = new WorldGUI(player, current.r.getRWorld(), current.rr);
+										RegionsListGUI mp = new RegionsListGUI(player, current.r.getRWorld(), current.rr);
 										mp.openInventory(player);
 									}
 								}.runTaskLater(current.rr, 2);
@@ -227,7 +227,7 @@ public class RegionGUI {
 								{
 									public void run()
 									{
-										WorldGUI mp = new WorldGUI(player, current.r.getRWorld(), current.rr);
+										RegionsListGUI mp = new RegionsListGUI(player, current.r.getRWorld(), current.rr);
 										mp.openInventory(player);
 									}
 								}.runTaskLater(current.rr, 2);
@@ -404,7 +404,7 @@ public class RegionGUI {
 									if (!StringUtils.isNumeric(input))
 									{
 										Text.send(player, Language.file().getString("Input.Not-Number"));
-										RegionGUI wv = new RegionGUI(player, current.r, current.rr);
+										FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
 									}
@@ -414,12 +414,12 @@ public class RegionGUI {
 									Text.send(player, Language.file().getString("Priority.Changed").replace("%input%", Text.color(input)));
 									new BukkitRunnable() {
 										public void run() {
-											RegionGUI wv = new RegionGUI(player, current.r, current.rr);
+											FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
 											wv.openInventory(player);
 										}
 									}.runTaskLater(current.rr, 2);
 								}, input -> {
-									RegionGUI wv = new RegionGUI(player, current.r, current.rr);
+									FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
 									wv.openInventory(player);
 								});
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
