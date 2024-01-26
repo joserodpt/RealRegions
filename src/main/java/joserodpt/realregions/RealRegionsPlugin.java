@@ -73,10 +73,12 @@ public class RealRegionsPlugin extends JavaPlugin {
     }
     @Override
     public void onEnable() {
+        printASCII();
+
+        final long start = System.currentTimeMillis();
+
         pl = this;
         new Metrics(this, 19311);
-
-        printASCII();
 
         saveDefaultConfig();
         Config.setup(this);
@@ -149,9 +151,8 @@ public class RealRegionsPlugin extends JavaPlugin {
             rpa.getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
         }
 
-        getLogger().info("Plugin has been loaded.");
-        getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
-        getLogger().info("<------------------ RealRegions | vPT ------------------>".replace("PT", this.getDescription().getVersion()));
+        getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");
+        getLogger().info("<------------------ RealRegions vPT ------------------>".replace("PT", this.getDescription().getVersion()));
     }
 
     private void printASCII() {
@@ -161,7 +162,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         logWithColor("&2 |    // _ \\/ _` | |    // _ \\/ _` | |/ _ \\| '_ \\/ __|");
         logWithColor("&2 | |\\ \\  __/ (_| | | |\\ \\  __/ (_| | | (_) | | | \\__ \\");
         logWithColor("&2 \\_| \\_\\___|\\__,_|_\\_| \\_\\___|\\__, |_|\\___/|_| |_|___/");
-        logWithColor("&0     Author: &9JoseGamer_PT      &2__/ |   &0Version: &9" + this.getDescription().getVersion());
+        logWithColor("&0  Made by: &9JoseGamer_PT        &2__/ |   &0Version: &9" + this.getDescription().getVersion());
         logWithColor("&2                              |___/");
     }
 
