@@ -38,7 +38,7 @@ public class RealMinesListener implements Listener {
         rr.setRealMinesAPI(RealMinesAPI.getInstance());
         rr.getLogger().info("Hooked onto RealMines! Version: " + rr.getRealMinesAPI().getVersion());
         if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
-            rr.getWorldManager().checkRealMinesRegions(rr.getRealMinesAPI().getMineManager().getMines());
+            rr.getRegionManager().checkRealMinesRegions(rr.getRealMinesAPI().getMineManager().getMines());
             rr.getLogger().info("Loaded " + rr.getRealMinesAPI().getMineManager().getRegisteredMines().size() + " mine regions from RealMines.");
         }
     }
@@ -48,15 +48,15 @@ public class RealMinesListener implements Listener {
         switch (e.getChangeOperation()) {
             case ADDED:
                 if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines"))
-                    rr.getWorldManager().getRegionManager().createCubeRegionRealMines(e.getMine(), rr.getWorldManager().getWorld(e.getMine().getWorld()));
+                    rr.getRegionManager().createCubeRegionRealMines(e.getMine(), rr.getWorldManager().getWorld(e.getMine().getWorld()));
                 break;
             case REMOVED:
                 if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines"))
-                    rr.getWorldManager().getRegionManager().deleteRegion(rr.getWorldManager().getRegionManager().getRegionPlusName(e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
+                    rr.getRegionManager().deleteRegion(rr.getRegionManager().getRegionPlusName(e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
                 break;
             case BOUNDS_UPDATED:
                 if (Config.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
-                    CuboidRegion r = (CuboidRegion) rr.getWorldManager().getRegionManager().getRegionPlusName((e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
+                    CuboidRegion r = (CuboidRegion) rr.getRegionManager().getRegionPlusName((e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
                     r.setCube(new Cube(e.getMine().getPOS1(), e.getMine().getPOS2()));
                     r.saveData(Region.RegionData.BOUNDS);
                 }

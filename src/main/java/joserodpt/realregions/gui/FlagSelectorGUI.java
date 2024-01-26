@@ -222,7 +222,7 @@ public class FlagSelectorGUI {
 								break;
 							case 42:
 								player.closeInventory();
-								current.rr.getWorldManager().getRegionManager().deleteRegion(player, current.r);
+								current.rr.getRegionManager().deleteRegion(player, current.r);
 								new BukkitRunnable()
 								{
 									public void run()

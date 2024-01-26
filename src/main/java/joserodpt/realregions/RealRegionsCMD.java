@@ -1,4 +1,4 @@
-package joserodpt.realregions.commands;
+package joserodpt.realregions;
 
 /*
  *  ______           _______           
@@ -16,7 +16,6 @@ package joserodpt.realregions.commands;
  */
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.config.Config;
@@ -75,7 +74,7 @@ public class RealRegionsCMD extends CommandBase {
         Language.reload();
 
         //reload worlds config
-        rr.getWorldManager().getWorlds().forEach(RWorld::reloadConfig);
+        rr.getWorldManager().getWorlds().values().forEach(RWorld::reloadConfig);
         Text.send(commandSender, Language.file().getString("System.Reloaded"));
     }
 
@@ -88,7 +87,7 @@ public class RealRegionsCMD extends CommandBase {
             WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rr);
             wv.openInventory(p);
         } else {
-            for (RWorld world : rr.getWorldManager().getWorlds().stream()
+            for (RWorld world : rr.getWorldManager().getWorldList().stream()
                     .sorted(Comparator.comparing(RWorld::getRWorldName)).collect(Collectors.toList())) {
                 Text.send(commandSender, "&b" + world.getRWorldName() + " &f- [" + (world.isLoaded() ? "&aLoaded" : "&eUnloaded") + "&f]");
             }
@@ -113,7 +112,7 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         RWorld rw = rr.getWorldManager().getWorld(p.getWorld());
-        if (!rr.getWorldManager().getRegionManager().hasRegion(rw, name)) {
+        if (!rw.hasRegion(name)) {
             try {
                 WorldEditPlugin w = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
                 com.sk89q.worldedit.regions.Region r = w.getSession(p).getSelection(w.getSession(p).getSelectionWorld());
@@ -122,7 +121,7 @@ public class RealRegionsCMD extends CommandBase {
                     Location min = new Location(p.getWorld(), r.getMinimumPoint().getBlockX(), r.getMinimumPoint().getBlockY(), r.getMinimumPoint().getBlockZ());
                     Location max = new Location(p.getWorld(), r.getMaximumPoint().getBlockX(), r.getMaximumPoint().getBlockY(), r.getMaximumPoint().getBlockZ());
 
-                    rr.getWorldManager().getRegionManager().createCubeRegion(name, min, max, rw);
+                    rr.getRegionManager().createCubeRegion(name, min, max, rw);
 
                     Text.send(p, Language.file().getString("Region.Created"));
 
@@ -158,8 +157,8 @@ public class RealRegionsCMD extends CommandBase {
 
     }
 
-    @SubCommand("region")
-    @Alias("reg")
+    @SubCommand("flags")
+    @Alias("f")
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr reg <name>")
@@ -167,7 +166,7 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+            Region reg = rr.getRegionManager().getRegionPlusName(name);
             if (reg == null) {
                 Text.send(p, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
                 return;
@@ -181,12 +180,12 @@ public class RealRegionsCMD extends CommandBase {
         }
     }
 
-    @SubCommand("world")
-    @Alias("w")
+    @SubCommand("regions")
+    @Alias({"world", "r"})
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr w <name>")
-    public void worldcmd(final CommandSender commandSender, final String name) {
+    public void regionscmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
@@ -231,7 +230,7 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+            Region reg = rr.getRegionManager().getRegionPlusName(name);
             if (reg == null) {
                 Text.send(p, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
                 return;
@@ -249,7 +248,7 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr view <name>")
     public void viewcmd(final CommandSender commandSender, final String name) {
-        Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+        Region reg = rr.getRegionManager().getRegionPlusName(name);
         if (reg == null) {
             Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
             return;
@@ -318,13 +317,13 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr delete <name>")
     public void delregcmd(final CommandSender commandSender, final String name) {
-        Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+        Region reg = rr.getRegionManager().getRegionPlusName(name);
         if (reg == null) {
             Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
             return;
         }
 
-        rr.getWorldManager().getRegionManager().deleteRegion(commandSender, reg);
+        rr.getRegionManager().deleteRegion(commandSender, reg);
     }
 
     @SubCommand("setbounds")
@@ -334,13 +333,13 @@ public class RealRegionsCMD extends CommandBase {
     @WrongUsage("&c/rr setbounds <region>")
     public void setboundscmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
-            Region reg = rr.getWorldManager().getRegionManager().getRegionPlusName(name);
+            Region reg = rr.getRegionManager().getRegionPlusName(name);
             if (reg == null) {
                 Text.send(commandSender, Language.file().getString("Region.Non-Existent-Name").replace("%name%", name));
                 return;
             }
 
-            rr.getWorldManager().getRegionManager().setRegionBounds(reg, (Player) commandSender);
+            rr.getRegionManager().setRegionBounds(reg, (Player) commandSender);
         } else {
             Text.send(commandSender, this.onlyPlayers);
         }
@@ -371,7 +370,7 @@ public class RealRegionsCMD extends CommandBase {
 
     @SubCommand("deletew")
     @Alias("delw")
-    @Completion("#mundos")
+    @Completion("#mundosPLUSimport")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr delw <name>")
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
@@ -381,7 +380,7 @@ public class RealRegionsCMD extends CommandBase {
             return;
         }
 
-        rr.getWorldManager().deleteWorld(commandSender, rw, true);
+        rr.getWorldManager().deleteWorld(commandSender, rw);
     }
 
     @SubCommand("players")

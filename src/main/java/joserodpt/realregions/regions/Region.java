@@ -33,6 +33,21 @@ import java.util.stream.Collectors;
 
 public class Region {
 
+    public enum RegionOrigin {
+        REALREGIONS("&fReal&eRegions"),
+        REALMINES("&fReal&9Mines");
+
+        private final String s;
+
+        RegionOrigin(String s) {
+            this.s = s;
+        }
+
+        public String getDisplayName() {
+            return s;
+        }
+    }
+
     public enum RegionType {CUBOID, INFINITE}
     public enum RegionData {ALL, ICON, SETTINGS, FLAGS, BOUNDS}
     private RegionOrigin regionOrigin = RegionOrigin.REALREGIONS;
@@ -84,9 +99,9 @@ public class Region {
         this.isBeingVisualized = beingVisualized;
 
         if (this.isBeingVisualized) {
-            RealRegionsPlugin.getPlugin().getWorldManager().getRegionManager().getView().add(this);
+            RealRegionsPlugin.getPlugin().getRegionManager().getView().add(this);
         } else {
-            RealRegionsPlugin.getPlugin().getWorldManager().getRegionManager().getView().remove(this);
+            RealRegionsPlugin.getPlugin().getRegionManager().getView().remove(this);
         }
     }
 

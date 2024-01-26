@@ -27,8 +27,8 @@ import joserodpt.realregions.gui.FlagSelectorGUI;
 import joserodpt.realregions.gui.RegionsListGUI;
 import joserodpt.realregions.gui.WorldsListGUI;
 import joserodpt.realregions.listeners.RealMinesListener;
+import joserodpt.realregions.managers.RegionManager;
 import joserodpt.realregions.regions.RWorld;
-import joserodpt.realregions.commands.RealRegionsCMD;
 import joserodpt.realregions.managers.WorldManager;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.listeners.RegionListener;
@@ -47,26 +47,28 @@ import java.util.stream.Collectors;
 
 public class RealRegionsPlugin extends JavaPlugin {
     private final WorldManager worldManager = new WorldManager(this);
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+
+    private final RegionManager regionManager = new RegionManager(this);
+    public RegionManager getRegionManager() {
+        return regionManager;
+    }
     private boolean newUpdate;
     private RealPermissionsAPI rpa = null;
-
     public RealPermissionsAPI getRealPermissionsAPI() {
         return rpa;
     }
-
     private RealMinesAPI rma = null;
-
     public RealMinesAPI getRealMinesAPI() {
         return rma;
     }
-
     public void setRealMinesAPI(RealMinesAPI rma) {
         this.rma = rma;
     }
 
-    public WorldManager getWorldManager() {
-        return worldManager;
-    }
+
     private static RealRegionsPlugin pl;
     public static RealRegionsPlugin getPlugin() {
         return pl;
@@ -102,13 +104,19 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         cm.hideTabComplete(true);
         cm.getCompletionHandler().register("#regions", input ->
-             worldManager.getRegionManager().getAllRegions()
+             this.getRegionManager().getRegions()
                     .stream()
                     .map(Region::getRegionNamePlusWorld)
                     .collect(Collectors.toList())
         );
         cm.getCompletionHandler().register("#mundos", input ->
-                worldManager.getWorlds()
+                worldManager.getWorldList()
+                        .stream()
+                        .map(RWorld::getRWorldName)
+                        .collect(Collectors.toList())
+        );
+        cm.getCompletionHandler().register("#mundosPLUSimport", input ->
+                worldManager.getWorldsAndPossibleImports()
                         .stream()
                         .map(RWorld::getRWorldName)
                         .collect(Collectors.toList())
@@ -127,10 +135,10 @@ public class RealRegionsPlugin extends JavaPlugin {
             pm.registerEvents(new RealMinesListener(this), this);
          }
 
-        getLogger().info("Loaded " + worldManager.getWorlds().size() + " worlds and " + worldManager.getRegionManager().getAllRegions().size() + " regions.");
+        getLogger().info("Loaded " + worldManager.getWorlds().size() + " worlds and " + regionManager.getRegions().size() + " regions.");
 
         //start region visualizer
-        worldManager.getRegionManager().startVisualizer();
+        getRegionManager().startVisualizer();
 
         new UpdateChecker(this, 111629).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
@@ -147,7 +155,7 @@ public class RealRegionsPlugin extends JavaPlugin {
             List<ExternalPluginPermission> perms = new ArrayList<>(List.of(
                     new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
             ));
-            worldManager.getRegionManager().getAllRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
+            getRegionManager().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
             rpa.getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
         }
 
@@ -162,7 +170,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         logWithColor("&2 |    // _ \\/ _` | |    // _ \\/ _` | |/ _ \\| '_ \\/ __|");
         logWithColor("&2 | |\\ \\  __/ (_| | | |\\ \\  __/ (_| | | (_) | | | \\__ \\");
         logWithColor("&2 \\_| \\_\\___|\\__,_|_\\_| \\_\\___|\\__, |_|\\___/|_| |_|___/");
-        logWithColor("&0  Made by: &9JoseGamer_PT        &2__/ |   &0Version: &9" + this.getDescription().getVersion());
+        logWithColor("&8  Made by: &9JoseGamer_PT        &2__/ |   &8Version: &9" + this.getDescription().getVersion());
         logWithColor("&2                              |___/");
     }
 

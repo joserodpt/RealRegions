@@ -79,7 +79,7 @@ public class RegionsListGUI {
     }
 
     public void load() {
-        p = new Pagination<>(15, rr.getWorldManager().getRegionManager().getRegions(r));
+        p = new Pagination<>(15, r.getRegionList());
         fillChest(p.getPage(pageNumber));
     }
 
@@ -209,7 +209,7 @@ public class RegionsListGUI {
                                         p.closeInventory();
                                         new PlayerInput(p, input -> {
                                             //continue
-                                            current.rr.getWorldManager().getRegionManager().createCubeRegion(input, min, max, current.r);
+                                            current.rr.getRegionManager().createCubeRegion(input, min, max, current.r);
                                             Text.send(p, Language.file().getString("Region.Created"));
                                             new BukkitRunnable() {
                                                 public void run() {
@@ -272,7 +272,7 @@ public class RegionsListGUI {
                                     }.runTaskLater(current.rr, 2);
                                     break;
                                 case DROP:
-                                    current.rr.getWorldManager().getRegionManager().deleteRegion(p, a);
+                                    current.rr.getRegionManager().deleteRegion(p, a);
                                     current.load();
                                     break;
                                 case SHIFT_RIGHT:

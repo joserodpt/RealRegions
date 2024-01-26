@@ -15,13 +15,10 @@ package joserodpt.realregions.managers;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realmines.api.mine.RMine;
 import joserodpt.realregions.RealRegionsPlugin;
 import joserodpt.realregions.config.Language;
-import joserodpt.realregions.regions.CuboidRegion;
 import joserodpt.realregions.regions.RWorld;
 import joserodpt.realregions.regions.Region;
-import joserodpt.realregions.utils.Cube;
 import joserodpt.realregions.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,33 +41,39 @@ import java.util.Map;
 import java.util.Random;
 
 public class WorldManager {
-    private final RegionManager rm = new RegionManager(this);
     private final RealRegionsPlugin rr;
     public WorldManager(RealRegionsPlugin rr) {
         this.rr = rr;
     }
-    private Map<RWorld, List<Region>> worlds_reg_dic = new HashMap<>();
-    public Map<RWorld, List<Region>> getWorldsAndRegions() {
-        return worlds_reg_dic;
-    }
-    public RegionManager getRegionManager() {
-        return rm;
+
+    private Map<String, RWorld> worlds = new HashMap<>();
+
+    public Map<String, RWorld> getWorlds() {
+        return worlds;
     }
 
     public RealRegionsPlugin getPlugin() {
         return rr;
     }
 
-    public List<RWorld> getWorlds() {
-        return new ArrayList<>(worlds_reg_dic.keySet());
+    public List<RWorld> getWorldList() {
+        return new ArrayList<>(this.worlds.values());
     }
 
     public List<RWorld> getWorldsAndPossibleImports() {
-        List<RWorld> ret = new ArrayList<>(this.getWorlds());
+        List<RWorld> ret = new ArrayList<>(this.getWorldList());
         ret.addAll(this.getPossibleImports());
         return ret;
     }
-
+    public RWorld getWorld(World w) {
+        return this.getWorldList().stream()
+                .filter(world -> world.getWorld().equals(w))
+                .findFirst()
+                .orElse(null);
+    }
+    public RWorld getWorld(String nome) {
+        return this.getWorldsAndPossibleImports().stream().filter(rWorld -> rWorld.getRWorldName().equalsIgnoreCase(nome)).findFirst().orElse(null);
+    }
     public List<RWorld> getPossibleImports() {
         List<RWorld> ret = new ArrayList<>();
 
@@ -81,7 +84,7 @@ public class WorldManager {
             if (worldFolders != null) {
                 for (File worldFolder : worldFolders) {
                     File levelDatFile = new File(worldFolder, "level.dat");
-                    if (levelDatFile.exists() && levelDatFile.isFile() && this.getWorld(worldFolder.getName()) == null) {
+                    if (levelDatFile.exists() && levelDatFile.isFile() && this.isRWorld(worldFolder.getName())) {
                         ret.add(new RWorld(worldFolder.getName()));
                     }
                 }
@@ -93,6 +96,10 @@ public class WorldManager {
         }
 
         return ret;
+    }
+
+    private boolean isRWorld(String name) {
+        return this.getWorlds().containsKey(name);
     }
 
     public void loadWorlds() {
@@ -119,7 +126,7 @@ public class WorldManager {
                         WorldCreator worldCreator = new WorldCreator(worldName);
                         World w = worldCreator.createWorld();
                         if (w != null) {
-                            this.initializeRWorld(worldName, w, wt);
+                            this.getWorlds().put(worldName, new RWorld(worldName, w, wt));
                         } else {
                             Bukkit.getLogger().severe("Failed to load world: " + worldName);
                         }
@@ -127,17 +134,14 @@ public class WorldManager {
                 } else {
                     //don't load world, but it's registered
                     //load rworld object but don't load the world
-                    RWorld rw = new RWorld(worldName, wt);
-
-                    //load regions
-                    worlds_reg_dic.put(rw, rm.loadRegions(rw));
+                    worlds.put(worldName, new RWorld(worldName, wt));
                 }
             }
         } else {
             //folder doesn't exist, load default worlds from Bukkit
             rr.getLogger().info("First startup, importing default worlds.");
             for (World world : Bukkit.getWorlds()) {
-                initializeRWorld(world.getName(), world, RWorld.WorldType.valueOf(world.getEnvironment().name()));
+                this.getWorlds().put(world.getName(), new RWorld(world.getName(), world, RWorld.WorldType.valueOf(world.getEnvironment().name())));
             }
         }
     }
@@ -161,19 +165,12 @@ public class WorldManager {
         World world = worldCreator.createWorld();
         if (world != null) {
             //registar mundo no real regions
-            this.initializeRWorld(worldName, world, wt);
+            this.worlds.put(worldName, new RWorld(worldName, world, wt));
 
             Text.send(p, Language.file().getString("World.Created").replace("%name%", worldName));
         } else {
             Text.send(p, Language.file().getString("World.Failed-To-Create").replace("%name%", worldName));
         }
-    }
-    private void initializeRWorld(String worldName, World w, RWorld.WorldType wt) {
-        //load rworld
-        RWorld rw = new RWorld(worldName, w, wt);
-
-        //load regions
-        worlds_reg_dic.put(rw, rm.loadRegions(rw));
     }
     public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
@@ -195,7 +192,7 @@ public class WorldManager {
     }
     public void unloadWorld(RWorld rw, boolean save) {
         rw.setLoaded(false);
-        this.getRegionManager().saveRegions(rw);
+        rw.getRegionList().forEach(region -> region.saveData(Region.RegionData.ALL));
 
         World world = rw.getWorld();
 
@@ -243,7 +240,7 @@ public class WorldManager {
 
             World w = worldCreator.createWorld();
             if (w != null) {
-                this.initializeRWorld(worldName, w, wt);
+                this.getWorlds().put(worldName, new RWorld(worldName, w, wt));
                 Text.send(p, Language.file().getString("World.Imported").replace("%name%", worldName));
             } else {
                 Text.send(p, Language.file().getString("World.Failed-To-Import").replace("%name%", worldName));
@@ -251,54 +248,49 @@ public class WorldManager {
         }
     }
     public void unregisterWorld(CommandSender p, RWorld r) {
+        if (r.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
+            return;
+        }
         //remove world config and from plugin world list
         this.unloadWorld(r, false);
         r.deleteConfig();
         //remove from world list
-        this.worlds_reg_dic.remove(r);
+        this.getWorlds().remove(r.getRWorldName());
 
         Text.send(p, Language.file().getString("World.Unregistered").replace("%name%", r.getRWorldName()));
     }
-
-    public RWorld getWorld(World w) {
-        return worlds_reg_dic.keySet().stream()
-                .filter(world -> world.getWorld().equals(w))
-                .findFirst()
-                .orElse(null);
-    }
-    public RWorld getWorld(String nome) {
-        return worlds_reg_dic.keySet().stream()
-                .filter(world -> world.getRWorldName().equalsIgnoreCase(nome))
-                .findFirst()
-                .orElse(null);
-    }
-    public void deleteWorld(CommandSender p, RWorld r, boolean removeFile) {
-
+    public void deleteWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
             Text.send(p, Language.file().getString("World.Delete-Default-Worlds"));
+            return;
+        }
+
+        if (r.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
+            removeWorldFiles(p, r);
         } else {
             Text.send(p, Language.file().getString("World.Being-Deleted").replace("%name%", r.getRWorldName()));
             this.unloadWorld(r, false);
             r.deleteConfig();
-            if (removeFile) {
-                File target = new File(rr.getServer().getWorldContainer().getAbsolutePath(), r.getWorld().getName());
-                try {
-                    deleteDirectory(target);
-                } catch (IOException e) {
-                    Bukkit.getLogger().severe("Error while trying to delete directory " + target);
-                    Bukkit.getLogger().severe(e.getMessage());
-                    Text.send(p, Language.file().getString("Folder.Error-Removing-Files").replace("%name%", r.getRWorldName()));
-                }
-
-            }
+            removeWorldFiles(p, r);
 
             //remove from world list
-            this.worlds_reg_dic.remove(r);
-
-            Text.send(p, Language.file().getString("World.Deleted").replace("%name%", r.getRWorldName()));
+            this.getWorlds().remove(r.getRWorldName());
         }
     }
+
+    public void removeWorldFiles(CommandSender p, RWorld r) {
+        File target = new File(rr.getServer().getWorldContainer().getAbsolutePath(), r.getRWorldName());
+        try {
+            deleteDirectory(target);
+            Text.send(p, Language.file().getString("World.Deleted").replace("%name%", r.getRWorldName()));
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("Error while trying to delete directory " + target);
+            Bukkit.getLogger().severe(e.getMessage());
+            Text.send(p, Language.file().getString("Folder.Error-Removing-Files").replace("%name%", r.getRWorldName()));
+        }
+    }
+
     public void deleteDirectory(final File directory) throws IOException {
         if (!directory.exists()) {
             return;
@@ -364,31 +356,6 @@ public class WorldManager {
             throw new IOException("Failed to list contents of " + directory);
         }
         return files;
-    }
-
-    public void checkRealMinesRegions(Map<String, RMine> mines) {
-        for (String mineName : mines.keySet()) {
-            RMine mine = mines.get(mineName);
-            RWorld rw = getWorld(mine.getWorld());
-
-            if (!getRegionManager().hasRegion(rw, mineName)) {
-                //create new region
-                getRegionManager().createCubeRegionRealMines(mine, rw);
-            } else {
-                //update region location
-                CuboidRegion r = (CuboidRegion) getRegionManager().getRegionPlusName(mineName + "@" + rw.getRWorldName());
-                if (r != null) {
-                    if (r.getCube().getPOS1() != mine.getPOS1()) {
-                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
-                        continue;
-                    }
-
-                    if (r.getCube().getPOS2() != mine.getPOS2()) {
-                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
-                    }
-                }
-            }
-        }
     }
 
     public class VoidWorld extends ChunkGenerator {

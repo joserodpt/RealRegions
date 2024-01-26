@@ -28,6 +28,7 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -229,7 +230,11 @@ public class WorldsListGUI {
                             RWorld a = current.display.get(e.getRawSlot());
 
                             if (a.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
-                                current.rr.getWorldManager().importWorld(p, a.getRWorldName(), RWorld.WorldType.NORMAL);
+                                if (e.getClick() == ClickType.DROP) {
+                                    current.rr.getWorldManager().removeWorldFiles(p, a);
+                                } else {
+                                    current.rr.getWorldManager().importWorld(p, a.getRWorldName(), RWorld.WorldType.NORMAL);
+                                }
                                 current.load();
                             } else {
                                 switch (e.getClick())
@@ -248,6 +253,10 @@ public class WorldsListGUI {
                                                 mp.openInventory(p);
                                             }
                                         }.runTaskLater(current.rr, 2);
+                                        break;
+                                    case DROP:
+                                        current.rr.getWorldManager().unregisterWorld(p, a);
+                                        current.load();
                                         break;
                                     default:
                                         p.closeInventory();
