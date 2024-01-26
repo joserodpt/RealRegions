@@ -21,20 +21,20 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 public enum RegionFlags {
-    ACCESS_CHESTS("Access-Chests"),
-    ACCESS_CRAFTING_TABLES("Access-Crafting-Tables"),
-    ACCESS_HOPPERS("Access-Hoppers"),
-    BLOCK_BREAK("Block-Break"),
-    BLOCK_INTERACTIONS("Block-Interactions"),
-    BLOCK_PLACE("Block-Place"),
-    CONTAINER_INTERACTIONS("Container-Interactions"),
-    ENTER("Enter"),
-    HUNGER("Hunger"),
-    ITEM_DROP("Item-Drop"),
-    ITEM_PICKUP("Item-Pickup"),
-    PVE("PVE"),
-    PVP("PVP"),
-    TAKE_DAMAGE("Take-Damage");
+    ACCESS_CHESTS("access-chests"),
+    ACCESS_CRAFTING_TABLES("access-crafting-tables"),
+    ACCESS_HOPPERS("access-hoppers"),
+    BLOCK_BREAK("block-break"),
+    BLOCK_INTERACTIONS("block-interactions"),
+    BLOCK_PLACE("block-place"),
+    CONTAINER_INTERACTIONS("container-interactions"),
+    ENTER("enter"),
+    HUNGER("hunger"),
+    ITEM_DROP("item-drop"),
+    ITEM_PICKUP("item-pickup"),
+    PVE("pve"),
+    PVP("pvp"),
+    TAKE_DAMAGE("take-damage");
 
     private final String permission;
 
@@ -47,7 +47,7 @@ public enum RegionFlags {
     }
 
     public String getBypassPermission(String world, String region) {
-        return String.format("RealRegions.%s.%s.%s.Bypass", world, region, this.getPermission());
+        return String.format("realregions.%s.%s.%s.bypass", world, region, this.getPermission());
     }
 
     public void sendBypassPermissionToPlayer(Player p, String world, String region) {

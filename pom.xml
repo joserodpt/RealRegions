@@ -6,7 +6,7 @@
 
     <groupId>josegamerpt</groupId>
     <artifactId>RealRegions</artifactId>
-    <version>0.5.2</version>
+    <version>0.5.5</version>
     <packaging>jar</packaging>
 
     <name>RealRegions</name>

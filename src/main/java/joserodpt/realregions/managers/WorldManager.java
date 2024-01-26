@@ -69,8 +69,6 @@ public class WorldManager {
         File folder = new File(rr.getDataFolder() + "/worlds");
 
         if (folder.exists() && folder.isDirectory()) {
-            rr.getLogger().info("Loading worlds and regions.");
-
             for (File world : folder.listFiles()) {
                 String worldName = world.getName().replace(".yml", "");
 

@@ -1,7 +1,7 @@
 package joserodpt.realregions;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -32,7 +32,6 @@ import joserodpt.realregions.commands.RealRegionsCMD;
 import joserodpt.realregions.managers.WorldManager;
 import joserodpt.realregions.regions.Region;
 import joserodpt.realregions.listeners.RegionListener;
-import joserodpt.realregions.regions.RegionFlags;
 import joserodpt.realregions.utils.PlayerInput;
 import joserodpt.realregions.utils.Text;
 import me.mattstudios.mf.base.CommandManager;
@@ -77,8 +76,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         pl = this;
         new Metrics(this, 19311);
 
-        getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
-                this.getDescription().getVersion()));
+        printASCII();
 
         saveDefaultConfig();
         Config.setup(this);
@@ -92,7 +90,6 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(PlayerInput.getListener(), this);
         pm.registerEvents(RegionGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
-
 
         CommandManager cm = new CommandManager(this);
 
@@ -154,8 +151,22 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         getLogger().info("Plugin has been loaded.");
         getLogger().info("Author: JoseGamer_PT | " + this.getDescription().getWebsite());
-        getLogger().info("<------------------ RealRegions PT ------------------>".replace("PT", "| " +
-                this.getDescription().getVersion()));
+        getLogger().info("<------------------ RealRegions | vPT ------------------>".replace("PT", this.getDescription().getVersion()));
+    }
+
+    private void printASCII() {
+        logWithColor("&2 ______           _______           _      ");
+        logWithColor("&2 | ___ \\         | | ___ \\         (_)  ");
+        logWithColor("&2 | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___ ");
+        logWithColor("&2 |    // _ \\/ _` | |    // _ \\/ _` | |/ _ \\| '_ \\/ __|");
+        logWithColor("&2 | |\\ \\  __/ (_| | | |\\ \\  __/ (_| | | (_) | | | \\__ \\");
+        logWithColor("&2 \\_| \\_\\___|\\__,_|_\\_| \\_\\___|\\__, |_|\\___/|_| |_|___/");
+        logWithColor("&0     Author: &9JoseGamer_PT      &2__/ |   &0Version: &9" + this.getDescription().getVersion());
+        logWithColor("&2                              |___/");
+    }
+
+    public void logWithColor(String s) {
+        getServer().getConsoleSender().sendMessage("[" + this.getDescription().getName() + "] " + Text.color(s));
     }
 
     public boolean hasNewUpdate() {
