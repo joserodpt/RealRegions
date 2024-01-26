@@ -1,0 +1,4 @@
+name: realregions-api
+version: '${project.version}'
+main: joserodpt.realregionsapi.Realregions_api
+api-version: '1.14'

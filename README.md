@@ -2,7 +2,7 @@
 
 ![Logo](https://i.imgur.com/0fvICMG.png)
 ## RealRegions
-### GUI based World and Region Management Plugin
+### GUI based World and Region M classanagement Plugin
 
 [![Build](https://img.shields.io/github/actions/workflow/status/joserodpt/RealMines/maven.yml?branch=master)](https://github.com/JoseGamerPT/RealRegions/actions)
 ![Issues](https://img.shields.io/github/issues-raw/JoseGamerPT/RealRegions)
@@ -122,6 +122,18 @@
 
 ## Requirements
 RealRegions requires [WorldEdit](https://dev.bukkit.org/projects/worldedit) or [FAWE](https://www.spigotmc.org/resources/fastasyncworldedit.13932/) to work.
+
+----
+
+## API
+
+RealRegions offers an API via the [RealRegionsAPI.java](realregions-api%2Fsrc%2Fmain%2Fjava%2Fjoserodpt%2Frealregions.api%2FRealRegionsAPI.java) class. It can be obtained as follows:
+
+```java
+var realRegionsAPI = RealRegionsAPI.getInstance()
+realRegionsAPI.getRegionManagerAPI()
+realRegionsAPI.getWorldManagerAPI()
+```
 
 ----
 
