@@ -103,9 +103,7 @@ public class RealRegionsPlugin extends JavaPlugin {
                         .collect(Collectors.toList())
         );
         cm.getCompletionHandler().register("#worldtype", input ->
-                Arrays.stream(RWorld.WorldType.values())
-                        .map(Enum::name)
-                        .collect(Collectors.toList())
+                Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID")
         );
 
         cm.register(new RealRegionsCMD(realRegions));
@@ -138,6 +136,10 @@ public class RealRegionsPlugin extends JavaPlugin {
             ));
             realRegions.getRegionManagerAPI().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
             realRegions.getRealPermissionsAPI().getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+            new RealRegionsPlaceholderAPI(realRegions).register(); //
         }
 
         getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");

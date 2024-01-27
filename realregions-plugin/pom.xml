@@ -62,6 +62,10 @@
             <id>enginehub-maven</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -87,6 +91,12 @@
             <artifactId>realregions-api</artifactId>
             <version>0.5.5</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
