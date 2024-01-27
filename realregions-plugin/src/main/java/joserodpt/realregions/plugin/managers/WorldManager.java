@@ -87,7 +87,7 @@ public class WorldManager extends WorldManagerAPI {
             if (worldFolders != null) {
                 for (File worldFolder : worldFolders) {
                     File levelDatFile = new File(worldFolder, "level.dat");
-                    if (levelDatFile.exists() && levelDatFile.isFile() && this.isRWorld(worldFolder.getName())) {
+                    if (levelDatFile.exists() && levelDatFile.isFile() && !this.isRWorld(worldFolder.getName())) {
                         ret.add(new RWorld(worldFolder.getName()));
                     }
                 }

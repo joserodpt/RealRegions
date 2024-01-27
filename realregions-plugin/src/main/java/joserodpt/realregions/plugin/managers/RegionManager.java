@@ -112,7 +112,7 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public Region getFirstPriorityRegionContainingLocation(Location l) {
-        return rra.getWorldManagerAPI().getWorld(l.getWorld()).getRegionList().stream()
+        return rra.getWorldManagerAPI().getWorld(l.getWorld()) == null ? null : rra.getWorldManagerAPI().getWorld(l.getWorld()).getRegionList().stream()
                 .sorted(Comparator.comparingInt(Region::getPriority).reversed())
                 .filter(region -> region.isLocationInRegion(l))
                 .findFirst()
