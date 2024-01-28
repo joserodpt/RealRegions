@@ -55,22 +55,28 @@ public class Region {
     private final RWorld rw;
 
     //flags
-    public boolean blockbreak = true;
-    public boolean blockplace = true;
-    public boolean blockinteract = true;
-    public boolean containerinteract = true;
+    public boolean blockBreak = true;
+    public boolean blockPlace = true;
+    public boolean blockInteract = true;
+    public boolean containerInteract = true;
     public boolean pvp = true;
     public boolean pve = true;
     public boolean hunger = true;
-    public boolean takedamage = true;
+    public boolean takeDamage = true;
     public boolean explosions = true;
-    public boolean itempickup = true;
-    public boolean itemdrop = true;
-    public boolean entityspawning = true;
+    public boolean itemPickup = true;
+    public boolean itemDrop = true;
+    public boolean entitySpawning = true;
     public boolean enter = true;
-    public boolean accesscrafting = true;
-    public boolean accesschests = true;
-    public boolean accesshoppers = true;
+    public boolean accessCrafting = true;
+    public boolean accessChests = true;
+    public boolean accessHoppers = true;
+    public boolean noChat = false;
+    public boolean noConsumables = false;
+    public boolean disabledNetherPortal = false;
+    public boolean disabledEndPortal = false;
+    public boolean noFireSpreading = false;
+
     public int priority;
 
     public Region(String name, String displayname, RWorld w, Material m, int priority, RegionType rt) {
@@ -94,22 +100,27 @@ public class Region {
                 cfg.set("Regions." + this.name + ".Icon", this.icon.name());
                 break;
             case FLAGS:
-                cfg.set("Regions." + this.name + ".Block.Interact", this.blockinteract);
-                cfg.set("Regions." + this.name + ".Block.Break", this.blockbreak);
-                cfg.set("Regions." + this.name + ".Block.Place", this.blockplace);
-                cfg.set("Regions." + this.name + ".Container.Interact", this.containerinteract);
+                cfg.set("Regions." + this.name + ".Block.Interact", this.blockInteract);
+                cfg.set("Regions." + this.name + ".Block.Break", this.blockBreak);
+                cfg.set("Regions." + this.name + ".Block.Place", this.blockPlace);
+                cfg.set("Regions." + this.name + ".Container.Interact", this.containerInteract);
                 cfg.set("Regions." + this.name + ".PVP", this.pvp);
                 cfg.set("Regions." + this.name + ".PVE", this.pve);
                 cfg.set("Regions." + this.name + ".Hunger", this.hunger);
-                cfg.set("Regions." + this.name + ".Damage", this.takedamage);
+                cfg.set("Regions." + this.name + ".Damage", this.takeDamage);
                 cfg.set("Regions." + this.name + ".Explosions", this.explosions);
-                cfg.set("Regions." + this.name + ".Item.Drop", this.itemdrop);
-                cfg.set("Regions." + this.name + ".Item.Pickup", this.itempickup);
-                cfg.set("Regions." + this.name + ".Entity-Spawning", this.entityspawning);
+                cfg.set("Regions." + this.name + ".Item.Drop", this.itemDrop);
+                cfg.set("Regions." + this.name + ".Item.Pickup", this.itemPickup);
+                cfg.set("Regions." + this.name + ".Entity-Spawning", this.entitySpawning);
                 cfg.set("Regions." + this.name + ".Enter", this.enter);
-                cfg.set("Regions." + this.name + ".Access.Crafting-Table", this.accesscrafting);
-                cfg.set("Regions." + this.name + ".Access.Chests", this.accesschests);
-                cfg.set("Regions." + this.name + ".Access.Hoppers", this.accesshoppers);
+                cfg.set("Regions." + this.name + ".Access.Crafting-Table", this.accessCrafting);
+                cfg.set("Regions." + this.name + ".Access.Chests", this.accessChests);
+                cfg.set("Regions." + this.name + ".Access.Hoppers", this.accessHoppers);
+                cfg.set("Regions." + this.name + ".No-Chat", this.noChat);
+                cfg.set("Regions." + this.name + ".No-Consumables", this.noConsumables);
+                cfg.set("Regions." + this.name + ".Disabled-Nether-Portal", this.disabledNetherPortal);
+                cfg.set("Regions." + this.name + ".Disabled-End-Portal", this.disabledEndPortal);
+                cfg.set("Regions." + this.name + ".No-Fire-Spreading", this.noFireSpreading);
                 break;
             case SETTINGS:
                 cfg.set("Regions." + this.name + ".Type", this.getType().name());
@@ -129,14 +140,6 @@ public class Region {
         rw.saveConfig();
     }
 
-    public Boolean hasEntitySpawning() {
-        return this.entityspawning;
-    }
-
-    public Boolean hasExplosions() {
-        return this.explosions;
-    }
-
     public RegionType getType()
     {
         return RegionType.INFINITE;
@@ -153,12 +156,32 @@ public class Region {
     public ItemStack getItem() {
         List<String> desc = new ArrayList<>();
         desc.add("&fPriority: &b" + this.priority);
-        desc.addAll(flagsList(Text.styleBoolean(this.accesschests), Text.styleBoolean(this.accesscrafting), Text.styleBoolean(this.accesshoppers), Text.styleBoolean(this.blockbreak), Text.styleBoolean(this.blockinteract), Text.styleBoolean(this.blockplace), Text.styleBoolean(this.containerinteract), Text.styleBoolean(this.entityspawning), Text.styleBoolean(this.enter), Text.styleBoolean(this.explosions), Text.styleBoolean(this.hunger), Text.styleBoolean(this.itemdrop), Text.styleBoolean(this.itempickup), Text.styleBoolean(this.pve), Text.styleBoolean(this.pvp), Text.styleBoolean(this.takedamage)));
+        desc.addAll(flagsList(Text.styleBoolean(this.accessChests),
+                Text.styleBoolean(this.accessCrafting),
+                Text.styleBoolean(this.accessHoppers),
+                Text.styleBoolean(this.blockBreak),
+                Text.styleBoolean(this.blockInteract),
+                Text.styleBoolean(this.blockPlace),
+                Text.styleBoolean(this.containerInteract),
+                Text.styleBoolean(this.entitySpawning),
+                Text.styleBoolean(this.enter),
+                Text.styleBoolean(this.explosions),
+                Text.styleBoolean(this.hunger),
+                Text.styleBoolean(this.itemDrop),
+                Text.styleBoolean(this.itemPickup),
+                Text.styleBoolean(this.pve),
+                Text.styleBoolean(this.pvp),
+                Text.styleBoolean(this.takeDamage),
+                Text.styleBoolean(this.noChat),
+                Text.styleBoolean(this.noConsumables),
+                Text.styleBoolean(this.noFireSpreading),
+                Text.styleBoolean(this.disabledNetherPortal),
+                Text.styleBoolean(this.disabledEndPortal)));
 
         return Itens.createItem(getIcon(), 1, "&f" + getDisplayName() + " &7[&b" + (getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name()) + "&7]", desc);
     }
 
-    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16) {
+    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21) {
         return Arrays.asList("",
                 "&6Flags:",
                 " &fAccess Chests: " + s,
@@ -177,6 +200,12 @@ public class Region {
                 " &fPVE: " + s14,
                 " &fPVP: " + s15,
                 " &fTake Damage: " + s16,
+                " &fNo Chat: " + s17,
+                " &fNo Consumables: " + s18,
+                " &fDisable Fire Spreading: " + s19,
+                " &fDisable Nether Portal: " + s20,
+                " &fDisable End Portal: " + s21,
+
                 "&f",
                 "&7Left Click to edit this region.",
                 "&7Shift + Left Click to change this region icon.",
@@ -233,7 +262,6 @@ public class Region {
         return this.name + "@" + this.getRWorld().getRWorldName();
     }
 
-
     public void setDisplayName(String s) {
         this.displayname = s;
     }
@@ -249,125 +277,4 @@ public class Region {
     public boolean isLocationInRegion(Location l) {
         return this.getRWorld().getWorld() == l.getWorld();
     }
-
-    public boolean hasBlockBreak() {
-        return this.blockbreak;
-    }
-
-    public boolean hasBlockPlace() {
-        return this.blockplace;
-    }
-
-    public boolean hasHunger() {
-        return this.hunger;
-    }
-
-    public boolean hasItemDrop() {
-        return this.itemdrop;
-    }
-
-    public boolean hasItemPickup() {
-        return this.itempickup;
-    }
-
-    public boolean hasTakeDamage() {
-        return this.takedamage;
-    }
-
-    public boolean hasEnter() {
-        return this.enter;
-    }
-
-    public boolean hasBlockInteract() {
-        return this.blockinteract;
-    }
-
-    public boolean hasContainerInteract() {
-        return this.containerinteract;
-    }
-
-    public boolean hasAccessCrafting() {
-        return this.accesscrafting;
-    }
-
-    public boolean hasAccessHoppers() {
-        return this.accesshoppers;
-    }
-
-    public boolean hasAccessChests() {
-        return this.accesschests;
-    }
-
-    public boolean hasPVP() {
-        return this.pvp;
-    }
-
-    public boolean hasPVE() {
-        return this.pve;
-    }
-
-    public void setBlockBreak(boolean b) {
-        this.blockbreak = b;
-    }
-
-    public void setBlockPlace(boolean b) {
-        this.blockplace = b;
-    }
-
-    public void setHunger(boolean b) {
-        this.hunger = b;
-    }
-
-    public void setItemDrop(boolean b) {
-        this.itemdrop = b;
-    }
-
-    public void setItemPickup(boolean b) {
-        this.itempickup = b;
-    }
-
-    public void setTakeDamage(boolean b) {
-        this.takedamage = b;
-    }
-
-    public void setEnter(boolean b) {
-        this.enter = b;
-    }
-
-    public void setBlockInteract(boolean b) {
-        this.blockinteract = b;
-    }
-
-    public void setContainerInteract(boolean b) {
-        this.containerinteract = b;
-    }
-
-    public void setAccessCrafting(boolean b) {
-        this.accesscrafting = b;
-    }
-
-    public void setAccessHoppers(boolean b) {
-        this.accesshoppers = b;
-    }
-
-    public void setAccessChests(boolean b) {
-        this.accesschests = b;
-    }
-
-    public void setPVP(boolean b) {
-        this.pvp = b;
-    }
-
-    public void setPVE(boolean b) {
-        this.pve = b;
-    }
-
-    public void setEntitySpawning(boolean b) {
-        this.entityspawning = b;
-    }
-
-    public void setExplosions(boolean b) {
-        this.explosions = b;
-    }
-
 }

@@ -327,6 +327,24 @@ public class RealRegionsCMD extends CommandBase {
         rra.getRegionManagerAPI().deleteRegion(commandSender, reg);
     }
 
+    @SubCommand("rename")
+    @Alias("rn")
+    @Completion("#regions")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr rename <region> <new name>")
+    public void renamecmd(final CommandSender commandSender, final String name, final String newname) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            Text.send(commandSender, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+            return;
+        }
+
+        reg.setDisplayName(newname);
+        Text.send(commandSender, "&aOK");
+
+        rra.getRegionManagerAPI().deleteRegion(commandSender, reg);
+    }
+
     @SubCommand("setbounds")
     @Alias("sb")
     @Completion("#regions")

@@ -99,24 +99,6 @@ public class RWorld implements Listener {
             String regionDisplayName = this.getConfig().getString("Regions." + regionName + ".Display-Name");
             Region reg = null;
 
-            //load region flags
-            boolean blockInteract = this.getConfig().getBoolean("Regions." + regionName + ".Block.Interact");
-            boolean containerInteract = this.getConfig().getBoolean("Regions." + regionName + ".Container.Interact");
-            boolean blockBreak = this.getConfig().getBoolean("Regions." + regionName + ".Block.Break");
-            boolean blockPlace = this.getConfig().getBoolean("Regions." + regionName + ".Block.Place");
-            boolean pvp = this.getConfig().getBoolean("Regions." + regionName + ".PVP");
-            boolean pve = this.getConfig().getBoolean("Regions." + regionName + ".PVE");
-            boolean hunger = this.getConfig().getBoolean("Regions." + regionName + ".Hunger");
-            boolean takeDamage = this.getConfig().getBoolean("Regions." + regionName + ".Damage");
-            boolean explosions = this.getConfig().getBoolean("Regions." + regionName + ".Explosions");
-            boolean itemDrop = this.getConfig().getBoolean("Regions." + regionName + ".Item.Drop");
-            boolean itemPickup = this.getConfig().getBoolean("Regions." + regionName + ".Item.Pickup");
-            boolean entitySpawning = this.getConfig().getBoolean("Regions." + regionName + ".Entity-Spawning");
-            boolean enter = this.getConfig().getBoolean("Regions." + regionName + ".Enter");
-            boolean accessCrafting = this.getConfig().getBoolean("Regions." + regionName + ".Access.Crafting-Table");
-            boolean accessChests = this.getConfig().getBoolean("Regions." + regionName + ".Access.Chests");
-            boolean accessHoppers = this.getConfig().getBoolean("Regions." + regionName + ".Access.Hoppers");
-
             switch (rt)
             {
                 case INFINITE:
@@ -137,22 +119,32 @@ public class RWorld implements Listener {
             }
 
             if (reg != null) {
-                reg.blockinteract = blockInteract;
-                reg.containerinteract = containerInteract;
-                reg.blockbreak = blockBreak;
-                reg.blockplace = blockPlace;
-                reg.pvp = pvp;
-                reg.pve = pve;
-                reg.hunger = hunger;
-                reg.takedamage = takeDamage;
-                reg.explosions = explosions;
-                reg.itemdrop = itemDrop;
-                reg.itempickup = itemPickup;
-                reg.entityspawning = entitySpawning;
-                reg.enter = enter;
-                reg.accesscrafting = accessCrafting;
-                reg.accesschests = accessChests;
-                reg.accesshoppers = accessHoppers;
+
+
+                //load region flags
+                reg.blockInteract = this.getConfig().getBoolean("Regions." + regionName + ".Block.Interact");
+                reg.containerInteract = this.getConfig().getBoolean("Regions." + regionName + ".Container.Interact");
+                reg.blockBreak = this.getConfig().getBoolean("Regions." + regionName + ".Block.Break");
+                reg.blockPlace = this.getConfig().getBoolean("Regions." + regionName + ".Block.Place");
+                reg.pvp = this.getConfig().getBoolean("Regions." + regionName + ".PVP");
+                reg.pve = this.getConfig().getBoolean("Regions." + regionName + ".PVE");
+                reg.hunger = this.getConfig().getBoolean("Regions." + regionName + ".Hunger");
+                reg.takeDamage = this.getConfig().getBoolean("Regions." + regionName + ".Damage");
+                reg.explosions = this.getConfig().getBoolean("Regions." + regionName + ".Explosions");
+                reg.itemDrop = this.getConfig().getBoolean("Regions." + regionName + ".Item.Drop");
+                reg.itemPickup = this.getConfig().getBoolean("Regions." + regionName + ".Item.Pickup");
+                reg.entitySpawning = this.getConfig().getBoolean("Regions." + regionName + ".Entity-Spawning");
+                reg.enter = this.getConfig().getBoolean("Regions." + regionName + ".Enter");
+                reg.accessCrafting = this.getConfig().getBoolean("Regions." + regionName + ".Access.Crafting-Table");
+                reg.accessChests = this.getConfig().getBoolean("Regions." + regionName + ".Access.Chests");
+                reg.accessHoppers = this.getConfig().getBoolean("Regions." + regionName + ".Access.Hoppers");
+                //failsafe if it doesn't exist, they're new entries
+                reg.noChat = this.getConfig().getBoolean("Regions." + regionName + ".No-Chat", false);
+                reg.noConsumables = this.getConfig().getBoolean("Regions." + regionName + ".No-Consumables", false);
+                reg.disabledNetherPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-Nether-Portal", false);
+                reg.disabledEndPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-End-Portal", false);
+                reg.noFireSpreading = this.getConfig().getBoolean("Regions." + regionName + ".No-Fire-Spreading", false);
+
                 reg.saveData(Region.RegionData.FLAGS);
                 this.getRegions().put(regionName, reg);
             }
@@ -168,7 +160,7 @@ public class RWorld implements Listener {
     }
 
     public void removeRegion(Region a) {
-        this.regions.remove(a);
+        this.regions.remove(a.getRegionName());
     }
 
     public int getRegistrationDate() {

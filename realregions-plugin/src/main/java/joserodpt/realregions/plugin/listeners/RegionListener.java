@@ -33,16 +33,20 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -67,7 +71,7 @@ public class RegionListener implements Listener {
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(event.getLocation());
 
-        if (selected != null && !selected.hasEntitySpawning()) {
+        if (selected != null && !selected.entitySpawning) {
             event.setCancelled(true);
         }
     }
@@ -77,7 +81,7 @@ public class RegionListener implements Listener {
         Location explodeLocation = e.getLocation();
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(explodeLocation);
 
-        if (selected != null && !selected.hasExplosions()) {
+        if (selected != null && !selected.explosions) {
             e.setCancelled(true);
         }
     }
@@ -94,7 +98,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasBlockBreak()) {
+            if (!selected.blockBreak) {
                 event.setCancelled(true);
                 cancelEvent(blockLocation, p, RRLanguage.file().getString("Region.Cant-Break-Block"));
             }
@@ -113,7 +117,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasBlockPlace()) {
+            if (!selected.blockPlace) {
                 event.setCancelled(true);
                 cancelEvent(blockLocation, p, RRLanguage.file().getString("Region.Cant-Place-Block"));
             }
@@ -135,7 +139,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasHunger()) {
+            if (!selected.hunger) {
                 event.setCancelled(true);
             }
         }
@@ -153,7 +157,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasItemDrop()) {
+            if (!selected.itemDrop) {
                 e.setCancelled(true);
                 cancelEvent(itemLocation, p, RRLanguage.file().getString("Region.Cant-Drop-Items"));
                 return;
@@ -165,16 +169,14 @@ public class RegionListener implements Listener {
                 public void run() {
                 if (e.getItemDrop().isOnGround()) {
                     Region landed = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getItemDrop().getLocation());
-
-                    if (!landed.hasItemDrop()) {
+                    if (landed != null && !landed.itemDrop) {
                         ItemStack tmp = e.getItemDrop().getItemStack();
                         e.getItemDrop().remove();
                         p.getInventory().addItem(tmp);
                         cancelEvent(itemLocation, p, RRLanguage.file().getString("Region.Cant-Drop-Items"));
                     }
-
                     cancel();
-                    }
+                }
                 }
             }.runTaskTimer(RealRegionsPlugin.getPlugin(), 1, 1);
         }
@@ -195,7 +197,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasItemPickup()) {
+            if (!selected.itemPickup) {
                 e.setCancelled(true);
 
                 cancelEvent(entityLocation, p, RRLanguage.file().getString("Region.Cant-Pickup-Items"));
@@ -216,7 +218,7 @@ public class RegionListener implements Listener {
                     return;
                 }
 
-                if (!selected.hasTakeDamage()) {
+                if (!selected.takeDamage) {
                     e.setCancelled(true);
                 }
             }
@@ -237,7 +239,7 @@ public class RegionListener implements Listener {
 
             switch (e.getCause()) {
                 case CHORUS_FRUIT:
-                    if (!selected.hasEnter()) {
+                    if (!selected.enter) {
                         e.setCancelled(true);
 
                         cancelEvent(e.getTo(), p, RRLanguage.file().getString("Region.Cant-Enter-Here"));
@@ -248,10 +250,15 @@ public class RegionListener implements Listener {
                 case ENDER_PEARL:
                     p.getInventory().addItem(new ItemStack(Material.ENDER_PEARL));
                 case END_PORTAL:
+                    if (selected.disabledEndPortal) {
+                        e.setCancelled(true);
+                        Text.send(p, RRLanguage.file().getString("Region.Disabled-End-Portal"));
+                    }
+                    break;
                 case NETHER_PORTAL:
                 case END_GATEWAY:
                 case SPECTATE:
-                    if (!selected.hasEnter()) {
+                    if (!selected.enter) {
                         e.setCancelled(true);
 
                         cancelEvent(e.getTo(), p, RRLanguage.file().getString("Region.Cant-Enter-Here"));
@@ -279,7 +286,7 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            if (!selected.hasEnter()) {
+            if (!selected.enter) {
                 Particles.spawnParticle(Particles.RRParticle.LAVA, e.getTo());
                 //OLD: p.setVelocity(p.getEyeLocation().getDirection().setY(-0.7D).multiply(-0.7D));
 
@@ -313,7 +320,7 @@ public class RegionListener implements Listener {
                 return;
             }
             if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND)) {
-                if (!selected.hasBlockInteract()) {
+                if (!selected.blockInteract) {
                     e.setCancelled(true);
                     cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Blocks"));
                 }
@@ -322,7 +329,7 @@ public class RegionListener implements Listener {
                 //container
 
                 if (b.getType().name().contains("SHULKER_BOX")) {
-                    if (!selected.hasContainerInteract()) {
+                    if (!selected.containerInteract) {
                         e.setCancelled(true);
                         cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Container"));
                     }
@@ -335,7 +342,7 @@ public class RegionListener implements Listener {
                     case HOPPER:
                     case BARREL:
                     case CHEST:
-                        if (!selected.hasContainerInteract()) {
+                        if (!selected.containerInteract) {
                             e.setCancelled(true);
                             cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Container"));
                         }
@@ -345,19 +352,19 @@ public class RegionListener implements Listener {
                 //individual
                 switch (b.getType()) {
                     case CRAFTING_TABLE:
-                        if (!selected.hasAccessCrafting()) {
+                        if (!selected.accessCrafting) {
                             e.setCancelled(true);
                             cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Crafting-Tables"));
                         }
                         break;
                     case HOPPER:
-                        if (!selected.hasAccessHoppers()) {
+                        if (!selected.accessHoppers) {
                             e.setCancelled(true);
                             cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Hopper"));
                         }
                         break;
                     case CHEST:
-                        if (!selected.hasAccessChests()) {
+                        if (!selected.accessChests) {
                             e.setCancelled(true);
                             cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Open-Chest"));
                         }
@@ -385,9 +392,73 @@ public class RegionListener implements Listener {
             }
 
             //pvp
-            if (!selected.hasPVP()) {
+            if (!selected.pvp) {
                 event.setCancelled(true);
                 Text.send(damager, RRLanguage.file().getString("Region.Cant-PVP"));
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    private void onChat(AsyncPlayerChatEvent e) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation());
+
+        if (selected != null) {
+            Player p = e.getPlayer();
+
+            if (p.isOp() || p.hasPermission(RegionFlags.PVP.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+                return;
+            }
+
+            if (selected.noChat) {
+                e.setCancelled(true);
+                Text.send(p, RRLanguage.file().getString("Region.Cant-Chat"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onConsumeItem(PlayerItemConsumeEvent e) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation());
+
+        if (selected != null) {
+            Player p = e.getPlayer();
+
+            if (p.isOp() || p.hasPermission(RegionFlags.NO_CONSUMABLES.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+                return;
+            }
+
+            if (selected.noConsumables) {
+                e.setCancelled(true);
+                Text.send(p, RRLanguage.file().getString("Region.Cant-Consume"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onNetherPortalEnter(PlayerPortalEvent e) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation());
+
+        if (selected != null) {
+            Player p = e.getPlayer();
+
+            if (p.isOp() || p.hasPermission(RegionFlags.DISABLED_NETHER_PORTAL.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+                return;
+            }
+
+            if (e.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && selected.disabledNetherPortal) {
+                e.setCancelled(true);
+                Text.send(p, RRLanguage.file().getString("Region.Disabled-Nether-Portal"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void blockSpreadEvent(BlockSpreadEvent e) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getSource().getLocation());
+        if (selected != null) {
+            if (selected.noFireSpreading) {
+                e.setCancelled(true);
             }
         }
     }
@@ -407,7 +478,7 @@ public class RegionListener implements Listener {
             }
 
             //pve
-            if (!selected.hasPVE()) {
+            if (!selected.pve) {
                 event.setCancelled(true);
                 Text.send(damager, RRLanguage.file().getString("Region.Cant-PVE"));
             }

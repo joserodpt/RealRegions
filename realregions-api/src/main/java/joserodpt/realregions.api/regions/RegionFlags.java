@@ -34,7 +34,12 @@ public enum RegionFlags {
     ITEM_PICKUP("item-pickup"),
     PVE("pve"),
     PVP("pvp"),
-    TAKE_DAMAGE("take-damage");
+    TAKE_DAMAGE("take-damage"),
+    NO_CHAT("no-chat"),
+    NO_CONSUMABLES("no-consumables"),
+    DISABLED_NETHER_PORTAL("disabled-nether-portal"),
+    DISABLED_END_PORTAL("disabled-end-portal");
+
 
     private final String permission;
 
