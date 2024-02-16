@@ -17,7 +17,7 @@ package joserodpt.realregions.plugin.listeners;
 
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.plugin.RealRegionsPlugin;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
@@ -100,7 +100,7 @@ public class RegionListener implements Listener {
 
             if (!selected.blockBreak) {
                 event.setCancelled(true);
-                cancelEvent(blockLocation, p, RRLanguage.file().getString("Region.Cant-Break-Block"));
+                cancelEvent(blockLocation, p, TranslatableLine.REGION_CANT_BREAK_BLOCK.get());
             }
         }
     }
@@ -119,7 +119,7 @@ public class RegionListener implements Listener {
 
             if (!selected.blockPlace) {
                 event.setCancelled(true);
-                cancelEvent(blockLocation, p, RRLanguage.file().getString("Region.Cant-Place-Block"));
+                cancelEvent(blockLocation, p, TranslatableLine.REGION_CANT_PLACE_BLOCK.get());
             }
         }
     }
@@ -159,7 +159,7 @@ public class RegionListener implements Listener {
 
             if (!selected.itemDrop) {
                 e.setCancelled(true);
-                cancelEvent(itemLocation, p, RRLanguage.file().getString("Region.Cant-Drop-Items"));
+                cancelEvent(itemLocation, p, TranslatableLine.REGION_CANT_DROP_ITEMS.get());
                 return;
             }
 
@@ -173,7 +173,7 @@ public class RegionListener implements Listener {
                         ItemStack tmp = e.getItemDrop().getItemStack();
                         e.getItemDrop().remove();
                         p.getInventory().addItem(tmp);
-                        cancelEvent(itemLocation, p, RRLanguage.file().getString("Region.Cant-Drop-Items"));
+                        cancelEvent(itemLocation, p, TranslatableLine.REGION_CANT_DROP_ITEMS.get());
                     }
                     cancel();
                 }
@@ -200,7 +200,7 @@ public class RegionListener implements Listener {
             if (!selected.itemPickup) {
                 e.setCancelled(true);
 
-                cancelEvent(entityLocation, p, RRLanguage.file().getString("Region.Cant-Pickup-Items"));
+                cancelEvent(entityLocation, p, TranslatableLine.REGION_CANT_PICKUP_ITEMS.get());
             }
         }
     }
@@ -242,7 +242,7 @@ public class RegionListener implements Listener {
                     if (!selected.enter) {
                         e.setCancelled(true);
 
-                        cancelEvent(e.getTo(), p, RRLanguage.file().getString("Region.Cant-Enter-Here"));
+                        cancelEvent(e.getTo(), p,TranslatableLine.REGION_CANT_ENTER_HERE.get());
 
                         p.getInventory().addItem(new ItemStack(Material.CHORUS_FRUIT));
                     }
@@ -252,7 +252,7 @@ public class RegionListener implements Listener {
                 case END_PORTAL:
                     if (selected.disabledEndPortal) {
                         e.setCancelled(true);
-                        Text.send(p, RRLanguage.file().getString("Region.Disabled-End-Portal"));
+                        TranslatableLine.REGION_DISABLED_END_PORTAL.send(p);
                     }
                     break;
                 case NETHER_PORTAL:
@@ -261,7 +261,7 @@ public class RegionListener implements Listener {
                     if (!selected.enter) {
                         e.setCancelled(true);
 
-                        cancelEvent(e.getTo(), p, RRLanguage.file().getString("Region.Cant-Enter-Here"));
+                        cancelEvent(e.getTo(), p,TranslatableLine.REGION_CANT_ENTER_HERE.get());
                     }
                     break;
             }
@@ -292,7 +292,7 @@ public class RegionListener implements Listener {
 
                 p.teleport(e.getFrom());  //TODO: better player knockback?
 
-                cancelEvent(e.getTo(), p, RRLanguage.file().getString("Region.Cant-Enter-Here"));
+                cancelEvent(e.getTo(), p, TranslatableLine.REGION_CANT_ENTER_HERE.get());
             }
         }
     }
@@ -322,7 +322,7 @@ public class RegionListener implements Listener {
             if (e.getHand() != null && e.getHand().equals(EquipmentSlot.HAND)) {
                 if (!selected.blockInteract) {
                     e.setCancelled(true);
-                    cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Blocks"));
+                    cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_INTERACT_BLOCKS.get());
                 }
 
                 Block b = e.getClickedBlock();
@@ -331,7 +331,7 @@ public class RegionListener implements Listener {
                 if (b.getType().name().contains("SHULKER_BOX")) {
                     if (!selected.containerInteract) {
                         e.setCancelled(true);
-                        cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Container"));
+                        cancelEvent(clickedBlockLocation, p,TranslatableLine.REGION_CANT_INTERACT_CONTAINER.get());
                     }
                     return;
                 }
@@ -344,7 +344,7 @@ public class RegionListener implements Listener {
                     case CHEST:
                         if (!selected.containerInteract) {
                             e.setCancelled(true);
-                            cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Container"));
+                            cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_INTERACT_CONTAINER.get());
                         }
                         break;
                 }
@@ -354,19 +354,19 @@ public class RegionListener implements Listener {
                     case CRAFTING_TABLE:
                         if (!selected.accessCrafting) {
                             e.setCancelled(true);
-                            cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Crafting-Tables"));
+                            cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_INTERACT_CRAFTING_TABLES.get());
                         }
                         break;
                     case HOPPER:
                         if (!selected.accessHoppers) {
                             e.setCancelled(true);
-                            cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Interact-Hopper"));
+                            cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_INTERACT_HOPPER.get());
                         }
                         break;
                     case CHEST:
                         if (!selected.accessChests) {
                             e.setCancelled(true);
-                            cancelEvent(clickedBlockLocation, p, RRLanguage.file().getString("Region.Cant-Open-Chest"));
+                            cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_OPEN_CHEST.get());
                         }
                         break;
                 }
@@ -394,7 +394,7 @@ public class RegionListener implements Listener {
             //pvp
             if (!selected.pvp) {
                 event.setCancelled(true);
-                Text.send(damager, RRLanguage.file().getString("Region.Cant-PVP"));
+                Text.send(damager, TranslatableLine.REGION_CANT_PVP.get());
             }
         }
     }
@@ -406,13 +406,13 @@ public class RegionListener implements Listener {
         if (selected != null) {
             Player p = e.getPlayer();
 
-            if (p.isOp() || p.hasPermission(RegionFlags.PVP.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+            if (p.isOp() || p.hasPermission(RegionFlags.NO_CHAT.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
                 return;
             }
 
             if (selected.noChat) {
                 e.setCancelled(true);
-                Text.send(p, RRLanguage.file().getString("Region.Cant-Chat"));
+                TranslatableLine.REGION_CANT_CHAT.send(p);
             }
         }
     }
@@ -430,7 +430,7 @@ public class RegionListener implements Listener {
 
             if (selected.noConsumables) {
                 e.setCancelled(true);
-                Text.send(p, RRLanguage.file().getString("Region.Cant-Consume"));
+                TranslatableLine.REGION_CANT_CONSUME.send(p);
             }
         }
     }
@@ -448,7 +448,7 @@ public class RegionListener implements Listener {
 
             if (e.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && selected.disabledNetherPortal) {
                 e.setCancelled(true);
-                Text.send(p, RRLanguage.file().getString("Region.Disabled-Nether-Portal"));
+                TranslatableLine.REGION_DISABLED_NETHER_PORTAL.send(p);
             }
         }
     }
@@ -480,7 +480,7 @@ public class RegionListener implements Listener {
             //pve
             if (!selected.pve) {
                 event.setCancelled(true);
-                Text.send(damager, RRLanguage.file().getString("Region.Cant-PVE"));
+                Text.send(damager, TranslatableLine.REGION_CANT_PVE.get());
             }
         }
     }

@@ -17,7 +17,8 @@ package joserodpt.realregions.plugin.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.ReplacableVar;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Itens;
@@ -194,7 +195,7 @@ public class RegionsListGUI {
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
-                                    Text.send(p, RRLanguage.file().getString("Region.Not-In-World").replace("%worldName%", current.r.getWorld().getName()));
+                                    TranslatableLine.REGION_NOT_IN_WORLD.setV1(ReplacableVar.WORLD.eq(current.r.getWorld().getName())).send(p);
                                     return;
                                 }
 
@@ -210,7 +211,7 @@ public class RegionsListGUI {
                                         new PlayerInput(p, input -> {
                                             //continue
                                             current.rr.getRegionManagerAPI().createCubeRegion(input, min, max, current.r);
-                                            Text.send(p, RRLanguage.file().getString("Region.Created"));
+                                            TranslatableLine.REGION_CREATED.send(p);
                                             new BukkitRunnable() {
                                                 public void run() {
                                                     RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);
@@ -222,10 +223,10 @@ public class RegionsListGUI {
                                             wv.openInventory(p);
                                         });
                                     } else {
-                                        Text.send(p, RRLanguage.file().getString("Selection.None"));
+                                        TranslatableLine.SELECTION_NONE.send(p);
                                     }
                                 } catch (Exception exception) {
-                                    Text.send(p, RRLanguage.file().getString("Selection.None"));
+                                    TranslatableLine.SELECTION_NONE.send(p);
                                     p.closeInventory();
                                 }
 
@@ -279,7 +280,7 @@ public class RegionsListGUI {
                                     new PlayerInput(p, input -> {
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
-                                        Text.send(p, RRLanguage.file().getString("Region.Display-Name-Changed").replace("%input%", Text.color(input)));
+                                        TranslatableLine.REGION_DISPLAY_NAME_CHANGED.setV1(ReplacableVar.INPUT.eq(Text.color(input))).send(p);
                                         new BukkitRunnable() {
                                             public void run() {
                                                 RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);

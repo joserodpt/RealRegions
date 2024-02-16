@@ -16,7 +16,8 @@ package joserodpt.realregions.plugin.gui;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.ReplacableVar;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
 import joserodpt.realregions.api.utils.Text;
@@ -471,7 +472,7 @@ public class FlagSelectorGUI {
 								new PlayerInput(player, input -> {
 									if (!StringUtils.isNumeric(input))
 									{
-										Text.send(player, RRLanguage.file().getString("Input.Not-Number"));
+										Text.send(player, TranslatableLine.INPUT_NOT_NUMBER.get());
 										FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
@@ -479,7 +480,7 @@ public class FlagSelectorGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									Text.send(player, RRLanguage.file().getString("Priority.Changed").replace("%input%", Text.color(input)));
+									Text.send(player, TranslatableLine.PRIORITY_CHANGED.setV1(ReplacableVar.INPUT.eq(Text.color(input))).get());
 									new BukkitRunnable() {
 										public void run() {
 											FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);

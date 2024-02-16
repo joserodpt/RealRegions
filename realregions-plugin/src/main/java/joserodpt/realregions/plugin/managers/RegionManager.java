@@ -18,7 +18,8 @@ package joserodpt.realregions.plugin.managers;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realmines.api.mine.RMine;
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.ReplacableVar;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.RegionManagerAPI;
 import joserodpt.realregions.api.regions.CuboidRegion;
 import joserodpt.realregions.api.regions.RWorld;
@@ -64,14 +65,13 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void deleteRegion(CommandSender p, Region a) {
-        if (a.getType() == Region.RegionType.INFINITE)
-        {
-            Text.send(p, RRLanguage.file().getString("Region.Cant-Delete-Infinite").replace("%name%", a.getDisplayName()));
+        if (a.getType() == Region.RegionType.INFINITE) {
+            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
             return;
         }
 
         if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            Text.send(p, "&fThis region was imported from " + a.getOrigin().getDisplayName() + "&r&7. &cDelete it there.");
+            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
             return;
         }
 
@@ -82,7 +82,7 @@ public class RegionManager extends RegionManagerAPI {
 
         deleteRegion(a);
 
-        Text.send(p, RRLanguage.file().getString("Region.Deleted").replace("%name%", a.getDisplayName()));
+        TranslatableLine.REGION_DELETED.setV1(ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
     }
 
     @Override
@@ -176,10 +176,10 @@ public class RegionManager extends RegionManagerAPI {
 
                 ((CuboidRegion) reg).setCube(new Cube(pos1, pos2));
                 reg.saveData(Region.RegionData.BOUNDS);
-                Text.send(p, RRLanguage.file().getString("Region.Region-Set-Bounds"));
+                TranslatableLine.REGION_SET_BOUNDS.send(p);
             }
         } catch (final Exception e) {
-            Text.send(p, RRLanguage.file().getString("Selection.None"));
+            TranslatableLine.SELECTION_NONE.send(p);
         }
     }
 

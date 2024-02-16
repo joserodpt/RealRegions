@@ -16,7 +16,7 @@ package joserodpt.realregions.plugin.gui;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.Itens;
@@ -200,7 +200,7 @@ public class EntityViewer {
 
     public void openInventory(Player target) {
         if (!r.isLoaded()) {
-            Text.send(target, RRLanguage.file().getString("Menu.Unloaded-World"));
+            Text.send(target, TranslatableLine.MENU_UNLOADED_WORLD.get());
             return;
         }
 
@@ -241,8 +241,7 @@ public class EntityViewer {
                             case 4:
                                 new PlayerInput(p, input -> {
                                     if (current.searchEntity(p, input).isEmpty()) {
-                                        Text.send(p, RRLanguage.file().getString("Search.No-Results"));
-
+                                        TranslatableLine.SEARCH_NO_RESULTS.send(p);
                                         current.exit(p, current.rr);
                                         return;
                                     }

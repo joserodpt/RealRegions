@@ -16,7 +16,7 @@ package joserodpt.realregions.plugin.gui;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.plugin.RealRegionsPlugin;
 import joserodpt.realregions.api.regions.CuboidRegion;
 import joserodpt.realregions.api.regions.RWorld;
@@ -228,7 +228,7 @@ public class MaterialPickerGUI {
                             case 4:
                                 new PlayerInput(p, input -> {
                                     if (current.searchMaterial(input).isEmpty()) {
-                                        Text.send(p, RRLanguage.file().getString("Search.No-Results"));
+                                        TranslatableLine.SEARCH_NO_RESULTS.send(p);
                                         current.exit(p, current.rr);
                                         return;
                                     }

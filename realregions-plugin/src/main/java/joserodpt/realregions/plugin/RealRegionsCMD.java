@@ -19,6 +19,8 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.ReplacableVar;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Text;
@@ -76,7 +78,7 @@ public class RealRegionsCMD extends CommandBase {
 
         //reload worlds config
         rra.getWorldManagerAPI().getWorlds().values().forEach(RWorld::reloadConfig);
-        Text.send(commandSender, RRLanguage.file().getString("System.Reloaded"));
+        Text.send(commandSender, TranslatableLine.SYSTEM_RELOADED.get());
     }
 
     @SubCommand("worlds")
@@ -108,7 +110,7 @@ public class RealRegionsCMD extends CommandBase {
 
         Player p = (Player) sender;
         if (name == null) {
-            Text.send(p, RRLanguage.file().getString("Region.Name-Empty"));
+            TranslatableLine.REGION_NAME_EMPTY.send(p);
             return;
         }
 
@@ -124,18 +126,18 @@ public class RealRegionsCMD extends CommandBase {
 
                     rra.getRegionManagerAPI().createCubeRegion(name, min, max, rw);
 
-                    Text.send(p, RRLanguage.file().getString("Region.Created"));
+                    TranslatableLine.REGION_CREATED.send(p);
 
                     RegionsListGUI g = new RegionsListGUI(p, rw, rra);
                     g.openInventory(p);
                 }
             } catch (Exception e) {
-                Text.send(p, RRLanguage.file().getString("Selection.None"));
+                TranslatableLine.SELECTION_NONE.send(p);
                 Bukkit.getLogger().severe("Error while getting player's worldedit selection:");
                 Bukkit.getLogger().severe(e.getMessage());
             }
         } else {
-            Text.send(p, RRLanguage.file().getString("Region.Name-Duplicate"));
+            TranslatableLine.REGION_NAME_DUPLICATE.send(p);
         }
     }
 
@@ -146,16 +148,15 @@ public class RealRegionsCMD extends CommandBase {
     @WrongUsage("&c/rr createw <name>")
     public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
         if (name == null) {
-            Text.send(commandSender, RRLanguage.file().getString("World.Name-Empty"));
+            Text.send(commandSender, TranslatableLine.WORLD_NAME_EMPTY.get());
             return;
         }
 
         try {
             rra.getWorldManagerAPI().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            Text.send(commandSender, RRLanguage.file().getString("World.Invalid-Type").replace("%type%", worldtype));
+            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(ReplacableVar.INPUT.eq(worldtype)).get());
         }
-
     }
 
     @SubCommand("flags")
@@ -169,7 +170,7 @@ public class RealRegionsCMD extends CommandBase {
 
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
-                Text.send(p, "There is no region named &c" + name + ". &fMake sure the world and region name are correct.");
+                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
                 return;
             }
 
@@ -192,7 +193,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(p, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -213,7 +214,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(p, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -233,7 +234,8 @@ public class RealRegionsCMD extends CommandBase {
 
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
-                Text.send(p, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+                
+                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).send(p);
                 return;
             }
 
@@ -251,7 +253,7 @@ public class RealRegionsCMD extends CommandBase {
     public void viewcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -265,7 +267,8 @@ public class RealRegionsCMD extends CommandBase {
     public void unloadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+
             return;
         }
 
@@ -279,7 +282,8 @@ public class RealRegionsCMD extends CommandBase {
     public void loadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+
             return;
         }
 
@@ -293,7 +297,8 @@ public class RealRegionsCMD extends CommandBase {
     public void unregistercmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+
             return;
         }
 
@@ -308,7 +313,7 @@ public class RealRegionsCMD extends CommandBase {
         try {
             rra.getWorldManagerAPI().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            Text.send(commandSender, RRLanguage.file().getString("World.Invalid-Type").replace("%type%", worldtype));
+            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(ReplacableVar.INPUT.eq(worldtype)).get());
         }
     }
 
@@ -320,7 +325,7 @@ public class RealRegionsCMD extends CommandBase {
     public void delregcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -335,7 +340,7 @@ public class RealRegionsCMD extends CommandBase {
     public void renamecmd(final CommandSender commandSender, final String name, final String newname) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -354,7 +359,7 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
-                Text.send(commandSender, RRLanguage.file().getString("Region.Non-Existent-Name").replace("%name%", name));
+                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
                 return;
             }
 
@@ -375,7 +380,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(p, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -395,7 +400,7 @@ public class RealRegionsCMD extends CommandBase {
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
             return;
         }
 
@@ -413,7 +418,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(p, RRLanguage.file().getString("World.No-World-Named").replace("%world%", name));
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 

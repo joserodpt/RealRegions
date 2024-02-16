@@ -16,11 +16,11 @@ package joserodpt.realregions.plugin.managers;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.RRLanguage;
+import joserodpt.realregions.api.config.ReplacableVar;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.WorldManagerAPI;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -152,7 +152,7 @@ public class WorldManager extends WorldManagerAPI {
     }
     @Override
     public void createWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
-        Text.send(p, RRLanguage.file().getString("World.Being-Created").replace("%name%", worldName));
+        TranslatableLine.WORLD_BEING_CREATED.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
 
         WorldCreator worldCreator = new WorldCreator(worldName);
 
@@ -173,17 +173,16 @@ public class WorldManager extends WorldManagerAPI {
             //registar mundo no real regions
             this.worlds.put(worldName, new RWorld(worldName, world, wt));
 
-            Text.send(p, RRLanguage.file().getString("World.Created").replace("%name%", worldName));
+            TranslatableLine.WORLD_CREATED.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
         } else {
-            Text.send(p, RRLanguage.file().getString("World.Failed-To-Create").replace("%name%", worldName));
+            TranslatableLine.WORLD_FAILED_TO_CREATE.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
         }
     }
     @Override
     public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
         if (rw.isLoaded()) {
-            Text.send(p, RRLanguage.file().getString("World.Already-Loaded"));
-
+            TranslatableLine.WORLD_ALREADY_LOADED.send(p);
         } else {
             WorldCreator worldCreator = new WorldCreator(worldName);
             World w = worldCreator.createWorld();
@@ -194,7 +193,7 @@ public class WorldManager extends WorldManagerAPI {
                 Bukkit.getLogger().severe("Failed to load world: " + worldName);
             }
 
-            Text.send(p, RRLanguage.file().getString("World.Loaded").replace("%name%", worldName));
+            TranslatableLine.WORLD_LOADED.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
         }
     }
     @Override
@@ -216,14 +215,14 @@ public class WorldManager extends WorldManagerAPI {
     public void unloadWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
-            Text.send(p, RRLanguage.file().getString("World.Unload-Default-Worlds"));
+            TranslatableLine.WORLD_UNLOAD_DEFAULT_WORLDS.send(p);
         } else {
             if (!r.isLoaded()) {
-                Text.send(p, RRLanguage.file().getString("World.Already-Unloaded"));
+                TranslatableLine.WORLD_ALREADY_UNLOADED.send(p);
             } else {
-                Text.send(p, RRLanguage.file().getString("World.Being-Unloaded").replace("%name%", r.getRWorldName()));
+                TranslatableLine.WORLD_BEING_UNLOADED.setV1(ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
                 unloadWorld(r, true);
-                Text.send(p, RRLanguage.file().getString("World.Unloaded"));
+                TranslatableLine.WORLD_UNLOADED.send(p);
             }
         }
     }
@@ -234,9 +233,9 @@ public class WorldManager extends WorldManagerAPI {
 
         //if it doesn't exist, display an warning
         if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-            Text.send(p, RRLanguage.file().getString("Folder.Not-Found").replace("%name%", worldName));
+            TranslatableLine.SYSTEM_NOT_FOUND.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
         } else {
-            Text.send(p, RRLanguage.file().getString("World.Being-Imported").replace("%name%", worldName));
+            TranslatableLine.WORLD_BEING_IMPORTED.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
 
             WorldCreator worldCreator = new WorldCreator(worldName);
 
@@ -251,9 +250,9 @@ public class WorldManager extends WorldManagerAPI {
             World w = worldCreator.createWorld();
             if (w != null) {
                 this.getWorlds().put(worldName, new RWorld(worldName, w, wt));
-                Text.send(p, RRLanguage.file().getString("World.Imported").replace("%name%", worldName));
+                TranslatableLine.WORLD_IMPORTED.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
             } else {
-                Text.send(p, RRLanguage.file().getString("World.Failed-To-Import").replace("%name%", worldName));
+                TranslatableLine.WORLD_FAILED_TO_IMPORT.setV1(ReplacableVar.NAME.eq(worldName)).send(p);
             }
         }
     }
@@ -268,20 +267,21 @@ public class WorldManager extends WorldManagerAPI {
         //remove from world list
         this.getWorlds().remove(r.getRWorldName());
 
-        Text.send(p, RRLanguage.file().getString("World.Unregistered").replace("%name%", r.getRWorldName()));
+        TranslatableLine.WORLD_UNREGISTERED.setV1(ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
     }
     @Override
     public void deleteWorld(CommandSender p, RWorld r) {
         if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
         {
-            Text.send(p, RRLanguage.file().getString("World.Delete-Default-Worlds"));
+            TranslatableLine.WORLD_DELETE_DEFAULT_WORLDS.send(p);
             return;
         }
 
         if (r.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
             removeWorldFiles(p, r);
         } else {
-            Text.send(p, RRLanguage.file().getString("World.Being-Deleted").replace("%name%", r.getRWorldName()));
+            TranslatableLine.WORLD_BEING_DELETED.setV1(ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
+
             this.unloadWorld(r, false);
             r.deleteConfig();
             removeWorldFiles(p, r);
@@ -296,11 +296,11 @@ public class WorldManager extends WorldManagerAPI {
         File target = new File(rra.getPlugin().getServer().getWorldContainer().getAbsolutePath(), r.getRWorldName());
         try {
             deleteDirectory(target);
-            Text.send(p, RRLanguage.file().getString("World.Deleted").replace("%name%", r.getRWorldName()));
+            TranslatableLine.WORLD_DELETED.setV1(ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
         } catch (IOException e) {
             Bukkit.getLogger().severe("Error while trying to delete directory " + target);
             Bukkit.getLogger().severe(e.getMessage());
-            Text.send(p, RRLanguage.file().getString("Folder.Error-Removing-Files").replace("%name%", r.getRWorldName()));
+            TranslatableLine.SYSTEM_ERROR_REMOVING_FILES.setV1(ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
         }
     }
 
