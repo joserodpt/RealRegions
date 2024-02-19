@@ -1,5 +1,20 @@
 package joserodpt.realregions.api.config;
 
+/*
+ *  ______           _______
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import joserodpt.realregions.api.utils.Text;
 import org.bukkit.command.CommandSender;
 
@@ -95,5 +110,31 @@ public enum TranslatableLine {
 
     public void send(CommandSender p) {
         Text.send(p, this.get());
+    }
+
+    public enum ReplacableVar {
+
+        NAME("%name%"),
+        WORLD("%world%"),
+        INPUT("%input%");
+
+        private String key;
+        private String val;
+        ReplacableVar(String key) {
+            this.key = key;
+        }
+
+        public ReplacableVar eq(String val) {
+            this.val = val;
+            return this;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getVal() {
+            return val;
+        }
     }
 }

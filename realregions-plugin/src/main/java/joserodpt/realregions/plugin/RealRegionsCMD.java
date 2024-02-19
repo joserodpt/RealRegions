@@ -19,7 +19,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
-import joserodpt.realregions.api.config.ReplacableVar;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
@@ -155,7 +154,7 @@ public class RealRegionsCMD extends CommandBase {
         try {
             rra.getWorldManagerAPI().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(ReplacableVar.INPUT.eq(worldtype)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).get());
         }
     }
 
@@ -170,7 +169,7 @@ public class RealRegionsCMD extends CommandBase {
 
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
-                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
                 return;
             }
 
@@ -193,7 +192,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -214,7 +213,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -235,7 +234,7 @@ public class RealRegionsCMD extends CommandBase {
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
                 
-                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).send(p);
+                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
                 return;
             }
 
@@ -253,7 +252,7 @@ public class RealRegionsCMD extends CommandBase {
     public void viewcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -267,7 +266,7 @@ public class RealRegionsCMD extends CommandBase {
     public void unloadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
 
             return;
         }
@@ -282,7 +281,7 @@ public class RealRegionsCMD extends CommandBase {
     public void loadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
 
             return;
         }
@@ -297,7 +296,7 @@ public class RealRegionsCMD extends CommandBase {
     public void unregistercmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
 
             return;
         }
@@ -313,7 +312,7 @@ public class RealRegionsCMD extends CommandBase {
         try {
             rra.getWorldManagerAPI().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
         } catch (Exception e) {
-            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(ReplacableVar.INPUT.eq(worldtype)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).get());
         }
     }
 
@@ -325,7 +324,7 @@ public class RealRegionsCMD extends CommandBase {
     public void delregcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -340,7 +339,7 @@ public class RealRegionsCMD extends CommandBase {
     public void renamecmd(final CommandSender commandSender, final String name, final String newname) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
             return;
         }
 
@@ -359,7 +358,7 @@ public class RealRegionsCMD extends CommandBase {
         if (commandSender instanceof Player) {
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
             if (reg == null) {
-                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(ReplacableVar.NAME.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
                 return;
             }
 
@@ -380,7 +379,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 
@@ -400,7 +399,7 @@ public class RealRegionsCMD extends CommandBase {
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
             return;
         }
 
@@ -418,7 +417,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(ReplacableVar.WORLD.eq(name)).get());
+                Text.send(commandSender, TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
                 return;
             }
 

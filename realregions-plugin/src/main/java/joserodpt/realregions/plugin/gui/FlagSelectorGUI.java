@@ -16,7 +16,6 @@ package joserodpt.realregions.plugin.gui;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.ReplacableVar;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
@@ -480,7 +479,7 @@ public class FlagSelectorGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									Text.send(player, TranslatableLine.PRIORITY_CHANGED.setV1(ReplacableVar.INPUT.eq(Text.color(input))).get());
+									Text.send(player, TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).get());
 									new BukkitRunnable() {
 										public void run() {
 											FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);

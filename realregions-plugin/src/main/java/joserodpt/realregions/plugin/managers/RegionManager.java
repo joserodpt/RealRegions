@@ -18,7 +18,6 @@ package joserodpt.realregions.plugin.managers;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realmines.api.mine.RMine;
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.ReplacableVar;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.RegionManagerAPI;
 import joserodpt.realregions.api.regions.CuboidRegion;
@@ -66,12 +65,12 @@ public class RegionManager extends RegionManagerAPI {
     @Override
     public void deleteRegion(CommandSender p, Region a) {
         if (a.getType() == Region.RegionType.INFINITE) {
-            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
             return;
         }
 
         if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
+            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
             return;
         }
 
@@ -82,7 +81,7 @@ public class RegionManager extends RegionManagerAPI {
 
         deleteRegion(a);
 
-        TranslatableLine.REGION_DELETED.setV1(ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+        TranslatableLine.REGION_DELETED.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
     }
 
     @Override

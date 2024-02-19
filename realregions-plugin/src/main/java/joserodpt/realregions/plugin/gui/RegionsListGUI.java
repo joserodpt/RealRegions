@@ -17,7 +17,6 @@ package joserodpt.realregions.plugin.gui;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.config.ReplacableVar;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
@@ -195,7 +194,7 @@ public class RegionsListGUI {
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
-                                    TranslatableLine.REGION_NOT_IN_WORLD.setV1(ReplacableVar.WORLD.eq(current.r.getWorld().getName())).send(p);
+                                    TranslatableLine.REGION_NOT_IN_WORLD.setV1(TranslatableLine.ReplacableVar.WORLD.eq(current.r.getWorld().getName())).send(p);
                                     return;
                                 }
 
@@ -280,7 +279,7 @@ public class RegionsListGUI {
                                     new PlayerInput(p, input -> {
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
-                                        TranslatableLine.REGION_DISPLAY_NAME_CHANGED.setV1(ReplacableVar.INPUT.eq(Text.color(input))).send(p);
+                                        TranslatableLine.REGION_DISPLAY_NAME_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(p);
                                         new BukkitRunnable() {
                                             public void run() {
                                                 RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);
