@@ -185,7 +185,7 @@ public class RealRegionsCMD extends CommandBase {
     @Alias("f")
     @Completion({"#regions", "#flags"})
     @Permission("realregions.admin")
-    @WrongUsage("&c/rr reg <name>")
+    @WrongUsage("&c/rr flag <region> <flag> optional<value> command")
     public void regioncmd(final CommandSender commandSender, final String name, final String flag, @Optional Boolean value) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
