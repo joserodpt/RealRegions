@@ -105,6 +105,30 @@ public class RealRegionsPlugin extends JavaPlugin {
         cm.getCompletionHandler().register("#worldtype", input ->
                 Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID")
         );
+        cm.getCompletionHandler().register("#flags", input -> Arrays.asList(
+                "block_break",
+                "block_place",
+                "block_interact",
+                "container_interact",
+                "pvp",
+                "pve",
+                "hunger",
+                "take_damage",
+                "explosions",
+                "item_pickup",
+                "item_drop",
+                "entity_spawning",
+                "enter",
+                "access_crafting",
+                "access_chests",
+                "access_hoppers",
+                "no_chat",
+                "no_consumables",
+                "disabled_nether_portal",
+                "disabled_end_portal",
+                "no_fire_spreading",
+                "leaf_decay"
+        ));
 
         cm.register(new RealRegionsCMD(realRegions));
 

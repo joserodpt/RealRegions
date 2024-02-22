@@ -28,7 +28,6 @@ public enum TranslatableLine {
     REGION_DISPLAY_NAME_CHANGED("Region.Display-Name-Changed", ReplacableVar.INPUT),
     REGION_CANT_DELETE_INFINITE("Region.Cant-Delete-Infinite", ReplacableVar.NAME),
     REGION_IMPORTED_FROM_EXTERNAL("Region.Imported-From-External", ReplacableVar.NAME),
-
     REGION_DELETED("Region.Deleted", ReplacableVar.NAME),
     REGION_CANT_BREAK_BLOCK("Region.Cant-Break-Block"),
     REGION_CANT_PLACE_BLOCK("Region.Cant-Place-Block"),
@@ -47,6 +46,8 @@ public enum TranslatableLine {
     REGION_DISABLED_END_PORTAL("Region.Disabled-End-Portal"),
     REGION_DISABLED_NETHER_PORTAL("Region.Disabled-Nether-Portal"),
     REGION_SET_BOUNDS("Region.Region-Set-Bounds"),
+    REGION_FLAG_UNKNOWN("Region.Flag-Unknown"),
+    REGION_FLAG_SET("Flag-Set", ReplacableVar.NAME, ReplacableVar.INPUT),
 
     //WORLD
 
@@ -84,7 +85,7 @@ public enum TranslatableLine {
 
 
     private final String configPath;
-    private ReplacableVar v1 = null;
+    private ReplacableVar v1,v2 = null;
 
     TranslatableLine(String configPath) {
         this.configPath = configPath;
@@ -93,17 +94,26 @@ public enum TranslatableLine {
         this.configPath = configPath;
         this.v1 = v1;
     }
+    TranslatableLine(String configPath, ReplacableVar v1, ReplacableVar v2) {
+        this.configPath = configPath;
+        this.v1 = v1;
+        this.v2 = v2;
+    }
 
     public TranslatableLine setV1(ReplacableVar v1) {
         this.v1 = v1;
         return this;
     }
 
+    public TranslatableLine setV2(ReplacableVar v2) {
+        this.v2 = v2;
+        return this;
+    }
+
     public String get() {
         String s = RRLanguage.file().getString(this.configPath);
-        if (v1 != null) {
-            s = s.replace(v1.getKey(), v1.getVal());
-        }
+        if (v1 != null) { s = s.replace(v1.getKey(), v1.getVal()); }
+        if (v2 != null) { s = s.replace(v2.getKey(), v2.getVal()); }
 
         return s;
     }
@@ -118,7 +128,7 @@ public enum TranslatableLine {
         WORLD("%world%"),
         INPUT("%input%");
 
-        private String key;
+        private final String key;
         private String val;
         ReplacableVar(String key) {
             this.key = key;

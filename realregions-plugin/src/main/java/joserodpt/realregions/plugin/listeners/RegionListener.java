@@ -34,6 +34,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -77,6 +78,15 @@ public class RegionListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
+    public void onLeafDecay(LeavesDecayEvent event) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(event.getBlock().getLocation());
+
+        if (selected != null && !selected.leafDecay) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(EntityExplodeEvent e) {
         Location explodeLocation = e.getLocation();
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(explodeLocation);
@@ -85,6 +95,8 @@ public class RegionListener implements Listener {
             e.setCancelled(true);
         }
     }
+
+    //player listeners
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {

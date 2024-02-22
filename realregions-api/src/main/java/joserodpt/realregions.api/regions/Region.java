@@ -76,6 +76,7 @@ public class Region {
     public boolean disabledNetherPortal = false;
     public boolean disabledEndPortal = false;
     public boolean noFireSpreading = false;
+    public boolean leafDecay = false;
 
     public int priority;
 
@@ -238,42 +239,34 @@ public class Region {
     public void setIcon(Material a) {
         this.icon = a;
     }
-
     public RWorld getRWorld() {
         return this.rw;
     }
-
     public String getDisplayName() {
         return displayname;
     }
-
     public Material getIcon() {
         return icon;
     }
-
     public boolean canVisualize() {
         return false;
     }
-
     public String getRegionName() {
         return this.name;
     }
     public String getRegionNamePlusWorld() {
         return this.name + "@" + this.getRWorld().getRWorldName();
     }
-
     public void setDisplayName(String s) {
         this.displayname = s;
     }
     public void setPriority(Integer a) {
         this.priority = a;
     }
-
     public int getPriority()
     {
         return this.priority;
     }
-
     public boolean isLocationInRegion(Location l) {
         return this.getRWorld().getWorld() == l.getWorld();
     }

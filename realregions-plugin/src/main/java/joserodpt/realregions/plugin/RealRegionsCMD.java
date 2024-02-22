@@ -31,6 +31,7 @@ import me.mattstudios.mf.annotations.Alias;
 import me.mattstudios.mf.annotations.Command;
 import me.mattstudios.mf.annotations.Completion;
 import me.mattstudios.mf.annotations.Default;
+import me.mattstudios.mf.annotations.Optional;
 import me.mattstudios.mf.annotations.Permission;
 import me.mattstudios.mf.annotations.SubCommand;
 import me.mattstudios.mf.annotations.WrongUsage;
@@ -159,7 +160,6 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("flags")
-    @Alias("f")
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr reg <name>")
@@ -178,6 +178,130 @@ public class RealRegionsCMD extends CommandBase {
         } else {
             Text.send(commandSender, onlyPlayers);
 
+        }
+    }
+
+    @SubCommand("flag")
+    @Alias("f")
+    @Completion({"#regions", "#flags"})
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr reg <name>")
+    public void regioncmd(final CommandSender commandSender, final String name, final String flag, @Optional Boolean value) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
+            return;
+        }
+
+        if (value == null) {
+            switch (flag) {
+                case "block_break":
+                case "block_place":
+                case "block_interact":
+                case "container_interact":
+                case "pvp":
+                case "pve":
+                case "hunger":
+                case "take_damage":
+                case "explosions":
+                case "item_pickup":
+                case "item_drop":
+                case "entity_spawning":
+                case "enter":
+                case "access_crafting":
+                case "access_chests":
+                case "access_hoppers":
+                case "no_chat":
+                case "no_consumables":
+                case "disabled_nether_portal":
+                case "disabled_end_portal":
+                case "no_fire_spreading":
+                case "leaf_decay":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&atrue" : "&cfalse")).send(commandSender);
+                    break;
+                default:
+                    TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
+                    break;
+            }
+            return;
+        }
+
+        boolean notFound = false;
+        switch (flag) {
+            case "block_break":
+                reg.blockBreak = value;
+                break;
+            case "block_place":
+                reg.blockPlace = value;
+                break;
+            case "block_interact":
+                reg.blockInteract = value;
+                break;
+            case "container_interact":
+                reg.containerInteract = value;
+                break;
+            case "pvp":
+                reg.pvp = value;
+                break;
+            case "pve":
+                reg.pve = value;
+                break;
+            case "hunger":
+                reg.hunger = value;
+                break;
+            case "take_damage":
+                reg.takeDamage = value;
+                break;
+            case "explosions":
+                reg.explosions = value;
+                break;
+            case "item_pickup":
+                reg.itemPickup = value;
+                break;
+            case "item_drop":
+                reg.itemDrop = value;
+                break;
+            case "entity_spawning":
+                reg.entitySpawning = value;
+                break;
+            case "enter":
+                reg.enter = value;
+                break;
+            case "access_crafting":
+                reg.accessCrafting = value;
+                break;
+            case "access_chests":
+                reg.accessChests = value;
+                break;
+            case "access_hoppers":
+                reg.accessHoppers = value;
+                break;
+            case "no_chat":
+                reg.noChat = value;
+                break;
+            case "no_consumables":
+                reg.noConsumables = value;
+                break;
+            case "disabled_nether_portal":
+                reg.disabledNetherPortal = value;
+                break;
+            case "disabled_end_portal":
+                reg.disabledEndPortal = value;
+                break;
+            case "no_fire_spreading":
+                reg.noFireSpreading = value;
+                break;
+            case "leaf_decay":
+                reg.leafDecay = value;
+                break;
+            default:
+                notFound = true;
+                TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
+                break;
+        }
+
+        if (!notFound) {
+            TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&atrue" : "&cfalse")).send(commandSender);
         }
     }
 

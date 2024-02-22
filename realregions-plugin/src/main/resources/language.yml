@@ -1,4 +1,4 @@
-Version: 4
+Version: 5
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -26,6 +26,9 @@ Region:
   Disabled-Nether-Portal: "&cYou can't use the end portal here."
   Region-Set-Bounds: "&aNew bounds have set."
   Imported-From-External: "&fThis region was imported from %name%&r&7. &cDelete it there."
+  Flag-Unknown: "&cUnknown flag. &fPlease check if you typed the flag correctly."
+  Flag-Set: "&fFlag &b%name% &fset to &b%input%"
+
 
 World:
   Being-Imported: "&fImporting &b%name%."
