@@ -26,7 +26,7 @@ import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.PlayerInput;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.plugin.gui.EntityViewer;
-import joserodpt.realregions.plugin.gui.FlagSelectorGUI;
+import joserodpt.realregions.plugin.gui.FlagToggleGUI;
 import joserodpt.realregions.plugin.gui.MaterialPickerGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
@@ -73,7 +73,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(RegionsListGUI.getListener(), this);
         pm.registerEvents(MaterialPickerGUI.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
-        pm.registerEvents(FlagSelectorGUI.getListener(), this);
+        pm.registerEvents(FlagToggleGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
         CommandManager cm = new CommandManager(this);
@@ -104,6 +104,9 @@ public class RealRegionsPlugin extends JavaPlugin {
         );
         cm.getCompletionHandler().register("#worldtype", input ->
                 Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID")
+        );
+        cm.getCompletionHandler().register("#bool", input ->
+                Arrays.asList("true", "false")
         );
         cm.getCompletionHandler().register("#flags", input -> Arrays.asList(
                 "block_break",
@@ -179,6 +182,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         logWithColor("&2 \\_| \\_\\___|\\__,_|_\\_| \\_\\___|\\__, |_|\\___/|_| |_|___/");
         logWithColor("&8  Made by: &9JoseGamer_PT        &2__/ |   &8Version: &9" + this.getDescription().getVersion());
         logWithColor("&2                              |___/");
+        logWithColor("");
     }
 
     public void logWithColor(String s) {

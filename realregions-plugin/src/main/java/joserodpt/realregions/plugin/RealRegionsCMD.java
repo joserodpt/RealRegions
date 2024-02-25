@@ -24,7 +24,7 @@ import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.plugin.gui.EntityViewer;
-import joserodpt.realregions.plugin.gui.FlagSelectorGUI;
+import joserodpt.realregions.plugin.gui.FlagToggleGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import me.mattstudios.mf.annotations.Alias;
@@ -173,7 +173,7 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            FlagSelectorGUI wv = new FlagSelectorGUI(p, reg, rra);
+            FlagToggleGUI wv = new FlagToggleGUI(p, reg, rra);
             wv.openInventory(p);
         } else {
             Text.send(commandSender, onlyPlayers);
@@ -183,49 +183,90 @@ public class RealRegionsCMD extends CommandBase {
 
     @SubCommand("flag")
     @Alias("f")
-    @Completion({"#regions", "#flags"})
+    @Completion({"#regions", "#flags", "#bool"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr flag <region> <flag> optional<value> command")
-    public void regioncmd(final CommandSender commandSender, final String name, final String flag, @Optional Boolean value) {
-        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+    public void regioncmd(final CommandSender commandSender, final String regionName, final String flag, @Optional String valueSTR) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(regionName);
         if (reg == null) {
-            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).get());
+            Text.send(commandSender, TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(regionName)).get());
             return;
         }
 
-        if (value == null) {
+        if (valueSTR == null || valueSTR.isEmpty()) {
             switch (flag) {
                 case "block_break":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockBreak ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "block_place":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockPlace ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "block_interact":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockInteract ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "container_interact":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.containerInteract ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "pvp":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.pvp ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "pve":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.pve ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "hunger":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.hunger ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "take_damage":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.takeDamage ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "explosions":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.explosions ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "item_pickup":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemPickup ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "item_drop":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemDrop ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "entity_spawning":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.entitySpawning ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "enter":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.enter ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "access_crafting":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessCrafting ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "access_chests":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessChests ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "access_hoppers":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessHoppers ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "no_chat":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noChat ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "no_consumables":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noConsumables ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "disabled_nether_portal":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.disabledNetherPortal ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "disabled_end_portal":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.disabledEndPortal ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 case "no_fire_spreading":
-                case "leaf_decay":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&atrue" : "&cfalse")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noFireSpreading ? "&a✔ true" : "&c❌ false")).send(commandSender);
                     break;
                 default:
                     TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
                     break;
             }
+
             return;
         }
 
+        boolean value = Boolean.parseBoolean(valueSTR);
         boolean notFound = false;
         switch (flag) {
             case "block_break":
@@ -301,7 +342,7 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         if (!notFound) {
-            TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&atrue" : "&cfalse")).send(commandSender);
+            TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&a✔ true" : "&c❌ false")).send(commandSender);
         }
     }
 

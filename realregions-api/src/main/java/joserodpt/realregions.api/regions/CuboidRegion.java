@@ -74,7 +74,8 @@ public class CuboidRegion extends Region {
                 Text.styleBoolean(this.noConsumables),
                 Text.styleBoolean(this.noFireSpreading),
                 Text.styleBoolean(this.disabledNetherPortal),
-                Text.styleBoolean(this.disabledEndPortal)));
+                Text.styleBoolean(this.disabledEndPortal),
+                Text.styleBoolean(this.leafDecay)));
 
         if (Objects.requireNonNull(this.getOrigin()) == RegionOrigin.REALMINES) {
             desc.remove(desc.size() - 1);

@@ -177,12 +177,13 @@ public class Region {
                 Text.styleBoolean(this.noConsumables),
                 Text.styleBoolean(this.noFireSpreading),
                 Text.styleBoolean(this.disabledNetherPortal),
-                Text.styleBoolean(this.disabledEndPortal)));
+                Text.styleBoolean(this.disabledEndPortal),
+                Text.styleBoolean(this.leafDecay)));
 
         return Itens.createItem(getIcon(), 1, "&f" + getDisplayName() + " &7[&b" + (getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name()) + "&7]", desc);
     }
 
-    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21) {
+    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21, String s22) {
         return Arrays.asList("",
                 "&6Flags:",
                 " &fAccess Chests: " + s,
@@ -206,6 +207,7 @@ public class Region {
                 " &fDisable Fire Spreading: " + s19,
                 " &fDisable Nether Portal: " + s20,
                 " &fDisable End Portal: " + s21,
+                " &fLeaf Decay: " + s22,
 
                 "&f",
                 "&7Left Click to edit this region.",

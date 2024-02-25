@@ -44,19 +44,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class FlagSelectorGUI {
+public class FlagToggleGUI {
 
-	private static Map<UUID, FlagSelectorGUI> inventories = new HashMap<>();
+	private static Map<UUID, FlagToggleGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
-	private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+	private final ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
 			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;
-	private Region r;
-	private RealRegionsAPI rr;
+	private final Region r;
+	private final RealRegionsAPI rr;
 
-	public FlagSelectorGUI(Player as, Region r, RealRegionsAPI rr) {
+	public FlagToggleGUI(Player as, Region r, RealRegionsAPI rr) {
 		this.rr = rr;
 		this.uuid = as.getUniqueId();
 		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
@@ -100,8 +100,8 @@ public class FlagSelectorGUI {
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 		inv.setItem(7, Itens.createItem(Material.OBSIDIAN, 1, "&7&lDisabled Nether Portal &r&7[" + getStyle(r.disabledNetherPortal) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Nether Portal Entering.", "&e&nPermissions",
-						"  &eBypass&f: " + RegionFlags.DISABLED_NETHER_PORTAL.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
-						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
+						"  &fNot applicable for Players.",
+						"&f&nLeft-click&r&f to change value")));
 
 		//row2
 
@@ -137,16 +137,22 @@ public class FlagSelectorGUI {
 
 		inv.setItem(16, Itens.createItem(Material.END_PORTAL_FRAME, 1, "&7&lDisabled End Portal &r&7[" + getStyle(r.disabledEndPortal) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows End Portal Entering.", "&e&nPermissions",
-						"  &eBypass&f: " + RegionFlags.DISABLED_END_PORTAL.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
-						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
+						"  &fNot applicable for Players.",
+						"&f&nLeft-click&r&f to change value")));
 
 
 		//row3
 
+		inv.setItem(19, Itens.createItem(Material.OAK_LEAVES, 1, "&7&lLeave Decay &r&7[" + getStyle(r.leafDecay) + "&7]",
+				Arrays.asList("&e&nDescription", "  Allows or Disallows Leaf Decay in This Region this region.", "&e&nPermissions",
+						"  &fNot applicable for Players.",
+						"&f&nLeft-click&r&f to change value")));
+
+
 		inv.setItem(20, Itens.createItem(Material.BARRIER, 1, "&7&lEnter &r&7[" + getStyle(r.enter) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows player access to this region.", "&e&nPermissions",
-						"  &eBypass&f: " + RegionFlags.ENTER.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
-						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
+						"  &fNot applicable for Players.",
+						"&f&nLeft-click&r&f to change value")));
 
 		inv.setItem(21, Itens.createItem(Material.TNT, 1, "&7&lExplosions &r&7[" + getStyle(r.explosions) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows explosions.", "&e&nPermissions",
@@ -218,7 +224,7 @@ public class FlagSelectorGUI {
 					}
 					UUID uuid = clicker.getUniqueId();
 					if (inventories.containsKey(uuid)) {
-						FlagSelectorGUI current = inventories.get(uuid);
+						FlagToggleGUI current = inventories.get(uuid);
 						if (event.getInventory().getHolder() != current.getInventory().getHolder()) {
 							return;
 						}
@@ -319,14 +325,10 @@ public class FlagSelectorGUI {
 								}
 								break;
 							case 7:
-								if (event.getClick() == ClickType.LEFT) {
-									current.r.disabledNetherPortal = !current.r.disabledNetherPortal;
-									current.r.saveData(Region.RegionData.FLAGS);
-									current.load();
-									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
-								} else if (event.getClick() == ClickType.RIGHT) {
-									RegionFlags.PVE.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
-								}
+								current.r.disabledNetherPortal = !current.r.disabledNetherPortal;
+								current.r.saveData(Region.RegionData.FLAGS);
+								current.load();
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								break;
 
 							case 11:
@@ -389,6 +391,13 @@ public class FlagSelectorGUI {
 
 							case 16:
 								current.r.disabledEndPortal = !current.r.disabledEndPortal;
+								current.r.saveData(Region.RegionData.FLAGS);
+								current.load();
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+								break;
+
+							case 19:
+								current.r.leafDecay = !current.r.leafDecay;
 								current.r.saveData(Region.RegionData.FLAGS);
 								current.load();
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
@@ -472,7 +481,7 @@ public class FlagSelectorGUI {
 									if (!StringUtils.isNumeric(input))
 									{
 										Text.send(player, TranslatableLine.INPUT_NOT_NUMBER.get());
-										FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
+										FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
 									}
@@ -482,12 +491,12 @@ public class FlagSelectorGUI {
 									Text.send(player, TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).get());
 									new BukkitRunnable() {
 										public void run() {
-											FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
+											FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
 											wv.openInventory(player);
 										}
 									}.runTaskLater(current.rr.getPlugin(), 2);
 								}, input -> {
-									FlagSelectorGUI wv = new FlagSelectorGUI(player, current.r, current.rr);
+									FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
 									wv.openInventory(player);
 								});
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);

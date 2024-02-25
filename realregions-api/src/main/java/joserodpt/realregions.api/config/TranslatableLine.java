@@ -47,7 +47,7 @@ public enum TranslatableLine {
     REGION_DISABLED_NETHER_PORTAL("Region.Disabled-Nether-Portal"),
     REGION_SET_BOUNDS("Region.Region-Set-Bounds"),
     REGION_FLAG_UNKNOWN("Region.Flag-Unknown"),
-    REGION_FLAG_SET("Flag-Set", ReplacableVar.NAME, ReplacableVar.INPUT),
+    REGION_FLAG_SET("Region.Flag-Set", ReplacableVar.NAME, ReplacableVar.INPUT),
 
     //WORLD
 

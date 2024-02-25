@@ -53,15 +53,15 @@ public class RegionsListGUI {
     private static Map<UUID, RegionsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
-    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
-    private ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
+    private final ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
+    private final ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
 
-    private ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+    private final ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
             Collections.singletonList("&fClick here to close this menu."));
 
     private final UUID uuid;
     private HashMap<Integer, Region> display = new HashMap<>();
-    private RWorld r;
+    private final RWorld r;
 
     int pageNumber = 0;
     private Pagination<Region> p;
@@ -257,7 +257,7 @@ public class RegionsListGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            FlagSelectorGUI fg = new FlagSelectorGUI(p, a, current.rr);
+                                            FlagToggleGUI fg = new FlagToggleGUI(p, a, current.rr);
                                             fg.openInventory(p);
                                         }
                                     }.runTaskLater(current.rr.getPlugin(), 2);

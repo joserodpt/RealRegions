@@ -81,9 +81,7 @@ public class RegionListener implements Listener {
     public void onLeafDecay(LeavesDecayEvent event) {
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(event.getBlock().getLocation());
 
-        if (selected != null && !selected.leafDecay) {
-            event.setCancelled(true);
-        }
+        if (selected != null && !selected.leafDecay) { event.setCancelled(true); }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
