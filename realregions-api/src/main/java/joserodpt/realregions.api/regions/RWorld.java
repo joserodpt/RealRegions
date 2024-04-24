@@ -52,7 +52,8 @@ public class RWorld implements Listener {
     private Material icon;
     private double worldSizeMB;
     private boolean loaded = true;
-    private Map<String, Region> regions = new LinkedHashMap<>();
+    private boolean tpOnJoin = false;
+    private final Map<String, Region> regions = new LinkedHashMap<>();
 
     public RWorld(String worldNameImported) {
         this.worldName = worldNameImported;
@@ -92,6 +93,14 @@ public class RWorld implements Listener {
 
     public void addRegion(Region r) {
         this.getRegions().put(r.getRegionName(), r);
+    }
+
+    public void setTPJoin(boolean b) { this.tpOnJoin = b; }
+
+    public boolean isTPJoinON() { return this.tpOnJoin; }
+
+    public Location getTPJoinLocation() {
+        return this.world.getSpawnLocation();
     }
 
     private void loadRegions() {
@@ -196,6 +205,7 @@ public class RWorld implements Listener {
         if (this.config == null) {
             this.config = YamlConfiguration.loadConfiguration(file);
             this.icon = Material.valueOf(config.getString("Settings.Icon"));
+            this.tpOnJoin = config.getBoolean("Settings.TP-On-Join");
         }
     }
 
@@ -254,6 +264,7 @@ public class RWorld implements Listener {
         this.config.set("Settings.Icon", this.icon.name());
         this.config.set("Settings.Type", this.getWorldType().name());
         this.config.set("Settings.Load", true);
+        this.config.set("Settings.TP-On-Join", false);
         this.config.set("Settings.Unix-Register", System.currentTimeMillis() / 1000L);
 
         //default global region

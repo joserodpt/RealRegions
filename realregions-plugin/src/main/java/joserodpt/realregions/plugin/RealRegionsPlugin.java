@@ -30,6 +30,7 @@ import joserodpt.realregions.plugin.gui.FlagToggleGUI;
 import joserodpt.realregions.plugin.gui.MaterialPickerGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
+import joserodpt.realregions.plugin.listeners.GeneralListener;
 import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
 import me.mattstudios.mf.base.CommandManager;
@@ -68,6 +69,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         RRLanguage.setup(this);
 
         PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new GeneralListener(realRegions), this);
         pm.registerEvents(new RegionListener(realRegions), this);
         pm.registerEvents(WorldsListGUI.getListener(), this);
         pm.registerEvents(RegionsListGUI.getListener(), this);

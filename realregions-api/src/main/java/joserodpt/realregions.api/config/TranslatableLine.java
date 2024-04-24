@@ -68,6 +68,8 @@ public enum TranslatableLine {
     WORLD_DELETED("World.Deleted", ReplacableVar.NAME),
     WORLD_UNREGISTERED("World.Unregistered", ReplacableVar.NAME),
     WORLD_NO_WORLD_NAMED("World.No-World-Named", ReplacableVar.WORLD),
+    WORLD_TPJOIN_SET("World.TP-Join-Set", ReplacableVar.WORLD),
+
     WORLD_SPAWN_SET("World.Spawn-Set", ReplacableVar.WORLD),
     WORLD_NAME_EMPTY("World.Name-Empty"),
     WORLD_INVALID_TYPE("World.Invalid-Type", ReplacableVar.INPUT),

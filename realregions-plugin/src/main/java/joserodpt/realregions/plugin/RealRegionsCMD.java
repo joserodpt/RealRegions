@@ -373,11 +373,12 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr setworldspawn <name>")
-    public void setworldspawn(final CommandSender commandSender, final String name) {
+    public void setworldspawn(final CommandSender commandSender, final @Optional String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+            RWorld rw = (name == null || name.isEmpty()) ? rra.getWorldManagerAPI().getWorld(p.getWorld()) : rra.getWorldManagerAPI().getWorld(name);
+
             if (rw == null) {
                 TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
                 return;
@@ -459,6 +460,21 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         rra.getWorldManagerAPI().unloadWorld(commandSender, rw);
+    }
+
+    @SubCommand("toggle-tpjoin")
+    @Completion("#mundos")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr toggle-tpjoin <world>")
+    public void toggletpjoin(final CommandSender commandSender, final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            return;
+        }
+
+        rw.setTPJoin(!rw.isTPJoinON());
+        TranslatableLine.WORLD_TPJOIN_SET.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rw.isTPJoinON() ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
     @SubCommand("load")
