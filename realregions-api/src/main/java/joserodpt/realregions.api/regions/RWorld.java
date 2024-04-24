@@ -21,6 +21,7 @@ import joserodpt.realregions.api.utils.IO;
 import joserodpt.realregions.api.utils.Itens;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -221,6 +222,11 @@ public class RWorld implements Listener {
         } catch (IOException e) {
             RealRegionsAPI.getInstance().getLogger().severe("RealRegions threw an error while saving world config for " + this.getRWorldName());
         }
+    }
+
+    public void setWorldSpawn(Location location) {
+        this.world.setSpawnLocation(location);
+        this.world.save();
     }
 
     private void setupDefaultConfig() {

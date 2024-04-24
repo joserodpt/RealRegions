@@ -1,4 +1,4 @@
-Version: 5
+Version: 6
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -50,6 +50,7 @@ World:
   No-World-Named: "There is no world named &c%world%."
   Name-Empty: "World name is empty."
   Invalid-Type: "&cThere is no world type named %input%"
+  Spawn-Set: "&fSpawn set to your current location for world &a%world%."
 
 Menu:
   Unloaded-World: "&cYou can't open this menu because this world is unloaded."
