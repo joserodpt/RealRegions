@@ -86,10 +86,12 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void deleteRegion(Region a) {
-        this.getViewing().remove(a);
-        a.getRWorld().removeRegion(a);
-        a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
-        a.getRWorld().saveConfig();
+        if (a != null) {
+            this.getViewing().remove(a);
+            a.getRWorld().removeRegion(a);
+            a.getRWorld().getConfig().set("Regions." + a.getRegionName(), null);
+            a.getRWorld().saveConfig();
+        }
     }
 
     @Override

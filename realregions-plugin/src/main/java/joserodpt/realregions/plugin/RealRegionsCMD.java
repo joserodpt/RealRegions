@@ -145,7 +145,7 @@ public class RealRegionsCMD extends CommandBase {
     @Alias("cw")
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
-    @WrongUsage("&c/rr createw <name>")
+    @WrongUsage("&c/rr createw <name> <type>")
     public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
         if (name == null) {
             Text.send(commandSender, TranslatableLine.WORLD_NAME_EMPTY.get());
