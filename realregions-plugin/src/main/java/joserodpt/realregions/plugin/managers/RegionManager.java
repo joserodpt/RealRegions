@@ -64,15 +64,15 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void deleteRegion(CommandSender p, Region a) {
-        if (a.getType() == Region.RegionType.INFINITE) {
-            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
-            return;
-        }
-
-        if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
-            return;
-        }
+//        if (a.getType() == Region.RegionType.INFINITE) {
+//            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+//            return;
+//        }
+//
+//        if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
+//            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
+//            return;
+//        }
 
         //remove permissions from RealPermissions
         if (rra.getRealPermissionsAPI() != null) {

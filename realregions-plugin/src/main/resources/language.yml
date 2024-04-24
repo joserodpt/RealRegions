@@ -28,6 +28,7 @@ Region:
   Imported-From-External: "&fThis region was imported from %name%&r&7. &cDelete it there."
   Flag-Unknown: "&cUnknown flag. &fPlease check if you typed the flag correctly."
   Flag-Set: "&fFlag &b%name% &fset to &b%input%"
+  Renamed: "&fRegion renamed to &b%name%."
 
 
 World:
