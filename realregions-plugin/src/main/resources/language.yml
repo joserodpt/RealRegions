@@ -34,6 +34,10 @@ Region:
   Redefine-External-Plugin: "&fYou &ccan't redefine &fthe bounds of a region imported by %name%"
   Cant-View-Infinite-Region: "&fYou &ccan't &fvisualize this region because its an infinite region."
   View-Region: "&fVisualizing %name%: %input%"
+  Entering:
+    Toggle: "&fAnnounce Enter enabled: %input%"
+    Title: "%name%"
+    Subtitle: "&fYou are entering %name%&f, &bwelcome!"
 
 
 World:

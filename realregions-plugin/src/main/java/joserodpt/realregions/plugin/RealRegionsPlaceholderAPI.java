@@ -34,14 +34,6 @@ public class RealRegionsPlaceholderAPI extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        if (params.equalsIgnoreCase("region_name")) {
-            return rra.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(player.getPlayer().getLocation()).getRegionName();
-        }
-
-        if (params.equalsIgnoreCase("region_displayname")) {
-            return rra.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(player.getPlayer().getLocation()).getDisplayName();
-        }
-
         if (params.equalsIgnoreCase("total_regions")) {
             return rra.getRegionManagerAPI().getRegions().size() + "";
         }
@@ -52,6 +44,22 @@ public class RealRegionsPlaceholderAPI extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("total_global_regions")) {
             return rra.getRegionManagerAPI().getRegions().stream().filter(region -> region.getType() == Region.RegionType.INFINITE).count() + "";
+        }
+
+        if (params.equalsIgnoreCase("current_region_name")) {
+            if (rra.getRegionManagerAPI().getLastRegions().containsKey(player.getPlayer().getUniqueId())) {
+                return rra.getRegionManagerAPI().getLastRegions().get(player.getPlayer().getUniqueId()).getRegionName();
+            } else {
+                return "?";
+            }
+        }
+
+        if (params.equalsIgnoreCase("current_region_displayname")) {
+            if (rra.getRegionManagerAPI().getLastRegions().containsKey(player.getPlayer().getUniqueId())) {
+                return rra.getRegionManagerAPI().getLastRegions().get(player.getPlayer().getUniqueId()).getDisplayName();
+            } else {
+                return "?";
+            }
         }
 
         return null; // 

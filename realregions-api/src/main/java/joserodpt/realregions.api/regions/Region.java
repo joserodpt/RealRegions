@@ -54,6 +54,8 @@ public class Region {
     private final String name;
     private String displayname;
     private final RWorld rw;
+    public boolean announceEnterTitle = false;
+    public boolean announceEnterActionbar = false;
 
     //flags
     public boolean blockBreak = true;
@@ -81,13 +83,15 @@ public class Region {
 
     public int priority;
 
-    public Region(String name, String displayname, RWorld w, Material m, int priority, RegionType rt) {
+    public Region(String name, String displayname, RWorld w, Material m, int priority, RegionType rt, boolean announceEnterTitle, boolean announceEnterActionbar) {
         //Infinite Region
         this.name = name;
         this.displayname = displayname;
         this.icon = m;
         this.rw = w;
         this.priority = priority;
+        this.announceEnterTitle = announceEnterTitle;
+        this.announceEnterActionbar = announceEnterActionbar;
 
         if (rt == RegionType.INFINITE) {
             //save region
@@ -129,6 +133,8 @@ public class Region {
                 cfg.set("Regions." + this.name + ".Display-Name", this.displayname);
                 cfg.set("Regions." + this.name + ".Priority", this.priority);
                 cfg.set("Regions." + this.name + ".Icon", this.icon.name());
+                cfg.set("Regions." + this.name + ".Announce-Enter.Title", this.announceEnterTitle);
+                cfg.set("Regions." + this.name + ".Announce-Enter.Actionbar", this.announceEnterActionbar);
                 if (this.getOrigin() != RegionOrigin.REALREGIONS)
                     cfg.set("Regions." + this.name + ".Origin", this.getOrigin().name());
                 break;

@@ -54,6 +54,9 @@ public enum TranslatableLine {
     REGION_REDEFINE_EXTERNAL_PLUGIN("Region.Redefine-External-Plugin"),
     REGION_CANT_VIEW_INFINITE_REGION("Region.Cant-View-Infinite-Region"),
     REGION_VIEW_REGION("Region.View-Region", ReplacableVar.NAME, ReplacableVar.INPUT),
+    REGION_ENTERING_TITLE("Region.Entering.Title", ReplacableVar.NAME),
+    REGION_ENTERING_SUBTITLE("Region.Entering.Subtitle", ReplacableVar.NAME),
+    REGION_ENTERING_TOGGLE("Region.Entering.Toggle", ReplacableVar.NAME),
 
     //WORLD
 
@@ -126,7 +129,7 @@ public enum TranslatableLine {
         if (v1 != null) { s = s.replace(v1.getKey(), v1.getVal()); }
         if (v2 != null) { s = s.replace(v2.getKey(), v2.getVal()); }
 
-        return s;
+        return Text.color(s);
     }
 
     public void send(CommandSender p) {

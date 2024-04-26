@@ -23,6 +23,8 @@ import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
 import joserodpt.realregions.api.utils.Particles;
 import joserodpt.realregions.api.utils.Text;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -275,6 +277,8 @@ public class RegionListener implements Listener {
                     }
                     break;
             }
+
+            notifyRegionChange(p, selected);
         }
     }
 
@@ -296,6 +300,8 @@ public class RegionListener implements Listener {
                 return;
             }
 
+            notifyRegionChange(p, selected);
+
             if (!selected.enter) {
                 Particles.spawnParticle(Particles.RRParticle.LAVA, e.getTo());
                 //OLD: p.setVelocity(p.getEyeLocation().getDirection().setY(-0.7D).multiply(-0.7D));
@@ -303,6 +309,25 @@ public class RegionListener implements Listener {
                 p.teleport(e.getFrom());  //TODO: better player knockback?
 
                 cancelEvent(e.getTo(), p, TranslatableLine.REGION_CANT_ENTER_HERE.get());
+            }
+        }
+    }
+
+    private void notifyRegionChange(Player player, Region r) {
+        if (r != null) {
+            if (rr.getRegionManagerAPI().getLastRegions().containsKey(player.getUniqueId())) {
+                if (rr.getRegionManagerAPI().getLastRegions().get(player.getUniqueId()) != r) {
+                    // announce region change via titles
+                    if (r.announceEnterTitle)
+                        player.sendTitle(TranslatableLine.REGION_ENTERING_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(),
+                            TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(), 10, 40, 10);
+
+                    if (r.announceEnterActionbar)
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get()));
+                }
+                rr.getRegionManagerAPI().getLastRegions().put(player.getUniqueId(), r);
+            } else {
+                rr.getRegionManagerAPI().getLastRegions().put(player.getUniqueId(), r);
             }
         }
     }

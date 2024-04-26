@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class RegionManagerAPI {
     public abstract List<Region> getViewing();
@@ -34,4 +35,6 @@ public abstract class RegionManagerAPI {
     public abstract void checkRealMinesRegions(Map<String, RMine> mines);
 
     public abstract void toggleRegionView(CommandSender commandSender, Region reg);
+
+    public abstract Map<UUID, Region> getLastRegions();
 }

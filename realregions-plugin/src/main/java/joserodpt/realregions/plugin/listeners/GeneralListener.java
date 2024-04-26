@@ -36,6 +36,7 @@ public class GeneralListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void join(PlayerJoinEvent e) {
         tpJoinLogic(e.getPlayer());
+        rra.getRegionManagerAPI().getLastRegions().put(e.getPlayer().getUniqueId(), rra.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

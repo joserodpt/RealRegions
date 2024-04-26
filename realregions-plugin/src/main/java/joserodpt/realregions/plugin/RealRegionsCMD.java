@@ -475,6 +475,38 @@ public class RealRegionsCMD extends CommandBase {
         TranslatableLine.WORLD_TPJOIN_SET.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rw.isTPJoinON() ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
+    @SubCommand("toggle-enter-title")
+    @Completion("#regions")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr toggle-enter-title <region>")
+    public void toggleentertitle(final CommandSender commandSender, final String name) {
+        Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (rg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            return;
+        }
+
+        rg.announceEnterTitle = !rg.announceEnterTitle;
+        rg.saveData(Region.RegionData.SETTINGS);
+        TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterTitle ? "&a✔ true" : "&c❌ false")).send(commandSender);
+    }
+
+    @SubCommand("toggle-enter-actionbar")
+    @Completion("#regions")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr toggle-enter-actionbar <region>")
+    public void toggleenteractionbar(final CommandSender commandSender, final String name) {
+        Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (rg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            return;
+        }
+
+        rg.announceEnterActionbar = !rg.announceEnterActionbar;
+        rg.saveData(Region.RegionData.SETTINGS);
+        TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterActionbar ? "&a✔ true" : "&c❌ false")).send(commandSender);
+    }
+
     @SubCommand("load")
     @Completion("#mundos")
     @Permission("realregions.admin")

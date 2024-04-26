@@ -36,14 +36,12 @@ public class CuboidRegion extends Region {
     private Cube cube;
     private final CubeVisualizer cv;
 
-    public CuboidRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri) {
-        super(name, displayname, w, m, pri, RegionType.CUBOID);
+    public CuboidRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri,  boolean announceEnterTitle, boolean announceEnterActionbar) {
+        super(name, displayname, w, m, pri, RegionType.CUBOID, announceEnterTitle, announceEnterActionbar);
 
         //Cube Region
         this.cube = new Cube(pos1, pos2);
         this.cv = new CubeVisualizer(this);
-
-
     }
 
     @Override

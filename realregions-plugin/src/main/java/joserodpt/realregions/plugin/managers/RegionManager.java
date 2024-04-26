@@ -36,14 +36,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class RegionManager extends RegionManagerAPI {
 
     private final RealRegionsAPI rra;
     private List<Region> viewing = new ArrayList<>();
+    private final Map<UUID, Region> lastRegion = new HashMap<>();
 
     @Override
     public List<Region> getViewing() {
@@ -64,15 +67,15 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void deleteRegion(CommandSender p, Region a) {
-//        if (a.getType() == Region.RegionType.INFINITE) {
-//            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
-//            return;
-//        }
-//
-//        if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-//            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
-//            return;
-//        }
+        if (a.getType() == Region.RegionType.INFINITE) {
+            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+            return;
+        }
+
+        if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
+            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
+            return;
+        }
 
         //remove permissions from RealPermissions
         if (rra.getRealPermissionsAPI() != null) {
@@ -122,7 +125,7 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void createCubeRegion(String name, Location min, Location max, RWorld r) {
-        CuboidRegion crg = new CuboidRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100);
+        CuboidRegion crg = new CuboidRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100, true, true);
         r.addRegion(crg);
 
         //save region
@@ -136,7 +139,7 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void createCubeRegionRealMines(RMine mine, RWorld rw) {
-        CuboidRegion crg = new CuboidRegion(mine.getPOS1(), mine.getPOS2(), ChatColor.stripColor(mine.getName()), mine.getDisplayName(), rw, mine.getIcon(), 101);
+        CuboidRegion crg = new CuboidRegion(mine.getPOS1(), mine.getPOS2(), ChatColor.stripColor(mine.getName()), mine.getDisplayName(), rw, mine.getIcon(), 101, false, false);
         rw.addRegion(crg);
         crg.setOrigin(Region.RegionOrigin.REALMINES);
 
@@ -223,5 +226,10 @@ public class RegionManager extends RegionManagerAPI {
         } else {
             TranslatableLine.REGION_CANT_VIEW_INFINITE_REGION.send(commandSender);
         }
+    }
+
+    @Override
+    public Map<UUID, Region> getLastRegions() {
+        return lastRegion;
     }
 }
