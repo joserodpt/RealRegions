@@ -200,7 +200,7 @@ public class EntityViewer {
 
     public void openInventory(Player target) {
         if (!r.isLoaded()) {
-            Text.send(target, TranslatableLine.MENU_UNLOADED_WORLD.get());
+            TranslatableLine.MENU_UNLOADED_WORLD.send(target);
             return;
         }
 

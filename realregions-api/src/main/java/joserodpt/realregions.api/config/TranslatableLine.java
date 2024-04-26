@@ -49,6 +49,11 @@ public enum TranslatableLine {
     REGION_FLAG_UNKNOWN("Region.Flag-Unknown"),
     REGION_FLAG_SET("Region.Flag-Set", ReplacableVar.NAME, ReplacableVar.INPUT),
     REGION_RENAMED("Region.Renamed", ReplacableVar.NAME),
+    REGION_TP_UNLOADED_WORLD("Region.TP-Unloaded-World"),
+    REGION_TP("Region.TP", ReplacableVar.NAME, ReplacableVar.WORLD),
+    REGION_REDEFINE_EXTERNAL_PLUGIN("Region.Redefine-External-Plugin"),
+    REGION_CANT_VIEW_INFINITE_REGION("Region.Cant-View-Infinite-Region"),
+    REGION_VIEW_REGION("Region.View-Region", ReplacableVar.NAME, ReplacableVar.INPUT),
 
     //WORLD
 
@@ -74,6 +79,8 @@ public enum TranslatableLine {
     WORLD_SPAWN_SET("World.Spawn-Set", ReplacableVar.WORLD),
     WORLD_NAME_EMPTY("World.Name-Empty"),
     WORLD_INVALID_TYPE("World.Invalid-Type", ReplacableVar.INPUT),
+    WORLD_TP_UNLOADED("World.TP-Unloaded-World"),
+    WORLD_TP("World.TP", ReplacableVar.WORLD),
 
     //MENU
     MENU_UNLOADED_WORLD("Menu.Unloaded-World"),

@@ -404,7 +404,7 @@ public class RegionListener implements Listener {
             //pvp
             if (!selected.pvp) {
                 event.setCancelled(true);
-                Text.send(damager, TranslatableLine.REGION_CANT_PVP.get());
+                TranslatableLine.REGION_CANT_PVP.send(damager);
             }
         }
     }
@@ -490,7 +490,7 @@ public class RegionListener implements Listener {
             //pve
             if (!selected.pve) {
                 event.setCancelled(true);
-                Text.send(damager, TranslatableLine.REGION_CANT_PVE.get());
+                TranslatableLine.REGION_CANT_PVE.send(damager);
             }
         }
     }

@@ -29,6 +29,11 @@ Region:
   Flag-Unknown: "&cUnknown flag. &fPlease check if you typed the flag correctly."
   Flag-Set: "&fFlag &b%name% &fset to &b%input%"
   Renamed: "&fRegion renamed to &b%name%."
+  TP-Unloaded-World: "&cYou can't teleport to this region because it belongs to a world that is unloaded."
+  TP: "&fYou teleported to region &b%name% &r &fon &a%world%"
+  Redefine-External-Plugin: "&fYou &ccan't redefine &fthe bounds of a region imported by %name%"
+  Cant-View-Infinite-Region: "&fYou &ccan't &fvisualize this region because its an infinite region."
+  View-Region: "&fVisualizing %name%: %input%"
 
 
 World:
@@ -53,6 +58,8 @@ World:
   Invalid-Type: "&cThere is no world type named %input%"
   Spawn-Set: "&fSpawn set to your current location for world &a%world%."
   TP-Join-Set: "&fTP-Join enabled: %input%"
+  TP-Unloaded-World: "&cYou can't teleport to this world because it's unloaded."
+  TP: "Teleported to world: &b%world%"
 
 Menu:
   Unloaded-World: "&cYou can't open this menu because this world is unloaded."

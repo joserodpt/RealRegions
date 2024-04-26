@@ -16,6 +16,7 @@ package joserodpt.realregions.api.regions;
  */
 
 import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Text;
 import org.bukkit.Location;
@@ -220,13 +221,13 @@ public class Region {
 
     public void teleport(Player p, boolean silent) {
         if (!this.getRWorld().isLoaded()) {
-            Text.send(p, "&cYou can't teleport to this region because it belongs to a world that is unloaded.");
+            TranslatableLine.REGION_TP_UNLOADED_WORLD.send(p);
             return;
         }
 
         p.teleport(this.rw.getWorld().getSpawnLocation());
         if (!silent) {
-            Text.send(p, "&fYou teleported to region &b" + this.displayname + "&r &fon &a" + this.rw.getRWorldName());
+            TranslatableLine.REGION_TP.setV1(TranslatableLine.ReplacableVar.NAME.eq(this.displayname)).setV2(TranslatableLine.ReplacableVar.WORLD.eq(this.getRWorld().getRWorldName())).send(p);
         }
     }
 

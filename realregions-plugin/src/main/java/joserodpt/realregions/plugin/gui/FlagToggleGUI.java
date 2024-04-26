@@ -480,7 +480,7 @@ public class FlagToggleGUI {
 								new PlayerInput(player, input -> {
 									if (!StringUtils.isNumeric(input))
 									{
-										Text.send(player, TranslatableLine.INPUT_NOT_NUMBER.get());
+										TranslatableLine.INPUT_NOT_NUMBER.send(player);
 										FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
@@ -488,7 +488,7 @@ public class FlagToggleGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									Text.send(player, TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).get());
+									TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(player);
 									new BukkitRunnable() {
 										public void run() {
 											FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);

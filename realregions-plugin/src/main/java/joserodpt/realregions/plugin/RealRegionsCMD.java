@@ -102,13 +102,13 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#range:1-20")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr create <name>")
-    public void create(final CommandSender sender, final String name) {
-        if (!(sender instanceof Player)) {
-            Text.send(sender, onlyPlayers);
+    public void create(final CommandSender commandSender, final String name) {
+        if (!(commandSender instanceof Player)) {
+            Text.send(commandSender, onlyPlayers);
             return;
         }
 
-        Player p = (Player) sender;
+        Player p = (Player) commandSender;
         if (name == null) {
             TranslatableLine.REGION_NAME_EMPTY.send(p);
             return;
@@ -357,7 +357,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).get());
+                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
                 return;
             }
 
@@ -577,7 +577,7 @@ public class RealRegionsCMD extends CommandBase {
 
             RWorld rw = rra.getWorldManagerAPI().getWorld(name);
             if (rw == null) {
-                ranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
                 return;
             }
 

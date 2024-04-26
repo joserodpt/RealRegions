@@ -16,6 +16,7 @@ package joserodpt.realregions.api.regions;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.IO;
 import joserodpt.realregions.api.utils.Itens;
@@ -310,13 +311,13 @@ public class RWorld implements Listener {
 
     public void teleport(Player p, boolean silent) {
         if (!isLoaded()) {
-            Text.send(p, "&cYou can't teleport to this world because it is unloaded.");
+            TranslatableLine.WORLD_TP_UNLOADED.send(p);
             return;
         }
 
         p.teleport(this.world.getSpawnLocation());
         if (!silent) {
-            Text.send(p, "Teleported to world: &b" + this.getRWorldName());
+            TranslatableLine.WORLD_TP.setV1(TranslatableLine.ReplacableVar.WORLD.eq(this.getRWorldName())).send(p);
         }
     }
 

@@ -163,7 +163,7 @@ public class RegionManager extends RegionManagerAPI {
     @Override
     public void setRegionBounds(Region reg, Player p) {
         if (reg.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            Text.send(p, "&fYou &ccan't redefine &fthe bounds of a region imported by " + reg.getOrigin().getDisplayName());
+            TranslatableLine.REGION_REDEFINE_EXTERNAL_PLUGIN.setV1(TranslatableLine.ReplacableVar.NAME.eq(reg.getDisplayName())).send(p);
             return;
         }
 
@@ -219,9 +219,9 @@ public class RegionManager extends RegionManagerAPI {
                 this.getViewing().add(a);
             }
 
-            Text.send(commandSender, "&fVisualizing " + a.getDisplayName() + ": " + Text.styleBoolean(this.getViewing().contains(a)));
+            TranslatableLine.REGION_VIEW_REGION.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).setV2(TranslatableLine.ReplacableVar.INPUT.eq(Text.styleBoolean(this.getViewing().contains(a)))).send(commandSender);
         } else {
-            Text.send(commandSender, "&fYou &ccan't &fvisualize this region because its an infinite region.");
+            TranslatableLine.REGION_CANT_VIEW_INFINITE_REGION.send(commandSender);
         }
     }
 }

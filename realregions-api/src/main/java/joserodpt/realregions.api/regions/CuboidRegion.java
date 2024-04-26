@@ -15,6 +15,7 @@ package joserodpt.realregions.api.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Cube;
 import joserodpt.realregions.api.utils.CubeVisualizer;
 import joserodpt.realregions.api.utils.Itens;
@@ -108,13 +109,13 @@ public class CuboidRegion extends Region {
     @Override
     public void teleport(Player p, boolean silent) {
         if (!this.getRWorld().isLoaded()) {
-            Text.send(p, "&cYou can't teleport to this region because it belongs to a world that is unloaded.");
+            TranslatableLine.REGION_TP_UNLOADED_WORLD.send(p);
             return;
         }
 
         p.teleport(this.cube.getCenter());
         if (!silent) {
-            Text.send(p, "&fYou teleported to region &b" + super.getDisplayName() + "&r &fon &a" + super.getRWorld().getRWorldName());
+            TranslatableLine.REGION_TP.setV1(TranslatableLine.ReplacableVar.NAME.eq(super.getDisplayName())).setV2(TranslatableLine.ReplacableVar.WORLD.eq(super.getRWorld().getRWorldName())).send(p);
         }
     }
 
