@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 public class WorldManager extends WorldManagerAPI {
@@ -111,34 +112,42 @@ public class WorldManager extends WorldManagerAPI {
         File folder = new File(rra.getPlugin().getDataFolder() + "/worlds");
 
         if (folder.exists() && folder.isDirectory()) {
-            for (File world : folder.listFiles()) {
+            for (File world : Objects.requireNonNull(folder.listFiles())) {
+                if (!world.getName().endsWith(".yml"))
+                    continue; // ignore non-yml files
+
                 String worldName = world.getName().replace(".yml", "");
 
-                //temporary load world config file to see if it is to load world
-                FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
+                try {
+                    //temporary load world config file to see if it is to load world
+                    FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
 
-                RWorld.WorldType wt = RWorld.WorldType.valueOf(worldConfig.getString("Settings.Type"));
+                    RWorld.WorldType wt = RWorld.WorldType.valueOf(worldConfig.getString("Settings.Type"));
 
-                if (worldConfig.getBoolean("Settings.Load")) {
-                    //to load world, check if folder exists
-                    File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
+                    if (worldConfig.getBoolean("Settings.Load")) {
+                        //to load world, check if folder exists
+                        File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
 
-                    //if it doesn't exist, display an warning
-                    if (!worldFolder.exists() || !worldFolder.isDirectory()) {
-                        rra.getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
-                    } else {
-                        WorldCreator worldCreator = new WorldCreator(worldName);
-                        World w = worldCreator.createWorld();
-                        if (w != null) {
-                            this.getWorlds().put(worldName, new RWorld(worldName, w, wt));
+                        //if it doesn't exist, display an warning
+                        if (!worldFolder.exists() || !worldFolder.isDirectory()) {
+                            rra.getLogger().severe(worldName + " folder NOT FOUND in server's directory. This world will not be loaded onto RealRegions. Please verify.");
                         } else {
-                            Bukkit.getLogger().severe("Failed to load world: " + worldName);
+                            WorldCreator worldCreator = new WorldCreator(worldName);
+                            World w = worldCreator.createWorld();
+                            if (w != null) {
+                                this.getWorlds().put(worldName, new RWorld(worldName, w, wt));
+                            } else {
+                                Bukkit.getLogger().severe("Failed to load world: " + worldName);
+                            }
                         }
+                    } else {
+                        //don't load world, but it's registered
+                        //load rworld object but don't load the world
+                        worlds.put(worldName, new RWorld(worldName, wt));
                     }
-                } else {
-                    //don't load world, but it's registered
-                    //load rworld object but don't load the world
-                    worlds.put(worldName, new RWorld(worldName, wt));
+                } catch (Exception e) {
+                    rra.getLogger().severe("Error while loading world " + worldName + ". Please verify the file, it may be corrupted.");
+                    e.printStackTrace();
                 }
             }
         } else {

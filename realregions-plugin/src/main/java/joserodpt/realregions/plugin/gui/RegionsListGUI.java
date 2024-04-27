@@ -257,7 +257,7 @@ public class RegionsListGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            FlagToggleGUI fg = new FlagToggleGUI(p, a, current.rr);
+                                            RegionSettingsGUI fg = new RegionSettingsGUI(p, a, current.rr);
                                             fg.openInventory(p);
                                         }
                                     }.runTaskLater(current.rr.getPlugin(), 2);

@@ -24,7 +24,7 @@ import joserodpt.realregions.api.regions.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.plugin.gui.EntityViewer;
-import joserodpt.realregions.plugin.gui.FlagToggleGUI;
+import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import me.mattstudios.mf.annotations.Alias;
@@ -160,6 +160,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("flags")
+    @Alias("region")
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr reg <name>")
@@ -173,7 +174,7 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            FlagToggleGUI wv = new FlagToggleGUI(p, reg, rra);
+            RegionSettingsGUI wv = new RegionSettingsGUI(p, reg, rra);
             wv.openInventory(p);
         } else {
             Text.send(commandSender, onlyPlayers);

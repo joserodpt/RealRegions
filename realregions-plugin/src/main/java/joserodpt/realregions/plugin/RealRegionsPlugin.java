@@ -26,7 +26,7 @@ import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.PlayerInput;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.plugin.gui.EntityViewer;
-import joserodpt.realregions.plugin.gui.FlagToggleGUI;
+import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.MaterialPickerGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
@@ -75,7 +75,7 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(RegionsListGUI.getListener(), this);
         pm.registerEvents(MaterialPickerGUI.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
-        pm.registerEvents(FlagToggleGUI.getListener(), this);
+        pm.registerEvents(RegionSettingsGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
         CommandManager cm = new CommandManager(this);

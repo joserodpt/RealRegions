@@ -41,12 +41,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class FlagToggleGUI {
+public class RegionSettingsGUI {
 
-	private static Map<UUID, FlagToggleGUI> inventories = new HashMap<>();
+	private static Map<UUID, RegionSettingsGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
 	private final ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
@@ -56,10 +57,10 @@ public class FlagToggleGUI {
 	private final Region r;
 	private final RealRegionsAPI rr;
 
-	public FlagToggleGUI(Player as, Region r, RealRegionsAPI rr) {
+	public RegionSettingsGUI(Player as, Region r, RealRegionsAPI rr) {
 		this.rr = rr;
 		this.uuid = as.getUniqueId();
-		inv = Bukkit.getServer().createInventory(null, 45, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
+		inv = Bukkit.getServer().createInventory(null, 54, Text.color("&8Real&eRegions &8| " + r.getDisplayName()));
 
 		this.r = r;
 		load();
@@ -190,9 +191,19 @@ public class FlagToggleGUI {
 				Arrays.asList("&e&nDescription", "  Region Priority over others.",
 						"Click to change the value.")));
 
-		inv.setItem(38, Itens.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
-		inv.setItem(40, close);
-		inv.setItem(42, Itens.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
+		for (int i = 0; i < 9; ++i) {
+			inv.setItem(36 + i, Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
+		}
+
+		inv.setItem(45, Itens.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
+
+		inv.setItem(46, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Title &r&7[" + getStyle(r.announceEnterTitle) + "&7]",
+                List.of("&f&nLeft-click&r&f to toggle value")));
+		inv.setItem(47, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Actionbar &r&7[" + getStyle(r.announceEnterActionbar) + "&7]",
+                List.of("&f&nLeft-click&r&f to toggle value")));
+
+		inv.setItem(49, close);
+		inv.setItem(53, Itens.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
 	}
 
 	private String getStyle(boolean b) {
@@ -224,7 +235,7 @@ public class FlagToggleGUI {
 					}
 					UUID uuid = clicker.getUniqueId();
 					if (inventories.containsKey(uuid)) {
-						FlagToggleGUI current = inventories.get(uuid);
+						RegionSettingsGUI current = inventories.get(uuid);
 						if (event.getInventory().getHolder() != current.getInventory().getHolder()) {
 							return;
 						}
@@ -233,11 +244,28 @@ public class FlagToggleGUI {
 
 						switch (event.getRawSlot())
 						{
-							case 38:
+							case 45:
 								player.closeInventory();
 								current.r.teleport(player, false);
 								break;
-							case 40:
+
+							case 46:
+								current.r.announceEnterTitle = !current.r.announceEnterTitle;
+								current.r.saveData(Region.RegionData.SETTINGS);
+								current.load();
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+
+								break;
+
+							case 47:
+								current.r.announceEnterActionbar = !current.r.announceEnterActionbar;
+								current.r.saveData(Region.RegionData.SETTINGS);
+								current.load();
+								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+
+								break;
+
+							case 49:
 								player.closeInventory();
 								new BukkitRunnable()
 								{
@@ -248,7 +276,7 @@ public class FlagToggleGUI {
 									}
 								}.runTaskLater(current.rr.getPlugin(), 2);
 								break;
-							case 42:
+							case 53:
 								player.closeInventory();
 								current.rr.getRegionManagerAPI().deleteRegion(player, current.r);
 								new BukkitRunnable()
@@ -481,7 +509,7 @@ public class FlagToggleGUI {
 									if (!StringUtils.isNumeric(input))
 									{
 										TranslatableLine.INPUT_NOT_NUMBER.send(player);
-										FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
+										RegionSettingsGUI wv = new RegionSettingsGUI(player, current.r, current.rr);
 										wv.openInventory(player);
 										return;
 									}
@@ -491,12 +519,12 @@ public class FlagToggleGUI {
 									TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(player);
 									new BukkitRunnable() {
 										public void run() {
-											FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
+											RegionSettingsGUI wv = new RegionSettingsGUI(player, current.r, current.rr);
 											wv.openInventory(player);
 										}
 									}.runTaskLater(current.rr.getPlugin(), 2);
 								}, input -> {
-									FlagToggleGUI wv = new FlagToggleGUI(player, current.r, current.rr);
+									RegionSettingsGUI wv = new RegionSettingsGUI(player, current.r, current.rr);
 									wv.openInventory(player);
 								});
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
