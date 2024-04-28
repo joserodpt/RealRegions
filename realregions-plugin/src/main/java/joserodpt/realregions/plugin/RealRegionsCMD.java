@@ -374,11 +374,18 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr setworldspawn <name>")
-    public void setworldspawn(final CommandSender commandSender, final @Optional String name) {
+    public void setworldspawn(final CommandSender commandSender, @Optional String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
 
-            RWorld rw = (name == null || name.isEmpty()) ? rra.getWorldManagerAPI().getWorld(p.getWorld()) : rra.getWorldManagerAPI().getWorld(name);
+            RWorld rw;
+
+            if (name == null || name.isEmpty()) {
+                rw = rra.getWorldManagerAPI().getWorld(p.getWorld());
+                name = p.getWorld().getName();
+            } else {
+                rw = rra.getWorldManagerAPI().getWorld(name);
+            }
 
             if (rw == null) {
                 TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
