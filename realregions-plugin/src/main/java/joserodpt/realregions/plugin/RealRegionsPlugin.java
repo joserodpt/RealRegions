@@ -16,8 +16,8 @@ package joserodpt.realregions.plugin;
  */
 
 import joserodpt.realpermissions.api.RealPermissionsAPI;
-import joserodpt.realpermissions.api.pluginhookup.ExternalPlugin;
-import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
+import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
+import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
@@ -159,12 +159,18 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("RealPermissions") != null) {
             //register RealRegions permissions onto RealPermissions
-            realRegions.setRealPermissionsAPI(RealPermissionsAPI.getInstance());
-            List<ExternalPluginPermission> perms = new ArrayList<>(List.of(
-                    new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
-            ));
-            realRegions.getRegionManagerAPI().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
-            realRegions.getRealPermissionsAPI().getHookupAPI().addHookup(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
+            try {
+                realRegions.setRealPermissionsAPI(RealPermissionsAPI.getInstance());
+                List<ExternalPluginPermission> perms = new ArrayList<>(List.of(
+                        new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
+                ));
+                realRegions.getRegionManagerAPI().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
+                realRegions.getRealPermissionsAPI().getHooksAPI().addHook(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
+
+            } catch (Exception e) {
+                getLogger().warning("Error while trying to register RealSkywars permissions onto RealPermissions.");
+                e.printStackTrace();
+            }
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //

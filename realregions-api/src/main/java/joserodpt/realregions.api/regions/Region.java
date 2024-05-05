@@ -15,7 +15,7 @@ package joserodpt.realregions.api.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realpermissions.api.pluginhookup.ExternalPluginPermission;
+import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Text;

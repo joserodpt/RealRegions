@@ -79,7 +79,7 @@ public class RegionManager extends RegionManagerAPI {
 
         //remove permissions from RealPermissions
         if (rra.getRealPermissionsAPI() != null) {
-            rra.getRealPermissionsAPI().getHookupAPI().removePermissionFromHookup(rra.getPlugin().getDescription().getName(), a.getRegionBypassPermissions());
+            rra.getRealPermissionsAPI().getHooksAPI().removePermissionFromHook(rra.getPlugin().getDescription().getName(), a.getRegionBypassPermissions());
         }
 
         deleteRegion(a);
@@ -133,7 +133,7 @@ public class RegionManager extends RegionManagerAPI {
 
         //send region permissions to RealPermissions
         if (rra.getRealPermissionsAPI() != null) {
-            rra.getRealPermissionsAPI().getHookupAPI().addPermissionToHookup(rra.getPlugin().getDescription().getName(), crg.getRegionBypassPermissions());
+            rra.getRealPermissionsAPI().getHooksAPI().addPermissionToHook(rra.getPlugin().getDescription().getName(), crg.getRegionBypassPermissions());
         }
     }
 
