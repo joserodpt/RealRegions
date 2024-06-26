@@ -59,6 +59,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @Default
+    @SuppressWarnings("unused")
     public void defaultCommand(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -72,6 +73,7 @@ public class RealRegionsCMD extends CommandBase {
     @SubCommand("reload")
     @Alias("rl")
     @Permission("realregions.admin")
+    @SuppressWarnings("unused")
     public void reloadcmd(final CommandSender commandSender) {
         RRConfig.reload();
         RRLanguage.reload();
@@ -84,6 +86,7 @@ public class RealRegionsCMD extends CommandBase {
     @SubCommand("worlds")
     @Alias("menu")
     @Permission("realregions.admin")
+    @SuppressWarnings("unused")
     public void worldscm(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -102,6 +105,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#range:1-20")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr create <name>")
+    @SuppressWarnings("unused")
     public void create(final CommandSender commandSender, final String name) {
         if (!(commandSender instanceof Player)) {
             Text.send(commandSender, onlyPlayers);
@@ -146,6 +150,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name> <type>")
+    @SuppressWarnings("unused")
     public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
@@ -164,6 +169,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr reg <name>")
+    @SuppressWarnings("unused")
     public void regioncmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -187,6 +193,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion({"#regions", "#flags", "#bool"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr flag <region> <flag> optional<value> command")
+    @SuppressWarnings("unused")
     public void regioncmd(final CommandSender commandSender, final String regionName, final String flag, @Optional String valueSTR) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(regionName);
         if (reg == null) {
@@ -374,6 +381,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr setworldspawn <name>")
+    @SuppressWarnings("unused")
     public void setworldspawn(final CommandSender commandSender, @Optional String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -403,6 +411,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr tp <name>")
+    @SuppressWarnings("unused")
     public void tpcmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -423,6 +432,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr tpr <name>")
+    @SuppressWarnings("unused")
     public void tprcmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -444,6 +454,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr view <name>")
+    @SuppressWarnings("unused")
     public void viewcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
@@ -458,6 +469,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr unload <name>")
+    @SuppressWarnings("unused")
     public void unloadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
@@ -472,6 +484,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr toggle-tpjoin <world>")
+    @SuppressWarnings("unused")
     public void toggletpjoin(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
@@ -487,6 +500,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr toggle-enter-title <region>")
+    @SuppressWarnings("unused")
     public void toggleentertitle(final CommandSender commandSender, final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
@@ -503,6 +517,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr toggle-enter-actionbar <region>")
+    @SuppressWarnings("unused")
     public void toggleenteractionbar(final CommandSender commandSender, final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
@@ -519,6 +534,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr load <name>")
+    @SuppressWarnings("unused")
     public void loadcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
@@ -533,6 +549,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr unregister <name>")
+    @SuppressWarnings("unused")
     public void unregistercmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
@@ -547,6 +564,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
     @WrongUsage("&c/rr import <name> <type>")
+    @SuppressWarnings("unused")
     public void importcmd(final CommandSender commandSender, final String name, final String worldtype) {
         try {
             rra.getWorldManagerAPI().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
@@ -560,6 +578,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr delete <name>")
+    @SuppressWarnings("unused")
     public void delregcmd(final CommandSender commandSender, final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
@@ -575,6 +594,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr rename <region> <new name>")
+    @SuppressWarnings("unused")
     public void renamecmd(final CommandSender commandSender, final String name, final String newname) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
@@ -592,6 +612,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr setbounds <region>")
+    @SuppressWarnings("unused")
     public void setboundscmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
@@ -611,6 +632,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr ents <name>")
+    @SuppressWarnings("unused")
     public void entitiescmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
@@ -634,6 +656,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundosPLUSimport")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr delw <name>")
+    @SuppressWarnings("unused")
     public void deleteworldcmd(final CommandSender commandSender, final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
@@ -649,6 +672,7 @@ public class RealRegionsCMD extends CommandBase {
     @Completion("#mundos")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr players <name>")
+    @SuppressWarnings("unused")
     public void playerscmd(final CommandSender commandSender, final String name) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
