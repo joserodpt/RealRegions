@@ -35,6 +35,7 @@ import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
 import me.mattstudios.mf.base.CommandManager;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -134,6 +135,7 @@ public class RealRegionsPlugin extends JavaPlugin {
                 "no_fire_spreading",
                 "leaf_decay"
         ));
+        cm.getCompletionHandler().register("#gamerules", input -> Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.toList()));
 
         cm.register(new RealRegionsCMD(realRegions));
 

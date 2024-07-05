@@ -36,7 +36,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -61,7 +60,7 @@ public class EntityViewer {
             Collections.singletonList("&fClick here to search for a entity."));
 
     private UUID uuid;
-    private ArrayList<EntityIcon> eicon;
+    private List<EntityIcon> eicon;
     private HashMap<Integer, EntityIcon> display = new HashMap<>();
 
     int pageNumber = 0;
@@ -123,23 +122,23 @@ public class EntityViewer {
         this.register();
     }
 
-    private ArrayList<EntityIcon> getEnts(Player p) {
+    private List<EntityIcon> getEnts(Player p) {
         return this.r.getWorld().getEntities().stream()
                 .map(entity -> new EntityIcon(p, entity))
                 .sorted(Comparator.comparingDouble(EntityIcon::getDistanceRelativeToPlayer))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
-    private ArrayList<EntityIcon> searchEntity(Player p, String s) {
+    private List<EntityIcon> searchEntity(Player p, String s) {
         return getEnts(p).stream()
                 .filter(e -> e.getEntityName().toLowerCase().contains(s.toLowerCase()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
-    private ArrayList<EntityIcon> searchEntity(Player p, EntityType search) {
+    private List<EntityIcon> searchEntity(Player p, EntityType search) {
         return getEnts(p).stream()
                 .filter(e -> e.getEntity().getType() == search)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
     }
 
     public void fillChest(List<EntityIcon> items) {

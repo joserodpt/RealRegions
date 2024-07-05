@@ -36,6 +36,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -48,12 +49,12 @@ public class WorldsListGUI {
     private static Map<UUID, WorldsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
-    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    private ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private final ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private final ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private final ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+    private final ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
@@ -78,7 +79,7 @@ public class WorldsListGUI {
     }
 
     public void load() {
-        List<RWorld> worlds = rr.getWorldManagerAPI().getWorldsAndPossibleImports();
+        List<RWorld> worlds = new ArrayList<>(rr.getWorldManagerAPI().getWorldsAndPossibleImports());
 
         switch (ws) {
             case REGISTRATION_DATE:

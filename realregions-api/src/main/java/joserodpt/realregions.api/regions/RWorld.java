@@ -22,6 +22,7 @@ import joserodpt.realregions.api.utils.IO;
 import joserodpt.realregions.api.utils.Itens;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -34,17 +35,17 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RWorld implements Listener {
 
-    public enum WorldType { NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED }
 
+    public enum WorldType { NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED }
     public enum Data { ICON, LOAD }
+
     private final String worldName;
     private World world;
     private final WorldType wt;
@@ -166,8 +167,8 @@ public class RWorld implements Listener {
         return this.regions;
     }
 
-    public List<Region> getRegionList() {
-        return new ArrayList<>(this.getRegions().values());
+    public Collection<Region> getRegionList() {
+        return this.getRegions().values();
     }
 
     public void removeRegion(Region a) {
@@ -321,6 +322,99 @@ public class RWorld implements Listener {
         if (!silent) {
             TranslatableLine.WORLD_TP.setV1(TranslatableLine.ReplacableVar.WORLD.eq(this.getRWorldName())).send(p);
         }
+    }
+
+    public boolean setGameRule(String gameRule, String val) {
+        try {
+            Integer op = Integer.valueOf(val);
+            switch (gameRule) {
+                case "randomTickSpeed":
+                    this.getWorld().setGameRule(GameRule.RANDOM_TICK_SPEED, op);
+                    break;
+                case "spawnRadius":
+                    this.getWorld().setGameRule(GameRule.SPAWN_RADIUS, op);
+                    break;
+                case "maxEntityCramming":
+                    this.getWorld().setGameRule(GameRule.MAX_ENTITY_CRAMMING, op);
+                    break;
+                case "maxCommandChainLength":
+                    this.getWorld().setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, op);
+                    break;
+                default:
+                    return false;
+            }
+
+            return true;
+        } catch (NumberFormatException e) {
+            try {
+                Boolean op = Boolean.valueOf(val);
+                switch (gameRule) {
+                    case "announceAdvancements":
+                        this.getWorld().setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, op);
+                        break;
+                    case "commandBlockOutput":
+                        this.getWorld().setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, op);
+                        break;
+                    case "disableElytraMovementCheck":
+                        this.getWorld().setGameRule(GameRule.DISABLE_ELYTRA_MOVEMENT_CHECK, op);
+                        break;
+                    case "doDaylightCycle":
+                        this.getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, op);
+                        break;
+                    case "doEntityDrops":
+                        this.getWorld().setGameRule(GameRule.DO_ENTITY_DROPS, op);
+                        break;
+                    case "doFireTick":
+                        this.getWorld().setGameRule(GameRule.DO_FIRE_TICK, op);
+                        break;
+                    case "doLimitedCrafting":
+                        this.getWorld().setGameRule(GameRule.DO_LIMITED_CRAFTING, op);
+                        break;
+                    case "doMobLoot":
+                        this.getWorld().setGameRule(GameRule.DO_MOB_LOOT, op);
+                        break;
+                    case "doMobSpawning":
+                        this.getWorld().setGameRule(GameRule.DO_MOB_SPAWNING, op);
+                        break;
+                    case "doTileDrops":
+                        this.getWorld().setGameRule(GameRule.DO_TILE_DROPS, op);
+                        break;
+                    case "doWeatherCycle":
+                        this.getWorld().setGameRule(GameRule.DO_WEATHER_CYCLE, op);
+                        break;
+                    case "keepInventory":
+                        this.getWorld().setGameRule(GameRule.KEEP_INVENTORY, op);
+                        break;
+                    case "logAdminCommands":
+                        this.getWorld().setGameRule(GameRule.LOG_ADMIN_COMMANDS, op);
+                        break;
+                    case "mobGriefing":
+                        this.getWorld().setGameRule(GameRule.MOB_GRIEFING, op);
+                        break;
+                    case "naturalRegeneration":
+                        this.getWorld().setGameRule(GameRule.NATURAL_REGENERATION, op);
+                        break;
+                    case "reducedDebugInfo":
+                        this.getWorld().setGameRule(GameRule.REDUCED_DEBUG_INFO, op);
+                        break;
+                    case "sendCommandFeedback":
+                        this.getWorld().setGameRule(GameRule.SEND_COMMAND_FEEDBACK, op);
+                        break;
+                    case "showDeathMessages":
+                        this.getWorld().setGameRule(GameRule.SHOW_DEATH_MESSAGES, op);
+                        break;
+                    case "spectatorsGenerateChunks":
+                        this.getWorld().setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, op);
+                        break;
+                    default:
+                        return false;
+                }
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public String getRWorldName() {

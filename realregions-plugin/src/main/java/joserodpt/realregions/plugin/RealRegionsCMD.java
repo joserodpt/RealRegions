@@ -651,6 +651,26 @@ public class RealRegionsCMD extends CommandBase {
         }
     }
 
+    @SubCommand("setgamerule")
+    @Alias("sgr")
+    @Completion({"#mundos", "#gamerules"})
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr sgr <name> <true/false>")
+    @SuppressWarnings("unused")
+    public void setgamerulecmd(final CommandSender commandSender, final String name, final String gameRule, final String op) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            return;
+        }
+
+        if (rw.setGameRule(gameRule, op)) {
+            TranslatableLine.WORLD_GAMERULE_SET.send(commandSender);
+        } else {
+            Text.send(commandSender, "&cInvalid gamerule: " + gameRule);
+        }
+    }
+
     @SubCommand("deletew")
     @Alias("delw")
     @Completion("#mundosPLUSimport")

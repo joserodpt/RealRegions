@@ -40,13 +40,13 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 
 public class RegionsListGUI {
 
@@ -79,7 +79,7 @@ public class RegionsListGUI {
     }
 
     public void load() {
-        p = new Pagination<>(15, r.getRegionList());
+        p = new Pagination<>(15, new ArrayList<>(r.getRegionList()));
         fillChest(p.getPage(pageNumber));
     }
 

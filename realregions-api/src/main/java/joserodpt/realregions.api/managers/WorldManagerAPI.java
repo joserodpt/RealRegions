@@ -6,21 +6,21 @@ import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 public abstract class WorldManagerAPI {
     public abstract Map<String, RWorld> getWorlds();
 
-    public abstract List<RWorld> getWorldList();
+    public abstract Collection<RWorld> getWorldList();
 
-    public abstract List<RWorld> getWorldsAndPossibleImports();
+    public abstract Collection<RWorld> getWorldsAndPossibleImports();
 
     public abstract RWorld getWorld(World w);
 
     public abstract RWorld getWorld(String nome);
 
-    public abstract List<RWorld> getPossibleImports();
+    public abstract Collection<RWorld> getPossibleImports();
 
     protected abstract boolean isRWorld(String name);
 

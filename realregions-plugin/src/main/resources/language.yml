@@ -1,4 +1,4 @@
-Version: 6
+Version: 7
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -64,6 +64,7 @@ World:
   TP-Join-Set: "&fTP-Join enabled: %input%"
   TP-Unloaded-World: "&cYou can't teleport to this world because it's unloaded."
   TP: "Teleported to world: &b%world%"
+  Gamerule-Set: "&fGamerule &ahas been set&f."
 
 Menu:
   Unloaded-World: "&cYou can't open this menu because this world is unloaded."
