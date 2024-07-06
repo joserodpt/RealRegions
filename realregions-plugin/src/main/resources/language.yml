@@ -1,4 +1,4 @@
-Version: 7
+Version: 8
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -65,6 +65,7 @@ World:
   TP-Unloaded-World: "&cYou can't teleport to this world because it's unloaded."
   TP: "Teleported to world: &b%world%"
   Gamerule-Set: "&fGamerule &ahas been set&f."
+  Inventories-Set: "&fInventories &aset to &b%world%&f."
 
 Menu:
   Unloaded-World: "&cYou can't open this menu because this world is unloaded."

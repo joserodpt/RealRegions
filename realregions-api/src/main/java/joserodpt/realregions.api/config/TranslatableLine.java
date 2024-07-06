@@ -79,6 +79,7 @@ public enum TranslatableLine {
     WORLD_NO_WORLD_NAMED("World.No-World-Named", ReplacableVar.WORLD),
     WORLD_TPJOIN_SET("World.TP-Join-Set", ReplacableVar.WORLD),
     WORLD_GAMERULE_SET("World.Gamerule-Set"),
+    WORLD_INVENTORIES_SET("World.Inventories-Set", ReplacableVar.WORLD),
 
     WORLD_SPAWN_SET("World.Spawn-Set", ReplacableVar.WORLD),
     WORLD_NAME_EMPTY("World.Name-Empty"),

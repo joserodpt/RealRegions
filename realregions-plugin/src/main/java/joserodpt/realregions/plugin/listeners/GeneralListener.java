@@ -35,24 +35,43 @@ public class GeneralListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void join(PlayerJoinEvent e) {
-        tpJoinLogic(e.getPlayer());
+        tpJoinLogic(e.getPlayer(), null);
         rra.getRegionManagerAPI().getLastRegions().put(e.getPlayer().getUniqueId(), rra.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void changeWorld(PlayerChangedWorldEvent e) {
-        tpJoinLogic(e.getPlayer());
+        tpJoinLogic(e.getPlayer(), e.getFrom());
     }
 
-    private void tpJoinLogic(Player player) {
+    private void tpJoinLogic(Player player, World previousWorld) {
         World w = player.getWorld();
 
         RWorld rw = rra.getWorldManagerAPI().getWorld(w);
-        if (rw != null && rw.isTPJoinON()) {
+        if (rw == null) {
+            return;
+        }
+
+        if (rw.isTPJoinON()) {
             Location loc = rw.getTPJoinLocation();
             if (loc != null) {
                 player.teleport(loc);
             }
+        }
+
+        if (previousWorld == null) {
+            return;
+        }
+        if (!previousWorld.equals(w)) {
+            RWorld previousRWorld = rra.getWorldManagerAPI().getWorld(previousWorld);
+            if (previousWorld == null) {
+                return;
+            }
+            if (previousRWorld.hasWorldInventories()) {
+                previousRWorld.saveWorldInventory(player);
+                player.getInventory().clear();
+            }
+            rw.giveWorldInventory(player);
         }
     }
 }

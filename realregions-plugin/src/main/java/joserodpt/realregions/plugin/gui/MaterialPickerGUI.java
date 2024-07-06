@@ -269,7 +269,7 @@ public class MaterialPickerGUI {
                                 p.closeInventory();
                                 RWorld r = ((RWorld) current.min);
                                 r.setIcon(a);
-                                r.saveData(RWorld.Data.ICON);
+                                r.saveData(RWorld.Data.ICON, true);
                                 WorldsListGUI v = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, current.rr);
                                 v.openInventory(p);
                             }

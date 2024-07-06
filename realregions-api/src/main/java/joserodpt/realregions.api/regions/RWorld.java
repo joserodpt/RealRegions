@@ -17,6 +17,7 @@ package joserodpt.realregions.api.regions;
 
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
+import joserodpt.realregions.api.utils.ItemStackSpringer;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.IO;
 import joserodpt.realregions.api.utils.Itens;
@@ -38,13 +39,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class RWorld implements Listener {
 
-
     public enum WorldType { NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED }
-    public enum Data { ICON, LOAD }
+    public enum Data { ICON, LOAD, TP_JOIN, WORLD_INVENTORIES, ALL }
 
     private final String worldName;
     private World world;
@@ -55,6 +57,7 @@ public class RWorld implements Listener {
     private double worldSizeMB;
     private boolean loaded = true;
     private boolean tpOnJoin = false;
+    private boolean worldInventories = false;
     private final Map<String, Region> regions = new LinkedHashMap<>();
 
     public RWorld(String worldNameImported) {
@@ -97,9 +100,19 @@ public class RWorld implements Listener {
         this.getRegions().put(r.getRegionName(), r);
     }
 
-    public void setTPJoin(boolean b) { this.tpOnJoin = b; }
+    public void setTPJoin(boolean b) {
+        this.tpOnJoin = b;
+        saveData(Data.TP_JOIN, true);
+    }
 
     public boolean isTPJoinON() { return this.tpOnJoin; }
+
+    public void setWorldInventories(boolean worldInventories) {
+        this.worldInventories = worldInventories;
+        saveData(Data.WORLD_INVENTORIES, true);
+    }
+
+    public boolean hasWorldInventories() { return this.worldInventories; }
 
     public Location getTPJoinLocation() {
         return this.world.getSpawnLocation();
@@ -208,6 +221,7 @@ public class RWorld implements Listener {
             this.config = YamlConfiguration.loadConfiguration(file);
             this.icon = Material.valueOf(config.getString("Settings.Icon"));
             this.tpOnJoin = config.getBoolean("Settings.TP-On-Join");
+            this.worldInventories = config.getBoolean("Settings.World-Inventories");
         }
     }
 
@@ -267,6 +281,7 @@ public class RWorld implements Listener {
         this.config.set("Settings.Type", this.getWorldType().name());
         this.config.set("Settings.Load", true);
         this.config.set("Settings.TP-On-Join", false);
+        this.config.set("Settings.World-Inventories", false);
         this.config.set("Settings.Unix-Register", System.currentTimeMillis() / 1000L);
 
         //default global region
@@ -438,7 +453,7 @@ public class RWorld implements Listener {
     public void setLoaded(boolean b) {
         this.loaded = b;
 
-        this.saveData(Data.LOAD);
+        this.saveData(Data.LOAD, true);
 
         if (b) { postWorldLoad(); }
     }
@@ -447,21 +462,50 @@ public class RWorld implements Listener {
         return this.loaded;
     }
 
-    public void saveData(Data dw) {
+    public void saveData(Data dw, boolean saveConfig) {
         switch (dw)
         {
+            case ALL:
+                saveData(Data.ICON, false);
+                saveData(Data.LOAD, false);
+                saveData(Data.WORLD_INVENTORIES, false);
+                break;
             case ICON:
                 config.set("Settings.Icon", this.icon.name());
-                saveConfig();
                 break;
             case LOAD:
                 config.set("Settings.Load", this.loaded);
-                saveConfig();
                 break;
+            case TP_JOIN:
+                config.set("Settings.TP-On-Join", this.tpOnJoin);
+            case WORLD_INVENTORIES:
+                config.set("Settings.World-Inventories", this.worldInventories);
+                break;
+        }
+
+        if (saveConfig) { saveConfig(); }
+    }
+
+    public double getWorldSizeMB() { return this.worldSizeMB; }
+
+    public void giveWorldInventory(Player player) {
+        if (this.hasWorldInventories()) {
+            if (config.contains("Inventories." + player.getUniqueId() + ".Inventory")) {
+                if (Objects.requireNonNull(config.getList("Inventories." + player.getUniqueId() + ".Inventory")).isEmpty()) {
+                    return;
+                }
+
+                ItemStack[] items = ItemStackSpringer.getItemsDeSerialized((List<Map<String, Object>>) Objects.requireNonNull(config.getList("Inventories." + player.getUniqueId() + ".Inventory")));
+                if (items != null) {
+                    player.getInventory().setContents(items);
+                }
+            }
         }
     }
 
-    public double getWorldSizeMB() {
-        return worldSizeMB;
+    public void saveWorldInventory(Player player) {
+        config.set("Inventories." + player.getUniqueId() + ".Name", player.getName());
+        config.set("Inventories." + player.getUniqueId() + ".Inventory", ItemStackSpringer.getItemsSerialized(player.getInventory().getContents()));
+        saveConfig();
     }
 }

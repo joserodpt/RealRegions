@@ -497,6 +497,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("toggle-enter-title")
+    @Alias("toggle-title")
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr toggle-enter-title <region>")
@@ -514,6 +515,7 @@ public class RealRegionsCMD extends CommandBase {
     }
 
     @SubCommand("toggle-enter-actionbar")
+    @Alias("toggle-actionbar")
     @Completion("#regions")
     @Permission("realregions.admin")
     @WrongUsage("&c/rr toggle-enter-actionbar <region>")
@@ -528,6 +530,23 @@ public class RealRegionsCMD extends CommandBase {
         rg.announceEnterActionbar = !rg.announceEnterActionbar;
         rg.saveData(Region.RegionData.SETTINGS);
         TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterActionbar ? "&a✔ true" : "&c❌ false")).send(commandSender);
+    }
+
+    @SubCommand("toggle-inventories")
+    @Alias("toggle-invs")
+    @Completion("#mundos")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr setinventories <world>")
+    @SuppressWarnings("unused")
+    public void toggleinventoriescmd(final CommandSender commandSender, final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            return;
+        }
+
+        rw.setWorldInventories(!rw.hasWorldInventories());
+        TranslatableLine.WORLD_INVENTORIES_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(rw.hasWorldInventories() ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
     @SubCommand("load")
@@ -707,7 +726,6 @@ public class RealRegionsCMD extends CommandBase {
             ev.openInventory(p);
         } else {
             Text.send(commandSender, onlyPlayers);
-
         }
     }
 }
