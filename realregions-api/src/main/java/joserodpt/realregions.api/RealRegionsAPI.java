@@ -1,5 +1,20 @@
 package joserodpt.realregions.api;
 
+/*
+ *  ______           _______
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues © 2020-2024
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import com.google.common.base.Preconditions;
 import joserodpt.realmines.api.RealMinesAPI;
 import joserodpt.realpermissions.api.RealPermissionsAPI;

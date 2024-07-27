@@ -1,5 +1,20 @@
 package joserodpt.realregions.api.managers;
 
+/*
+ *  ______           _______
+ *  | ___ \         | | ___ \         (_)
+ *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
+ *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
+ *  | |\ \  __/ (_| | | |\ \  __/ (_| | | (_) | | | \__ \
+ *  \_| \_\___|\__,_|_\_| \_\___|\__, |_|\___/|_| |_|___/
+ *                                __/ |
+ *                               |___/
+ *
+ * Licensed under the MIT License
+ * @author José Rodrigues © 2020-2024
+ * @link https://github.com/joserodpt/RealRegions
+ */
+
 import joserodpt.realregions.api.regions.RWorld;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
