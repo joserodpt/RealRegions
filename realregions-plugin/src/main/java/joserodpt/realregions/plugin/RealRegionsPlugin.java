@@ -21,7 +21,7 @@ import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.PlayerInput;
 import joserodpt.realregions.api.utils.Text;

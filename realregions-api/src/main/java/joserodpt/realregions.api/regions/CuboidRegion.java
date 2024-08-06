@@ -15,6 +15,7 @@ package joserodpt.realregions.api.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Cube;
 import joserodpt.realregions.api.utils.CubeVisualizer;
@@ -36,7 +37,7 @@ public class CuboidRegion extends Region {
     private Cube cube;
     private final CubeVisualizer cv;
 
-    public CuboidRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri,  boolean announceEnterTitle, boolean announceEnterActionbar) {
+    public CuboidRegion(Location pos1, Location pos2, String name, String displayname, RWorld w, Material m, int pri, boolean announceEnterTitle, boolean announceEnterActionbar) {
         super(name, displayname, w, m, pri, RegionType.CUBOID, announceEnterTitle, announceEnterActionbar);
 
         //Cube Region

@@ -18,7 +18,7 @@ package joserodpt.realregions.plugin.gui;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Pagination;

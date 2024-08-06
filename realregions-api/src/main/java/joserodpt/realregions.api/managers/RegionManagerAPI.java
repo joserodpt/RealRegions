@@ -16,7 +16,7 @@ package joserodpt.realregions.api.managers;
  */
 
 import joserodpt.realmines.api.mine.RMine;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;

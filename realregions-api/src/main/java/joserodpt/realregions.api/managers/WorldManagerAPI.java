@@ -15,7 +15,7 @@ package joserodpt.realregions.api.managers;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
@@ -41,7 +41,9 @@ public abstract class WorldManagerAPI {
 
     public abstract void loadWorlds();
 
-    public abstract void createWorld(CommandSender p, String worldName, RWorld.WorldType wt);
+    public abstract RWorld createTimedWorld(CommandSender p, String worldName, RWorld.WorldType wt, int time);
+
+    public abstract RWorld createWorld(CommandSender p, String worldName, RWorld.WorldType wt);
 
     public abstract void loadWorld(CommandSender p, String worldName);
 
@@ -66,4 +68,6 @@ public abstract class WorldManagerAPI {
     public abstract boolean isSymlink(File file);
 
     public abstract File[] verifiedListFiles(File directory) throws IOException;
+
+    public abstract void resetWorld(RWorld ref);
 }

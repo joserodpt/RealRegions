@@ -18,7 +18,7 @@ package joserodpt.realregions.plugin.managers;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.WorldManagerAPI;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -158,10 +158,36 @@ public class WorldManager extends WorldManagerAPI {
             }
         }
     }
+
     @Override
-    public void createWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
+    public RWorld createTimedWorld(CommandSender p, String worldName, RWorld.WorldType wt, int time) {
+        RWorld rw = createWorld(p, worldName, wt);
+        if (rw != null) {
+            rw.setResetEverySeconds(time);
+            return rw;
+        }
+        return null;
+    }
+
+    @Override
+    public RWorld createWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
         TranslatableLine.WORLD_BEING_CREATED.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
 
+        World world = generateWorld(worldName, wt);
+        if (world != null) {
+            //registar mundo no real regions
+            this.worlds.put(worldName, new RWorld(worldName, world, wt));
+
+            TranslatableLine.WORLD_CREATED.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
+
+            return this.worlds.get(worldName);
+        } else {
+            TranslatableLine.WORLD_FAILED_TO_CREATE.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
+        }
+        return null;
+    }
+
+    private World generateWorld(String worldName, RWorld.WorldType wt) {
         WorldCreator worldCreator = new WorldCreator(worldName);
 
         if (wt == RWorld.WorldType.VOID) {
@@ -176,16 +202,9 @@ public class WorldManager extends WorldManagerAPI {
             }
         }
 
-        World world = worldCreator.createWorld();
-        if (world != null) {
-            //registar mundo no real regions
-            this.worlds.put(worldName, new RWorld(worldName, world, wt));
-
-            TranslatableLine.WORLD_CREATED.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
-        } else {
-            TranslatableLine.WORLD_FAILED_TO_CREATE.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
-        }
+        return worldCreator.createWorld();
     }
+
     @Override
     public void loadWorld(CommandSender p, String worldName) {
         RWorld rw = getWorld(worldName);
@@ -382,6 +401,32 @@ public class WorldManager extends WorldManagerAPI {
             throw new IOException("Failed to list contents of " + directory);
         }
         return files;
+    }
+
+    @Override
+    public void resetWorld(RWorld r) {
+        World w = r.getWorld();
+        if (w != null) {
+            w.getPlayers().forEach(player -> {
+                RWorld tp = getWorld("world");
+                tp.teleport(player, false);
+            });
+            w.getEntities().forEach(entity -> {
+                if (!(entity instanceof Player)) {
+                    entity.remove();
+                }
+            });
+        }
+
+        this.unloadWorld(r, false);
+        removeWorldFiles(Bukkit.getConsoleSender(), r);
+        World world = generateWorld(r.getRWorldName(), r.getWorldType());
+        if (world != null) {
+            r.setWorld(world);
+            r.setLoaded(true);
+        } else {
+            Bukkit.getLogger().severe("Failed to reset world: " + r.getRWorldName());
+        }
     }
 
     public class VoidWorld extends ChunkGenerator {

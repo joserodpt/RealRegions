@@ -1,7 +1,7 @@
-package joserodpt.realregions.api.regions;
+package joserodpt.realregions.api;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -15,8 +15,9 @@ package joserodpt.realregions.api.regions;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
+import joserodpt.realregions.api.regions.CuboidRegion;
+import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.ItemStackSpringer;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.IO;
@@ -33,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,8 +47,9 @@ import java.util.Objects;
 
 public class RWorld implements Listener {
 
-    public enum WorldType { NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED }
-    public enum Data { ICON, LOAD, TP_JOIN, WORLD_INVENTORIES, ALL }
+    public enum WorldType {NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED}
+
+    public enum Data {ICON, LOAD, TP_JOIN, WORLD_INVENTORIES, ALL}
 
     private final String worldName;
     private World world;
@@ -59,6 +62,8 @@ public class RWorld implements Listener {
     private boolean tpOnJoin = false;
     private boolean worldInventories = false;
     private final Map<String, Region> regions = new LinkedHashMap<>();
+    private int resetWorldEverySeconds = 0;
+    private BukkitTask resetTask;
 
     public RWorld(String worldNameImported) {
         this.worldName = worldNameImported;
@@ -105,14 +110,42 @@ public class RWorld implements Listener {
         saveData(Data.TP_JOIN, true);
     }
 
-    public boolean isTPJoinON() { return this.tpOnJoin; }
+    public boolean isTPJoinON() {
+        return this.tpOnJoin;
+    }
 
     public void setWorldInventories(boolean worldInventories) {
         this.worldInventories = worldInventories;
         saveData(Data.WORLD_INVENTORIES, true);
     }
 
-    public boolean hasWorldInventories() { return this.worldInventories; }
+    public void setResetEverySeconds(int time) {
+        this.resetWorldEverySeconds = time;
+        config.set("Settings.Reset-Every-Seconds", this.resetWorldEverySeconds);
+        saveConfig();
+
+        if (this.resetTask != null) {
+            this.resetTask.cancel();
+        }
+        if (time > 0) {
+            if (this.resetTask != null) {
+                this.resetTask.cancel();
+            }
+
+            RWorld ref = this;
+
+            this.resetTask = new BukkitRunnable() {
+                @Override
+                public void run() {
+                    RealRegionsAPI.getInstance().getWorldManagerAPI().resetWorld(ref);
+                }
+            }.runTaskTimer(RealRegionsAPI.getInstance().getPlugin(), 0, resetWorldEverySeconds * 20L);
+        }
+    }
+
+    public boolean hasWorldInventories() {
+        return this.worldInventories;
+    }
 
     public Location getTPJoinLocation() {
         return this.world.getSpawnLocation();
@@ -126,8 +159,7 @@ public class RWorld implements Listener {
             boolean announceEnterActionbar = this.getConfig().getBoolean("Regions." + regionName + ".Announce-Enter.Actionbar", false);
             Region reg = null;
 
-            switch (rt)
-            {
+            switch (rt) {
                 case INFINITE:
                     reg = new Region(regionName, regionDisplayName, this, Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon")), this.getConfig().getInt("Regions." + regionName + ".Priority"), Region.RegionType.INFINITE, announceEnterTitle, announceEnterActionbar);
                     break;
@@ -222,6 +254,7 @@ public class RWorld implements Listener {
             this.icon = Material.valueOf(config.getString("Settings.Icon"));
             this.tpOnJoin = config.getBoolean("Settings.TP-On-Join");
             this.worldInventories = config.getBoolean("Settings.World-Inventories");
+            this.resetWorldEverySeconds = config.getInt("Settings.Reset-Every-Seconds");
         }
     }
 
@@ -439,7 +472,7 @@ public class RWorld implements Listener {
     public ItemStack getItem() {
         return this.getWorldType() == WorldType.UNKNOWN_TO_BE_IMPORTED ?
                 Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&e&lUNIMPORTED&7]", Arrays.asList("&f", "&7Click to import this world.", "&cQ (Drop)&7 to &cdelete &7this world."))
-                : Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.","", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.getRegistrationDate()), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world.", "&cQ (Drop)&7 to unregister this world."));
+                : Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.", "", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.getRegistrationDate()), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world.", "&cQ (Drop)&7 to unregister this world."));
     }
 
     private Material getIcon() {
@@ -455,7 +488,9 @@ public class RWorld implements Listener {
 
         this.saveData(Data.LOAD, true);
 
-        if (b) { postWorldLoad(); }
+        if (b) {
+            postWorldLoad();
+        }
     }
 
     public boolean isLoaded() {
@@ -463,8 +498,7 @@ public class RWorld implements Listener {
     }
 
     public void saveData(Data dw, boolean saveConfig) {
-        switch (dw)
-        {
+        switch (dw) {
             case ALL:
                 saveData(Data.ICON, false);
                 saveData(Data.LOAD, false);
@@ -483,10 +517,14 @@ public class RWorld implements Listener {
                 break;
         }
 
-        if (saveConfig) { saveConfig(); }
+        if (saveConfig) {
+            saveConfig();
+        }
     }
 
-    public double getWorldSizeMB() { return this.worldSizeMB; }
+    public double getWorldSizeMB() {
+        return this.worldSizeMB;
+    }
 
     public void giveWorldInventory(Player player) {
         if (this.hasWorldInventories()) {

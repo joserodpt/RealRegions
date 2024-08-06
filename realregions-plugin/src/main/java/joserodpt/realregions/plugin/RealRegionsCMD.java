@@ -20,7 +20,7 @@ import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
 import joserodpt.realregions.api.config.TranslatableLine;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.plugin.gui.EntityViewer;
@@ -145,7 +145,7 @@ public class RealRegionsCMD extends CommandBase {
         }
     }
 
-    @SubCommand("createw")
+    @SubCommand("createworld")
     @Alias("cw")
     @Completion({"#range:1-20", "#worldtype"})
     @Permission("realregions.admin")
@@ -158,10 +158,55 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         try {
-            rra.getWorldManagerAPI().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+            RWorld rw = rra.getWorldManagerAPI().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+            if (rw != null && commandSender instanceof Player) {
+                rw.teleport((Player) commandSender, true);
+            }
         } catch (Exception e) {
             TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).send(commandSender);
         }
+    }
+
+    @SubCommand("createtimedworld")
+    @Alias("ctw")
+    @Completion({"#range:1-20", "#worldtype", "#range:1-20"})
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr createw <name> <type> <time>")
+    @SuppressWarnings("unused")
+    public void createtimedworldcmd(final CommandSender commandSender, final String name, final String worldtype, final Integer time) {
+        if (name == null) {
+            TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
+            return;
+        }
+
+        if (time == null || time <= 5) {
+            Text.send(commandSender, "&cTime must be greater than 5");
+            return;
+        }
+
+        try {
+            RWorld rw = rra.getWorldManagerAPI().createTimedWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype), time);
+            if (rw != null && commandSender instanceof Player) {
+                rw.teleport((Player) commandSender, true);
+            }
+        } catch (Exception e) {
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).send(commandSender);
+        }
+    }
+
+    @SubCommand("reset")
+    @Completion("#mundos")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr reset <name>")
+    public void resetworld(final CommandSender commandSender, final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            return;
+        }
+
+        rra.getWorldManagerAPI().resetWorld(rw);
+        Text.send(commandSender, "&aWorld reseted.");
     }
 
     @SubCommand("flags")

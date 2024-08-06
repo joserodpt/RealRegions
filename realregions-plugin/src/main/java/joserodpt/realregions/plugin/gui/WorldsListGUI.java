@@ -16,7 +16,7 @@ package joserodpt.realregions.plugin.gui;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Pagination;
 import joserodpt.realregions.api.utils.PlayerInput;

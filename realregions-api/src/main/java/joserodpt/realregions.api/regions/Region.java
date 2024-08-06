@@ -16,6 +16,7 @@ package joserodpt.realregions.api.regions;
  */
 
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
+import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Text;

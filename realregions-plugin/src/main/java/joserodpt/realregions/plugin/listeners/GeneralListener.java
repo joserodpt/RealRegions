@@ -16,7 +16,7 @@ package joserodpt.realregions.plugin.listeners;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
-import joserodpt.realregions.api.regions.RWorld;
+import joserodpt.realregions.api.RWorld;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
