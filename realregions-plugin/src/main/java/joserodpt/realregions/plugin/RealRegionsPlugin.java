@@ -15,6 +15,7 @@ package joserodpt.realregions.plugin;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import java.util.Collections;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
@@ -163,7 +164,7 @@ public class RealRegionsPlugin extends JavaPlugin {
             //register RealRegions permissions onto RealPermissions
             try {
                 realRegions.setRealPermissionsAPI(RealPermissionsAPI.getInstance());
-                List<ExternalPluginPermission> perms = new ArrayList<>(List.of(
+                List<ExternalPluginPermission> perms = new ArrayList<>(Collections.singletonList(
                         new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
                 ));
                 realRegions.getRegionManagerAPI().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
