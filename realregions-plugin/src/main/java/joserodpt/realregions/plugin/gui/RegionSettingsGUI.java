@@ -198,9 +198,9 @@ public class RegionSettingsGUI {
 		inv.setItem(45, Itens.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
 
 		inv.setItem(46, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Title &r&7[" + getStyle(r.announceEnterTitle) + "&7]",
-                List.of("&f&nLeft-click&r&f to toggle value")));
+                Collections.singletonList("&f&nLeft-click&r&f to toggle value")));
 		inv.setItem(47, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Actionbar &r&7[" + getStyle(r.announceEnterActionbar) + "&7]",
-                List.of("&f&nLeft-click&r&f to toggle value")));
+                Collections.singletonList("&f&nLeft-click&r&f to toggle value")));
 
 		inv.setItem(49, close);
 		inv.setItem(53, Itens.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
