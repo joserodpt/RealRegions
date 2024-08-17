@@ -6,7 +6,7 @@
 
     <groupId>joserodpt</groupId>
     <artifactId>realregions-plugin</artifactId>
-    <version>0.7.2</version>
+    <version>0.7.3</version>
     <packaging>jar</packaging>
 
     <name>realregions-plugin</name>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>joserodpt</groupId>
             <artifactId>realregions-api</artifactId>
-            <version>0.7.2</version>
+            <version>0.7.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
