@@ -16,12 +16,14 @@ package joserodpt.realregions.plugin.managers;
  */
 
 import joserodpt.realregions.api.RealRegionsAPI;
+import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.WorldManagerAPI;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.command.CommandSender;
@@ -74,7 +76,11 @@ public class WorldManager extends WorldManagerAPI {
     }
     @Override
     public RWorld getWorld(String nome) {
-        return this.getWorldsAndPossibleImports().stream().filter(rWorld -> rWorld.getRWorldName().equalsIgnoreCase(nome)).findFirst().orElse(null);
+        if (nome == null || nome.isEmpty()) {
+            nome = "world";
+        }
+        String finalNome = nome;
+        return this.getWorldsAndPossibleImports().stream().filter(rWorld -> rWorld.getRWorldName().equalsIgnoreCase(finalNome)).findFirst().orElse(null);
     }
     @Override
     public List<RWorld> getPossibleImports() {
@@ -408,7 +414,7 @@ public class WorldManager extends WorldManagerAPI {
         World w = r.getWorld();
         if (w != null) {
             w.getPlayers().forEach(player -> {
-                RWorld tp = getWorld("world");
+                RWorld tp = getWorld(RRConfig.file().getString("RealRegions.Fallback-World"));
                 tp.teleport(player, false);
             });
             w.getEntities().forEach(entity -> {
@@ -432,6 +438,11 @@ public class WorldManager extends WorldManagerAPI {
     public class VoidWorld extends ChunkGenerator {
         @Override
         public ChunkData generateChunkData(World world, Random random, int x, int z, BiomeGrid biome) {
+            ChunkData chunkData = createChunkData(world);
+
+            if (x == 0 && z == 0) {
+                chunkData.setBlock(0, 0, 0, Material.BEDROCK);
+            }
             return createChunkData(world);
         }
 

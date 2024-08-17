@@ -120,6 +120,8 @@ public class RWorld implements Listener {
     }
 
     public void setResetEverySeconds(int time) {
+        if (time <= 2) { return; }
+
         this.resetWorldEverySeconds = time;
         config.set("Settings.Reset-Every-Seconds", this.resetWorldEverySeconds);
         saveConfig();
@@ -127,20 +129,15 @@ public class RWorld implements Listener {
         if (this.resetTask != null) {
             this.resetTask.cancel();
         }
-        if (time > 0) {
-            if (this.resetTask != null) {
-                this.resetTask.cancel();
+
+        RWorld ref = this;
+
+        Bukkit.getScheduler().runTaskLater(RealRegionsAPI.getInstance().getPlugin(), () -> this.resetTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                RealRegionsAPI.getInstance().getWorldManagerAPI().resetWorld(ref);
             }
-
-            RWorld ref = this;
-
-            this.resetTask = new BukkitRunnable() {
-                @Override
-                public void run() {
-                    RealRegionsAPI.getInstance().getWorldManagerAPI().resetWorld(ref);
-                }
-            }.runTaskTimer(RealRegionsAPI.getInstance().getPlugin(), 0, resetWorldEverySeconds * 20L);
-        }
+        }.runTaskTimer(RealRegionsAPI.getInstance().getPlugin(), 0, this.resetWorldEverySeconds * 20L), 20L * this.resetWorldEverySeconds);
     }
 
     public boolean hasWorldInventories() {
@@ -254,11 +251,15 @@ public class RWorld implements Listener {
             this.icon = Material.valueOf(config.getString("Settings.Icon"));
             this.tpOnJoin = config.getBoolean("Settings.TP-On-Join");
             this.worldInventories = config.getBoolean("Settings.World-Inventories");
-            this.resetWorldEverySeconds = config.getInt("Settings.Reset-Every-Seconds");
+            this.setResetEverySeconds(config.getInt("Settings.Reset-Every-Seconds"));
         }
     }
 
     public void deleteConfig() {
+        if (this.resetTask != null) {
+            this.resetTask.cancel();
+        }
+
         File fileToDelete = new File(RealRegionsAPI.getInstance().getPlugin().getDataFolder() + "/worlds/", this.getRWorldName() + ".yml");
 
         if (fileToDelete.exists()) {

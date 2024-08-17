@@ -8,4 +8,5 @@ RealRegions:
   Hooks:
     RealMines:
       Import-Mines: true
-Version: 3
+  Fallback-World: "world"
+Version: 4
