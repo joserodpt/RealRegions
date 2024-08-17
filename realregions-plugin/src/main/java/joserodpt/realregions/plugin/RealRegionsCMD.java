@@ -63,8 +63,12 @@ public class RealRegionsCMD extends CommandBase {
     public void defaultCommand(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
             Player p = (Player) commandSender;
-            WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rra);
-            wv.openInventory(p);
+            if (p.hasPermission("realregions.admin") || p.isOp()) {
+                WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rra);
+                wv.openInventory(p);
+            } else {
+                Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion()));
+            }
         } else {
             Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion()));
         }
