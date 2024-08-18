@@ -458,7 +458,6 @@ public class RealRegionsCMD extends CommandBase {
 
     @SubCommand("tp")
     @Completion("#mundos")
-    @Permission("realregions.admin")
     @WrongUsage("&c/rr tp <name>")
     @SuppressWarnings("unused")
     public void tpcmd(final CommandSender commandSender, final String name) {
@@ -471,7 +470,38 @@ public class RealRegionsCMD extends CommandBase {
                 return;
             }
 
-            rw.teleport(p, false);
+            if (p.hasPermission("realregions.admin") || p.isOp() || p.hasPermission("realregions.tpworld." + rw.getRWorldName())) {
+                rw.teleport(p, false);
+            } else {
+                Text.send(commandSender, "&cYou don't have permission to teleport to this world.");
+            }
+        } else {
+            Text.send(commandSender, onlyPlayers);
+        }
+    }
+
+    @SubCommand("tpo")
+    @Completion("#mundos")
+    @Permission("realregions.admin")
+    @WrongUsage("&c/rr tpo <name> <player>")
+    @SuppressWarnings("unused")
+    public void topcmd(final CommandSender commandSender, final String name, final Player player) {
+        if (commandSender instanceof Player) {
+            Player p = (Player) commandSender;
+
+            if (player == null) {
+                Text.send(commandSender, "&cPlayer not found.");
+                return;
+            }
+
+            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+            if (rw == null) {
+                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+                return;
+            }
+
+            rw.teleport(player, false);
+            Text.send(commandSender, "&aTeleported " + player.getName() + " to " + name);
         } else {
             Text.send(commandSender, onlyPlayers);
         }
