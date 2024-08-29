@@ -22,6 +22,9 @@ import java.util.Objects;
 public class IO {
 
     public static long folderSize(File directory) {
+        if (!directory.isDirectory()) return -1;
+        if (directory.listFiles() == null) return -1;
+
         return Arrays.stream(Objects.requireNonNull(directory.listFiles()))
                 .mapToLong(file -> file.isFile() ? file.length() : folderSize(file))
                 .sum();
