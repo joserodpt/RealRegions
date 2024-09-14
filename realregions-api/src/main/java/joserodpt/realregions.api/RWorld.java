@@ -47,7 +47,7 @@ import java.util.Objects;
 
 public class RWorld implements Listener {
 
-    public enum WorldType {NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED}
+    public enum WorldType {FLAT, NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED}
 
     public enum Data {ICON, LOAD, TP_JOIN, WORLD_INVENTORIES, ALL}
 
@@ -294,6 +294,7 @@ public class RWorld implements Listener {
 
         Material m;
         switch (wt) {
+            case FLAT:
             case NORMAL:
                 m = Material.GRASS_BLOCK;
                 break;
@@ -307,7 +308,7 @@ public class RWorld implements Listener {
                 m = Material.FEATHER;
                 break;
             default:
-                throw new IllegalStateException("Unexpected value in World Type (is this a bug?): " + world.getEnvironment());
+                throw new IllegalStateException("Unexpected value in World Type (is this a bug?): " + wt.name());
         }
 
         this.icon = m;

@@ -1,7 +1,7 @@
 package joserodpt.realregions.plugin.managers;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -26,6 +26,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,6 +46,7 @@ import java.util.Random;
 
 public class WorldManager extends WorldManagerAPI {
     private final RealRegionsAPI rra;
+
     public WorldManager(RealRegionsAPI rra) {
         this.rra = rra;
     }
@@ -67,6 +69,7 @@ public class WorldManager extends WorldManagerAPI {
         ret.addAll(this.getPossibleImports());
         return ret;
     }
+
     @Override
     public RWorld getWorld(World w) {
         return this.getWorldList().stream()
@@ -74,6 +77,7 @@ public class WorldManager extends WorldManagerAPI {
                 .findFirst()
                 .orElse(null);
     }
+
     @Override
     public RWorld getWorld(String nome) {
         if (nome == null || nome.isEmpty()) {
@@ -82,6 +86,7 @@ public class WorldManager extends WorldManagerAPI {
         String finalNome = nome;
         return this.getWorldsAndPossibleImports().stream().filter(rWorld -> rWorld.getRWorldName().equalsIgnoreCase(finalNome)).findFirst().orElse(null);
     }
+
     @Override
     public List<RWorld> getPossibleImports() {
         List<RWorld> ret = new ArrayList<>();
@@ -123,13 +128,19 @@ public class WorldManager extends WorldManagerAPI {
                     continue; // ignore non-yml files
 
                 String worldName = world.getName().replace(".yml", "");
+                //temporary load world config file to see if it is to load world
+                FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
+
+                RWorld.WorldType wt;
+                try {
+                    wt = RWorld.WorldType.valueOf(worldConfig.getString("Settings.Type"));
+                } catch (IllegalArgumentException | NullPointerException e) {
+                    rra.getLogger().severe("Error while loading world " + worldName + ". Invalid world type " + worldConfig.getString("Settings.Type") + " Skipping!.");
+                    continue;
+                }
+
 
                 try {
-                    //temporary load world config file to see if it is to load world
-                    FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(world);
-
-                    RWorld.WorldType wt = RWorld.WorldType.valueOf(worldConfig.getString("Settings.Type"));
-
                     if (worldConfig.getBoolean("Settings.Load")) {
                         //to load world, check if folder exists
                         File worldFolder = new File(Bukkit.getWorldContainer() + "/" + worldName);
@@ -196,19 +207,28 @@ public class WorldManager extends WorldManagerAPI {
     private World generateWorld(String worldName, RWorld.WorldType wt) {
         WorldCreator worldCreator = new WorldCreator(worldName);
 
-        if (wt == RWorld.WorldType.VOID) {
-            worldCreator.environment(World.Environment.NORMAL);
-            worldCreator.generateStructures(false);
-            worldCreator.generator(new VoidWorld());
-        } else {
-            try {
-                worldCreator.environment(World.Environment.valueOf(wt.name()));
-            } catch (Exception e) {
+        switch (wt) {
+            case VOID:
+                worldCreator.environment(World.Environment.NORMAL);
+                worldCreator.generateStructures(false);
+                worldCreator.generator(new VoidWorld());
+                break;
+            case NETHER:
+                worldCreator.environment(World.Environment.NETHER);
+                break;
+            case THE_END:
+                worldCreator.environment(World.Environment.THE_END);
+                break;
+            case FLAT:
+            case NORMAL:
+                worldCreator.environment(World.Environment.NORMAL);
+                break;
+            default:
                 throw new IllegalStateException("Unexpected value in World Type (is this a bug?): " + wt.name());
-            }
         }
 
-        return worldCreator.createWorld();
+
+        return wt == RWorld.WorldType.FLAT ? worldCreator.type(WorldType.FLAT).createWorld() : worldCreator.createWorld();
     }
 
     @Override
@@ -229,6 +249,7 @@ public class WorldManager extends WorldManagerAPI {
             TranslatableLine.WORLD_LOADED.setV1(TranslatableLine.ReplacableVar.NAME.eq(worldName)).send(p);
         }
     }
+
     @Override
     public void unloadWorld(RWorld rw, boolean save) {
         rw.setLoaded(false);
@@ -244,10 +265,10 @@ public class WorldManager extends WorldManagerAPI {
         }
         rra.getPlugin().getServer().unloadWorld(world, save);
     }
+
     @Override
     public void unloadWorld(CommandSender p, RWorld r) {
-        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
-        {
+        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_")) {
             TranslatableLine.WORLD_UNLOAD_DEFAULT_WORLDS.send(p);
         } else {
             if (!r.isLoaded()) {
@@ -259,6 +280,7 @@ public class WorldManager extends WorldManagerAPI {
             }
         }
     }
+
     @Override
     public void importWorld(CommandSender p, String worldName, RWorld.WorldType wt) {
         //check if folder exists
@@ -289,6 +311,7 @@ public class WorldManager extends WorldManagerAPI {
             }
         }
     }
+
     @Override
     public void unregisterWorld(CommandSender p, RWorld r) {
         if (r.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
@@ -302,10 +325,10 @@ public class WorldManager extends WorldManagerAPI {
 
         TranslatableLine.WORLD_UNREGISTERED.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getRWorldName())).send(p);
     }
+
     @Override
     public void deleteWorld(CommandSender p, RWorld r) {
-        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_"))
-        {
+        if (r.getRWorldName().equalsIgnoreCase("world") || r.getRWorldName().startsWith("world_")) {
             TranslatableLine.WORLD_DELETE_DEFAULT_WORLDS.send(p);
             return;
         }
@@ -351,6 +374,7 @@ public class WorldManager extends WorldManagerAPI {
             rra.getLogger().warning("Unable to delete directory " + directory);
         }
     }
+
     @Override
     protected void cleanDirectory(final File directory) throws IOException {
         final File[] files = verifiedListFiles(directory);
@@ -368,6 +392,7 @@ public class WorldManager extends WorldManagerAPI {
             throw exception;
         }
     }
+
     @Override
     public void forceDelete(final File file) throws IOException {
         if (file.isDirectory()) {
@@ -383,6 +408,7 @@ public class WorldManager extends WorldManagerAPI {
             }
         }
     }
+
     @Override
     public boolean isSymlink(final File file) {
         if (file == null) {
@@ -390,6 +416,7 @@ public class WorldManager extends WorldManagerAPI {
         }
         return Files.isSymbolicLink(file.toPath());
     }
+
     @Override
     public File[] verifiedListFiles(File directory) throws IOException {
         if (!directory.exists()) {

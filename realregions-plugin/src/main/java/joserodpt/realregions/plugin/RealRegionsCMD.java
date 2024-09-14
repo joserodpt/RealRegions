@@ -155,19 +155,25 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name> <type>")
     @SuppressWarnings("unused")
-    public void createworldcmd(final CommandSender commandSender, final String name, final String worldtype) {
+    public void createworldcmd(final CommandSender commandSender, final String name, final RWorld.WorldType worldtype) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
             return;
         }
 
+        if (worldtype == null) {
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            return;
+        }
+
         try {
-            RWorld rw = rra.getWorldManagerAPI().createWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+            RWorld rw = rra.getWorldManagerAPI().createWorld(commandSender, name, worldtype);
             if (rw != null && commandSender instanceof Player) {
                 rw.teleport((Player) commandSender, true);
             }
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
+            e.printStackTrace();
         }
     }
 
@@ -177,7 +183,7 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr createw <name> <type> <time>")
     @SuppressWarnings("unused")
-    public void createtimedworldcmd(final CommandSender commandSender, final String name, final String worldtype, final Integer time) {
+    public void createtimedworldcmd(final CommandSender commandSender, final String name, final RWorld.WorldType worldtype, final Integer time) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
             return;
@@ -188,13 +194,19 @@ public class RealRegionsCMD extends CommandBase {
             return;
         }
 
+        if (worldtype == null) {
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            return;
+        }
+
         try {
-            RWorld rw = rra.getWorldManagerAPI().createTimedWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype), time);
+            RWorld rw = rra.getWorldManagerAPI().createTimedWorld(commandSender, name, worldtype, time);
             if (rw != null && commandSender instanceof Player) {
                 rw.teleport((Player) commandSender, true);
             }
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
+            e.printStackTrace();
         }
     }
 
@@ -663,11 +675,21 @@ public class RealRegionsCMD extends CommandBase {
     @Permission("realregions.admin")
     @WrongUsage("&c/rr import <name> <type>")
     @SuppressWarnings("unused")
-    public void importcmd(final CommandSender commandSender, final String name, final String worldtype) {
+    public void importcmd(final CommandSender commandSender, final String name, final RWorld.WorldType worldtype) {
+        if (name == null) {
+            TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
+            return;
+        }
+
+        if (worldtype == null) {
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            return;
+        }
+
         try {
-            rra.getWorldManagerAPI().importWorld(commandSender, name, RWorld.WorldType.valueOf(worldtype));
+            rra.getWorldManagerAPI().importWorld(commandSender, name, worldtype);
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype)).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
         }
     }
 
@@ -763,7 +785,7 @@ public class RealRegionsCMD extends CommandBase {
         }
 
         if (rw.setGameRule(gameRule, op)) {
-            TranslatableLine.WORLD_GAMERULE_SET.send(commandSender);
+            Text.send(commandSender, TranslatableLine.WORLD_GAMERULE_SET.get() + " " + gameRule + "&r&f: &b" + op);
         } else {
             Text.send(commandSender, "&cInvalid gamerule: " + gameRule);
         }

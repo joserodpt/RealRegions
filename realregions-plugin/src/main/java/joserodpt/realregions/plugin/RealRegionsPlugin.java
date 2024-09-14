@@ -35,6 +35,7 @@ import joserodpt.realregions.plugin.listeners.GeneralListener;
 import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
 import me.mattstudios.mf.base.CommandManager;
+import me.mattstudios.mf.base.components.TypeResult;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
@@ -107,8 +108,16 @@ public class RealRegionsPlugin extends JavaPlugin {
                         .collect(Collectors.toList())
         );
         cm.getCompletionHandler().register("#worldtype", input ->
-                Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID")
+                Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID", "FLAT")
         );
+        cm.getParameterHandler().register(RWorld.WorldType.class, argument -> {
+            try {
+                RWorld.WorldType tt = RWorld.WorldType.valueOf(argument.toString().toUpperCase());
+                return new TypeResult(tt, argument);
+            } catch (Exception e) {
+                return new TypeResult(null, argument);
+            }
+        });
         cm.getCompletionHandler().register("#bool", input ->
                 Arrays.asList("true", "false")
         );
