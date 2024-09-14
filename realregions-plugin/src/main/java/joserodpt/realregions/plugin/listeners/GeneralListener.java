@@ -65,13 +65,12 @@ public class GeneralListener implements Listener {
         if (!previousWorld.equals(w)) {
             RWorld previousRWorld = rra.getWorldManagerAPI().getWorld(previousWorld);
             if (previousWorld == null) {
-                return;
+                if (previousWorld != null && previousRWorld.hasWorldInventories()) {
+                    previousRWorld.saveWorldInventory(player);
+                    player.getInventory().clear();
+                }
+                rw.giveWorldInventory(player);
             }
-            if (previousRWorld.hasWorldInventories()) {
-                previousRWorld.saveWorldInventory(player);
-                player.getInventory().clear();
-            }
-            rw.giveWorldInventory(player);
         }
     }
 }
