@@ -65,7 +65,7 @@ public class RegionListener implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent e) {
         if (e.getPlayer().isOp() && rr.hasNewUpdate()) {
-            Text.send(e.getPlayer(), "&6&LWARNING! &r&fThere is a new update available for Real&eRegions&f! https://www.spigotmc.org/resources/111629/");
+            Text.send(e.getPlayer(), "&6&LWARNING! &r&fThere is a new update available! https://www.spigotmc.org/resources/111629/");
         }
     }
 
