@@ -429,7 +429,9 @@ public class RegionListener implements Listener {
             //pvp
             if (!selected.pvp) {
                 event.setCancelled(true);
-                TranslatableLine.REGION_CANT_PVP.send(damager);
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_CANT_PVP.send(damager);
+                }
             }
         }
     }
@@ -447,7 +449,9 @@ public class RegionListener implements Listener {
 
             if (selected.noChat) {
                 e.setCancelled(true);
-                TranslatableLine.REGION_CANT_CHAT.send(p);
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_CANT_CHAT.send(p);
+                }
             }
         }
     }
@@ -465,7 +469,9 @@ public class RegionListener implements Listener {
 
             if (selected.noConsumables) {
                 e.setCancelled(true);
-                TranslatableLine.REGION_CANT_CONSUME.send(p);
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_CANT_CONSUME.send(p);
+                }
             }
         }
     }
@@ -483,7 +489,10 @@ public class RegionListener implements Listener {
 
             if (e.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && selected.disabledNetherPortal) {
                 e.setCancelled(true);
-                TranslatableLine.REGION_DISABLED_NETHER_PORTAL.send(p);
+
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_DISABLED_NETHER_PORTAL.send(p);
+                }
             }
         }
     }
@@ -515,7 +524,9 @@ public class RegionListener implements Listener {
             //pve
             if (!selected.pve) {
                 event.setCancelled(true);
-                TranslatableLine.REGION_CANT_PVE.send(damager);
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_CANT_PVE.send(damager);
+                }
             }
         }
     }
