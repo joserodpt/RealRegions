@@ -81,6 +81,7 @@ public class Region {
     public boolean disabledEndPortal = false;
     public boolean noFireSpreading = false;
     public boolean leafDecay = false;
+    public boolean itemPickupOnlyOwner = false;
 
     public int priority;
 
@@ -128,6 +129,7 @@ public class Region {
                 cfg.set("Regions." + this.name + ".Disabled-Nether-Portal", this.disabledNetherPortal);
                 cfg.set("Regions." + this.name + ".Disabled-End-Portal", this.disabledEndPortal);
                 cfg.set("Regions." + this.name + ".No-Fire-Spreading", this.noFireSpreading);
+                cfg.set("Regions." + this.name + ".Item-Pickup-Only-Owner", this.itemPickupOnlyOwner);
                 break;
             case SETTINGS:
                 cfg.set("Regions." + this.name + ".Type", this.getType().name());

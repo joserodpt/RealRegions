@@ -198,6 +198,7 @@ public class RWorld implements Listener {
                 reg.disabledNetherPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-Nether-Portal", false);
                 reg.disabledEndPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-End-Portal", false);
                 reg.noFireSpreading = this.getConfig().getBoolean("Regions." + regionName + ".No-Fire-Spreading", false);
+                reg.itemPickupOnlyOwner = this.getConfig().getBoolean("Regions." + regionName + ".Item-Pickup-Only-Owner", false);
 
                 reg.saveData(Region.RegionData.FLAGS);
                 this.getRegions().put(regionName, reg);

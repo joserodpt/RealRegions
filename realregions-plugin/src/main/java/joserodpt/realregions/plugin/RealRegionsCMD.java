@@ -1,7 +1,7 @@
 package joserodpt.realregions.plugin;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -49,12 +49,12 @@ import java.util.stream.Collectors;
 @Command("realregions")
 @Alias("rr")
 public class RealRegionsCMD extends CommandBase {
-    
+
     private final String onlyPlayers = "[RealRegions] Only players can run this command.";
 
     RealRegionsAPI rra;
-    public RealRegionsCMD(RealRegionsAPI r)
-    {
+
+    public RealRegionsCMD(RealRegionsAPI r) {
         this.rra = r;
     }
 
@@ -327,6 +327,9 @@ public class RealRegionsCMD extends CommandBase {
                 case "no_fire_spreading":
                     TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noFireSpreading ? "&a✔ true" : "&c❌ false")).send(commandSender);
                     break;
+                case "item_pickup_only_owner":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemPickupOnlyOwner ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 default:
                     TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
                     break;
@@ -403,6 +406,9 @@ public class RealRegionsCMD extends CommandBase {
                 break;
             case "leaf_decay":
                 reg.leafDecay = value;
+                break;
+            case "item_pickup_only_owner":
+                reg.itemPickupOnlyOwner = value;
                 break;
             default:
                 notFound = true;

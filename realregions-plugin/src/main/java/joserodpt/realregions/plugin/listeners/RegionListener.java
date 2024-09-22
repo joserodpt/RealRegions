@@ -1,7 +1,7 @@
 package joserodpt.realregions.plugin.listeners;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -25,10 +25,12 @@ import joserodpt.realregions.api.utils.Particles;
 import joserodpt.realregions.api.utils.Text;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,11 +55,14 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.UUID;
 
 public class RegionListener implements Listener {
     private final RealRegionsAPI rr;
-    
+
     public RegionListener(RealRegionsAPI rr) {
         this.rr = rr;
     }
@@ -83,7 +88,9 @@ public class RegionListener implements Listener {
     public void onLeafDecay(LeavesDecayEvent event) {
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(event.getBlock().getLocation());
 
-        if (selected != null && !selected.leafDecay) { event.setCancelled(true); }
+        if (selected != null && !selected.leafDecay) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -175,22 +182,27 @@ public class RegionListener implements Listener {
                 return;
             }
 
-            //verificar onde é que o tem aterra
-           new BukkitRunnable() {
+            //verificar onde é que o item aterra
+            new BukkitRunnable() {
                 @Override
                 public void run() {
-                if (e.getItemDrop().isOnGround()) {
-                    Region landed = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getItemDrop().getLocation());
-                    if (landed != null && !landed.itemDrop) {
-                        ItemStack tmp = e.getItemDrop().getItemStack();
-                        e.getItemDrop().remove();
-                        p.getInventory().addItem(tmp);
-                        cancelEvent(itemLocation, p, TranslatableLine.REGION_CANT_DROP_ITEMS.get());
+                    if (e.getItemDrop().isOnGround()) {
+                        Region landed = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getItemDrop().getLocation());
+                        if (landed != null && !landed.itemDrop) {
+                            ItemStack tmp = e.getItemDrop().getItemStack();
+                            e.getItemDrop().remove();
+                            p.getInventory().addItem(tmp);
+                            cancelEvent(itemLocation, p, TranslatableLine.REGION_CANT_DROP_ITEMS.get());
+                        }
+                        cancel();
                     }
-                    cancel();
-                }
                 }
             }.runTaskTimer(RealRegionsPlugin.getPlugin(), 1, 1);
+
+            if (!e.isCancelled() && e.getItemDrop() != null && e.getItemDrop().getItemStack() != null && selected.itemPickupOnlyOwner) {
+                Item item = e.getItemDrop();
+                item.setMetadata("owner", new FixedMetadataValue(rr.getPlugin(), p.getUniqueId()));
+            }
         }
     }
 
@@ -211,8 +223,16 @@ public class RegionListener implements Listener {
 
             if (!selected.itemPickup) {
                 e.setCancelled(true);
-
                 cancelEvent(entityLocation, p, TranslatableLine.REGION_CANT_PICKUP_ITEMS.get());
+                return;
+            }
+
+            if (!e.isCancelled() && e.getItem() != null && e.getItem().getItemStack() != null && selected.itemPickupOnlyOwner) {
+                Item item = e.getItem();
+                UUID owner = UUID.fromString(item.getMetadata("owner").get(0).asString());
+                if (!owner.equals(p.getUniqueId())) {
+                    e.setCancelled(true);
+                }
             }
         }
     }
@@ -254,7 +274,7 @@ public class RegionListener implements Listener {
                     if (!selected.enter) {
                         e.setCancelled(true);
 
-                        cancelEvent(e.getTo(), p,TranslatableLine.REGION_CANT_ENTER_HERE.get());
+                        cancelEvent(e.getTo(), p, TranslatableLine.REGION_CANT_ENTER_HERE.get());
 
                         p.getInventory().addItem(new ItemStack(Material.CHORUS_FRUIT));
                     }
@@ -273,7 +293,7 @@ public class RegionListener implements Listener {
                     if (!selected.enter) {
                         e.setCancelled(true);
 
-                        cancelEvent(e.getTo(), p,TranslatableLine.REGION_CANT_ENTER_HERE.get());
+                        cancelEvent(e.getTo(), p, TranslatableLine.REGION_CANT_ENTER_HERE.get());
                     }
                     break;
             }
@@ -320,7 +340,7 @@ public class RegionListener implements Listener {
                     // announce region change via titles
                     if (r.announceEnterTitle)
                         player.sendTitle(TranslatableLine.REGION_ENTERING_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(),
-                            TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(), 10, 40, 10);
+                                TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(), 10, 40, 10);
 
                     if (r.announceEnterActionbar)
                         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get()));
@@ -366,7 +386,7 @@ public class RegionListener implements Listener {
                 if (b.getType().name().contains("SHULKER_BOX")) {
                     if (!selected.containerInteract) {
                         e.setCancelled(true);
-                        cancelEvent(clickedBlockLocation, p,TranslatableLine.REGION_CANT_INTERACT_CONTAINER.get());
+                        cancelEvent(clickedBlockLocation, p, TranslatableLine.REGION_CANT_INTERACT_CONTAINER.get());
                     }
                     return;
                 }

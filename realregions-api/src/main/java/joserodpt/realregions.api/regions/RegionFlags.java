@@ -32,6 +32,7 @@ public enum RegionFlags {
     HUNGER("hunger"),
     ITEM_DROP("item-drop"),
     ITEM_PICKUP("item-pickup"),
+    ITEM_PICKUP_ONLY_OWNER("item-pickup-only-owner"),
     PVE("pve"),
     PVP("pvp"),
     TAKE_DAMAGE("take-damage"),

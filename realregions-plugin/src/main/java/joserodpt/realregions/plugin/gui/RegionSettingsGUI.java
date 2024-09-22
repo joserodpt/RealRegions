@@ -175,6 +175,11 @@ public class RegionSettingsGUI {
 						"  &eBypass&f: " + RegionFlags.ITEM_PICKUP.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
+		inv.setItem(25, Itens.createItem(Material.NAME_TAG, 1, "&7&lItem Pickup Only Owner &r&7[" + getStyle(r.itemPickupOnlyOwner) + "&7]",
+				Arrays.asList("&e&nDescription", "  Allows or Disallows Item Pickup only to the item's owner.", "&e&nPermissions",
+						"  &eBypass&f: " + RegionFlags.ITEM_PICKUP_ONLY_OWNER.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
+						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
+
 
 		//row4
 		inv.setItem(30, Itens.createItem(Material.FLINT_AND_STEEL, 1, "&7&lTake Damage &r&7[" + getStyle(r.takeDamage) + "&7]",
@@ -479,6 +484,17 @@ public class RegionSettingsGUI {
 									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								} else if (event.getClick() == ClickType.RIGHT) {
 									RegionFlags.ITEM_PICKUP.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
+								}
+								break;
+
+							case 25:
+								if (event.getClick() == ClickType.LEFT) {
+									current.r.itemPickupOnlyOwner = !current.r.itemPickupOnlyOwner;
+									current.r.saveData(Region.RegionData.FLAGS);
+									current.load();
+									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+								} else if (event.getClick() == ClickType.RIGHT) {
+									RegionFlags.ITEM_PICKUP_ONLY_OWNER.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
 								}
 								break;
 

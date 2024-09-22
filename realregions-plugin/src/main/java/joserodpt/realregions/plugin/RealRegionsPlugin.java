@@ -143,7 +143,8 @@ public class RealRegionsPlugin extends JavaPlugin {
                 "disabled_nether_portal",
                 "disabled_end_portal",
                 "no_fire_spreading",
-                "leaf_decay"
+                "leaf_decay",
+                "item_pickup_only_owner"
         ));
         cm.getCompletionHandler().register("#gamerules", input -> Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.toList()));
 
