@@ -152,7 +152,7 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         realRegions.getWorldManagerAPI().loadWorlds();
 
-        if (getServer().getPluginManager().getPlugin("RealMines") != null) {
+        if (Bukkit.getPluginManager().getPlugin("RealMines") != null) {
             pm.registerEvents(new RealMinesListener(realRegions), this);
         }
 
