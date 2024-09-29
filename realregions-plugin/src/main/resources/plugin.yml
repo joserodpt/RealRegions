@@ -8,7 +8,6 @@ authors: [JoseGamer_PT]
 description: New, Simple and Easy to Use Region/World Management Plugin.
 depend: [WorldEdit]
 softdepend:
-  - RealMines
   - RealPermissions
   - PlaceholderAPI
 website: https://www.spigotmc.org/members/josegamer_pt.40267/
