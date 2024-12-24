@@ -9,6 +9,13 @@
     <version>0.7.4</version>
     <packaging>jar</packaging>
 
+    <parent>
+        <groupId>joserodpt.realregions</groupId>
+        <artifactId>realregions-parent</artifactId>
+        <version>0.7.4</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <name>realregions-plugin</name>
 
     <properties>
@@ -66,6 +73,11 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>neziw-repo-releases</id>
+            <name>Reposilite Repository</name>
+            <url>https://repo.neziw.ovh/releases</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -99,11 +111,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>joserodpt.realpermissions</groupId>
-            <artifactId>realpermissions</artifactId>
-            <version>0.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/RealPermissions.jar</systemPath>
+            <groupId>joserodpt</groupId>
+            <artifactId>realpermissions-api</artifactId>
+            <version>0.4.2</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>joserodpt.realmines</groupId>
