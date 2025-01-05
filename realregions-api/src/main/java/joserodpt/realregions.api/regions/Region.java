@@ -1,7 +1,7 @@
 package joserodpt.realregions.api.regions;
 
 /*
- *  ______           _______           
+ *  ______           _______
  *  | ___ \         | | ___ \         (_)
  *  | |_/ /___  __ _| | |_/ /___  __ _ _  ___  _ __  ___
  *  |    // _ \/ _` | |    // _ \/ _` | |/ _ \| '_ \/ __|
@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Region {
@@ -49,7 +50,9 @@ public class Region {
     }
 
     public enum RegionType {CUBOID, INFINITE}
+
     public enum RegionData {ALL, ICON, SETTINGS, FLAGS, BOUNDS}
+
     private RegionOrigin regionOrigin = RegionOrigin.REALREGIONS;
     private Material icon;
     private final String name;
@@ -85,20 +88,58 @@ public class Region {
 
     public int priority;
 
-    public Region(String name, String displayname, RWorld w, Material m, int priority, RegionType rt, boolean announceEnterTitle, boolean announceEnterActionbar) {
-        //Infinite Region
+    //infinite
+    public Region(String name, RWorld w, Material m) {
+        this(name, w, m, RegionType.INFINITE);
+    }
+
+    //custom type main constructor
+    public Region(String name, RWorld w, Material m, RegionType rt) {
         this.name = name;
-        this.displayname = displayname;
         this.icon = m;
         this.rw = w;
-        this.priority = priority;
-        this.announceEnterTitle = announceEnterTitle;
-        this.announceEnterActionbar = announceEnterActionbar;
+        this.displayname = rw.getConfig().getString("Regions." + name + ".Display-Name", name);
+        this.priority = rw.getConfig().getInt("Regions." + name + ".Priority", 0);
+
+        //load region flags
+        this.loadRegionFlags();
 
         if (rt == RegionType.INFINITE) {
             //save region
             this.saveData(RegionData.ALL);
         }
+    }
+
+    private void loadRegionFlags() {
+        //load region flags
+        this.blockInteract = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Block.Interact");
+        this.containerInteract = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Container.Interact");
+        this.blockBreak = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Block.Break");
+        this.blockPlace = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Block.Place");
+        this.pvp = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".PVP");
+        this.pve = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".PVE");
+        this.hunger = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Hunger");
+        this.takeDamage = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Damage");
+        this.explosions = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Explosions");
+        this.itemDrop = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Item.Drop");
+        this.itemPickup = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Item.Pickup");
+        this.entitySpawning = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Entity-Spawning");
+        this.enter = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Enter");
+        this.accessCrafting = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Access.Crafting-Table");
+        this.accessChests = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Access.Chests");
+        this.accessHoppers = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Access.Hoppers");
+
+        //failsafe if it doesn't exist, they're new entries
+        this.announceEnterTitle = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Announce-Enter.Title", false);
+        this.announceEnterActionbar = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Announce-Enter.Actionbar", false);
+        this.noChat = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".No-Chat", false);
+        this.noConsumables = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".No-Consumables", false);
+        this.disabledNetherPortal = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Disabled-Nether-Portal", false);
+        this.disabledEndPortal = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Disabled-End-Portal", false);
+        this.noFireSpreading = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".No-Fire-Spreading", false);
+        this.itemPickupOnlyOwner = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Item-Pickup-Only-Owner", false);
+
+        this.saveData(Region.RegionData.FLAGS);
     }
 
     public void saveData(Region.RegionData dr) {
@@ -141,18 +182,50 @@ public class Region {
                 if (this.getOrigin() != RegionOrigin.REALREGIONS)
                     cfg.set("Regions." + this.name + ".Origin", this.getOrigin().name());
                 break;
+            case BOUNDS:
+                if (this instanceof CuboidRegion) {
+                    CuboidRegion cr = (CuboidRegion) this;
+                    if (cr.getCube() == null || cr.getCube().getPOS1() == null || cr.getCube().getPOS2() == null) {
+                        return;
+                    }
+                    cfg.set("Regions." + this.getRegionName() + ".POS.1", Text.locToTex(cr.getCube().getPOS1()));
+                    cfg.set("Regions." + this.getRegionName() + ".POS.2", Text.locToTex(cr.getCube().getPOS2()));
+                }
+                break;
             case ALL:
                 this.saveData(RegionData.ICON);
                 this.saveData(RegionData.FLAGS);
                 this.saveData(RegionData.SETTINGS);
+                this.saveData(RegionData.BOUNDS);
                 break;
         }
 
         rw.saveConfig();
     }
 
-    public RegionType getType()
-    {
+    public void setupDefaultConfig() {
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Block.Interact", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Block.Break", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Block.Place", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Container.Interact", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".PVP", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".PVE", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Hunger", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Damage", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Explosions", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Item.Drop", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Item.Pickup", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Entity-Spawning", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Enter", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Create-Portal", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Access.Crafting-Table", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Access.Chests", true);
+        rw.getConfig().set("Regions." + this.getRegionName() + ".Access.Hoppers", true);
+
+        loadRegionFlags();
+    }
+
+    public RegionType getType() {
         return RegionType.INFINITE;
     }
 
@@ -167,7 +240,19 @@ public class Region {
     public ItemStack getItem() {
         List<String> desc = new ArrayList<>();
         desc.add("&fPriority: &b" + this.priority);
-        desc.addAll(flagsList(Text.styleBoolean(this.accessChests),
+
+        // Add dimensions and volume if applicable
+        if (this instanceof CuboidRegion) {
+            CuboidRegion cr = (CuboidRegion) this;
+            desc.add("&fBlocks: &b" + cr.getCube().getVolume() + " &7(&b "
+                    + cr.getCube().getSizeX() + " &fx &b"
+                    + cr.getCube().getSizeY() + " &fx &b"
+                    + cr.getCube().getSizeZ() + " &7)");
+        }
+
+        // Add flags
+        desc.addAll(flagsList(
+                Text.styleBoolean(this.accessChests),
                 Text.styleBoolean(this.accessCrafting),
                 Text.styleBoolean(this.accessHoppers),
                 Text.styleBoolean(this.blockBreak),
@@ -188,9 +273,24 @@ public class Region {
                 Text.styleBoolean(this.noFireSpreading),
                 Text.styleBoolean(this.disabledNetherPortal),
                 Text.styleBoolean(this.disabledEndPortal),
-                Text.styleBoolean(this.leafDecay)));
+                Text.styleBoolean(this.leafDecay)
+        ));
 
-        return Itens.createItem(getIcon(), 1, "&f" + getDisplayName() + " &7[&b" + (getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name()) + "&7]", desc);
+        // Add a special message if the origin is REALMINES
+        if (Objects.requireNonNull(this.getOrigin()) == RegionOrigin.REALMINES) {
+            desc.add("&7This region was imported from " + this.getOrigin().getDisplayName() + "&r&7. Delete it there.");
+        }
+
+        // Determine the region type display
+        String typeDisplay = this.getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name();
+
+        // Create and return the item
+        return Itens.createItem(
+                getIcon(),
+                1,
+                "&f" + getDisplayName() + " &7[&b" + typeDisplay + "&7]",
+                desc
+        );
     }
 
     public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21, String s22) {
@@ -251,34 +351,43 @@ public class Region {
     public void setIcon(Material a) {
         this.icon = a;
     }
+
     public RWorld getRWorld() {
         return this.rw;
     }
+
     public String getDisplayName() {
         return displayname;
     }
+
     public Material getIcon() {
         return icon;
     }
+
     public boolean canVisualize() {
         return false;
     }
+
     public String getRegionName() {
         return this.name;
     }
+
     public String getRegionNamePlusWorld() {
         return this.name + "@" + this.getRWorld().getRWorldName();
     }
+
     public void setDisplayName(String s) {
         this.displayname = s;
     }
+
     public void setPriority(Integer a) {
         this.priority = a;
     }
-    public int getPriority()
-    {
+
+    public int getPriority() {
         return this.priority;
     }
+
     public boolean isLocationInRegion(Location l) {
         return this.getRWorld().getWorld() == l.getWorld();
     }

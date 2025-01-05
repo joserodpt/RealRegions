@@ -140,9 +140,9 @@ public class RealRegionsCMD extends CommandBase {
                     g.openInventory(p);
                 }
             } catch (Exception e) {
-                TranslatableLine.SELECTION_NONE.send(p);
+                Text.send(commandSender, "&cError while getting player's worldedit selection. See console for details.");
                 Bukkit.getLogger().severe("Error while getting player's worldedit selection:");
-                Bukkit.getLogger().severe(e.getMessage());
+                e.printStackTrace();
             }
         } else {
             TranslatableLine.REGION_NAME_DUPLICATE.send(p);

@@ -23,7 +23,6 @@ import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.IO;
 import joserodpt.realregions.api.utils.Itens;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -120,7 +119,9 @@ public class RWorld implements Listener {
     }
 
     public void setResetEverySeconds(int time) {
-        if (time <= 2) { return; }
+        if (time <= 2) {
+            return;
+        }
 
         this.resetWorldEverySeconds = time;
         config.set("Settings.Reset-Every-Seconds", this.resetWorldEverySeconds);
@@ -150,21 +151,42 @@ public class RWorld implements Listener {
 
     private void loadRegions() {
         for (String regionName : this.getConfig().getConfigurationSection("Regions").getKeys(false)) {
-            Region.RegionType rt = Region.RegionType.valueOf(this.getConfig().getString("Regions." + regionName + ".Type"));
-            String regionDisplayName = this.getConfig().getString("Regions." + regionName + ".Display-Name");
-            boolean announceEnterTitle = this.getConfig().getBoolean("Regions." + regionName + ".Announce-Enter.Title", false);
-            boolean announceEnterActionbar = this.getConfig().getBoolean("Regions." + regionName + ".Announce-Enter.Actionbar", false);
+            Region.RegionType rt;
+            try {
+                rt = Region.RegionType.valueOf(this.getConfig().getString("Regions." + regionName + ".Type"));
+            } catch (IllegalArgumentException e) {
+                Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". Region type is invalid. Skipping!");
+                continue;
+            }
+
+            Material mat;
+            try {
+                mat = Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon"));
+            } catch (IllegalArgumentException e) {
+                Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". Icon is invalid. Skipping!");
+                continue;
+            }
+
             Region reg = null;
 
             switch (rt) {
                 case INFINITE:
-                    reg = new Region(regionName, regionDisplayName, this, Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon")), this.getConfig().getInt("Regions." + regionName + ".Priority"), Region.RegionType.INFINITE, announceEnterTitle, announceEnterActionbar);
+                    reg = new Region(regionName, this, mat);
                     break;
                 case CUBOID:
-                    reg = new CuboidRegion(Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.1"), this.getWorld()),
-                            Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.2"), this.getWorld()),
-                            ChatColor.stripColor(regionName), this.getConfig().getString("Regions." + regionName + ".Display-Name"), this,
-                            Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon")), this.getConfig().getInt("Regions." + regionName + ".Priority"), announceEnterTitle, announceEnterActionbar);
+                    Location pos1 = Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.1"), this.getWorld());
+                    if (pos1 == null) {
+                        Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". POS1 is invalid. Skipping!");
+                        continue;
+                    }
+
+                    Location pos2 = Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.2"), this.getWorld());
+                    if (pos2 == null) {
+                        Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". POS2 is invalid. Skipping!");
+                        continue;
+                    }
+
+                    reg = new CuboidRegion(regionName, this, mat, pos1, pos2);
                     break;
             }
 
@@ -174,35 +196,7 @@ public class RWorld implements Listener {
                 reg.setOrigin(Region.RegionOrigin.valueOf(orig));
             }
 
-            if (reg != null) {
-                //load region flags
-                reg.blockInteract = this.getConfig().getBoolean("Regions." + regionName + ".Block.Interact");
-                reg.containerInteract = this.getConfig().getBoolean("Regions." + regionName + ".Container.Interact");
-                reg.blockBreak = this.getConfig().getBoolean("Regions." + regionName + ".Block.Break");
-                reg.blockPlace = this.getConfig().getBoolean("Regions." + regionName + ".Block.Place");
-                reg.pvp = this.getConfig().getBoolean("Regions." + regionName + ".PVP");
-                reg.pve = this.getConfig().getBoolean("Regions." + regionName + ".PVE");
-                reg.hunger = this.getConfig().getBoolean("Regions." + regionName + ".Hunger");
-                reg.takeDamage = this.getConfig().getBoolean("Regions." + regionName + ".Damage");
-                reg.explosions = this.getConfig().getBoolean("Regions." + regionName + ".Explosions");
-                reg.itemDrop = this.getConfig().getBoolean("Regions." + regionName + ".Item.Drop");
-                reg.itemPickup = this.getConfig().getBoolean("Regions." + regionName + ".Item.Pickup");
-                reg.entitySpawning = this.getConfig().getBoolean("Regions." + regionName + ".Entity-Spawning");
-                reg.enter = this.getConfig().getBoolean("Regions." + regionName + ".Enter");
-                reg.accessCrafting = this.getConfig().getBoolean("Regions." + regionName + ".Access.Crafting-Table");
-                reg.accessChests = this.getConfig().getBoolean("Regions." + regionName + ".Access.Chests");
-                reg.accessHoppers = this.getConfig().getBoolean("Regions." + regionName + ".Access.Hoppers");
-                //failsafe if it doesn't exist, they're new entries
-                reg.noChat = this.getConfig().getBoolean("Regions." + regionName + ".No-Chat", false);
-                reg.noConsumables = this.getConfig().getBoolean("Regions." + regionName + ".No-Consumables", false);
-                reg.disabledNetherPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-Nether-Portal", false);
-                reg.disabledEndPortal = this.getConfig().getBoolean("Regions." + regionName + ".Disabled-End-Portal", false);
-                reg.noFireSpreading = this.getConfig().getBoolean("Regions." + regionName + ".No-Fire-Spreading", false);
-                reg.itemPickupOnlyOwner = this.getConfig().getBoolean("Regions." + regionName + ".Item-Pickup-Only-Owner", false);
-
-                reg.saveData(Region.RegionData.FLAGS);
-                this.getRegions().put(regionName, reg);
-            }
+            this.getRegions().put(regionName, reg);
         }
     }
 
@@ -325,6 +319,7 @@ public class RWorld implements Listener {
         this.config.set("Regions.Global.Display-Name", "&f&lGlobal");
         this.config.set("Regions.Global.Priority", 10);
         this.config.set("Regions.Global.Icon", Material.BEDROCK.name());
+
         this.config.set("Regions.Global.Announce-Enter.Title", false);
         this.config.set("Regions.Global.Announce-Enter.Actionbar", false);
         this.config.set("Regions.Global.Block.Interact", true);

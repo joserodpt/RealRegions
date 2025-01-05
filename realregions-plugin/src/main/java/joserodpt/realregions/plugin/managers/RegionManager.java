@@ -125,8 +125,11 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void createCubeRegion(String name, Location min, Location max, RWorld r) {
-        CuboidRegion crg = new CuboidRegion(min, max, ChatColor.stripColor(Text.color(name)), name, r, Material.LIGHT_BLUE_STAINED_GLASS, 100, true, true);
+        CuboidRegion crg = new CuboidRegion(ChatColor.stripColor(Text.color(name)), r, Material.LIGHT_BLUE_STAINED_GLASS, min, max);
+        crg.setPriority(100);
+        crg.setupDefaultConfig();
         r.addRegion(crg);
+
 
         //save region
         crg.saveData(Region.RegionData.ALL);
@@ -139,9 +142,11 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void createCubeRegionRealMines(RMine mine, RWorld rw) {
-        CuboidRegion crg = new CuboidRegion(mine.getPOS1(), mine.getPOS2(), ChatColor.stripColor(mine.getName()), mine.getDisplayName(), rw, mine.getIcon(), 101, false, false);
-        rw.addRegion(crg);
+        CuboidRegion crg = new CuboidRegion(ChatColor.stripColor(mine.getName()), rw, mine.getIcon(), mine.getPOS1(), mine.getPOS2());
+        crg.setDisplayName(mine.getDisplayName());
+        crg.setupDefaultConfig();
         crg.setOrigin(Region.RegionOrigin.REALMINES);
+        rw.addRegion(crg);
 
         //save region
         crg.saveData(Region.RegionData.ALL);
