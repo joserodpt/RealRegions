@@ -45,6 +45,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -348,6 +349,29 @@ public class RegionListener implements Listener {
                 rr.getRegionManagerAPI().getLastRegions().put(player.getUniqueId(), r);
             } else {
                 rr.getRegionManagerAPI().getLastRegions().put(player.getUniqueId(), r);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPaintingBreak(HangingBreakByEntityEvent e) {
+        Location entityLocation = e.getEntity().getLocation();
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(entityLocation);
+
+        if (selected != null) {
+            if (!(e.getRemover() instanceof Player))
+                return;
+
+            Player p = (Player) e.getRemover();
+
+            if (p.isOp() || p.hasPermission(RegionFlags.BLOCK_BREAK.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName())) ||
+                    p.hasPermission(RegionFlags.BLOCK_INTERACTIONS.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+                return;
+            }
+
+            if (!selected.blockBreak || !selected.blockInteract) {
+                e.setCancelled(true);
+                cancelEvent(entityLocation, p, TranslatableLine.REGION_CANT_BREAK_BLOCK.get());
             }
         }
     }
