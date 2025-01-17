@@ -11,7 +11,7 @@ package joserodpt.realregions.plugin.managers;
  *                               |___/
  *
  * Licensed under the MIT License
- * @author José Rodrigues © 2020-2024
+ * @author José Rodrigues © 2020-2025
  * @link https://github.com/joserodpt/RealRegions
  */
 
