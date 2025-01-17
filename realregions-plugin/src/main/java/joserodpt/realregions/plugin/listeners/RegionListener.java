@@ -25,7 +25,6 @@ import joserodpt.realregions.api.utils.Particles;
 import joserodpt.realregions.api.utils.Text;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -40,6 +39,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -240,6 +240,20 @@ public class RegionListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
+        commonDamageHandler(e);
+    }
+
+    @EventHandler
+    public void onDamageByBlock(EntityDamageByBlockEvent e) {
+        commonDamageHandler(e);
+    }
+
+    @EventHandler
+    public void onDamageByEntity(EntityDamageByEntityEvent e) {
+        commonDamageHandler(e);
+    }
+
+    private void commonDamageHandler(EntityDamageEvent e) {
         Location entityLocation = e.getEntity().getLocation();
         Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(entityLocation);
 
