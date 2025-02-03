@@ -16,6 +16,11 @@ package joserodpt.realregions.plugin;
  */
 
 import java.util.Collections;
+
+import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
+import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey;
+import dev.triumphteam.cmd.core.message.MessageKey;
+import dev.triumphteam.cmd.core.suggestion.SuggestionKey;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
@@ -34,11 +39,10 @@ import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import joserodpt.realregions.plugin.listeners.GeneralListener;
 import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
-import me.mattstudios.mf.base.CommandManager;
-import me.mattstudios.mf.base.components.TypeResult;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -52,9 +56,11 @@ public class RealRegionsPlugin extends JavaPlugin {
     private RealRegions realRegions;
 
     private static RealRegionsPlugin pl;
+
     public static RealRegionsPlugin getPlugin() {
         return pl;
     }
+
     @Override
     public void onEnable() {
         printASCII();
@@ -81,74 +87,74 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(RegionSettingsGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
-        CommandManager cm = new CommandManager(this);
+        BukkitCommandManager<CommandSender> commandManager = BukkitCommandManager.create(this);
 
-        cm.getMessageHandler().register("cmd.no.permission", (sender) -> Text.send(sender, "&cYou don't have permission to execute this command!"));
-        cm.getMessageHandler().register("cmd.no.exists", (sender) -> Text.send(sender, "&cThe command you're trying to use doesn't exist"));
-        cm.getMessageHandler().register("cmd.wrong.usage", (sender) -> Text.send(sender, "&cWrong usage for the command!"));
-        cm.getMessageHandler().register("cmd.no.console", sender -> Text.send(sender,  "&cCommand can't be used in the console!"));
+        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender, "&cYou don't have permission to execute this command!"));
+        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender, "&cThe command you're trying to run doesn't exist"));
+        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender, "&cWrong usage for the command!"));
+        commandManager.registerMessage(BukkitMessageKey.PLAYER_ONLY, (sender, context) -> Text.send(sender, "&cCommand can't be used in the console!"));
 
-        cm.hideTabComplete(true);
-        cm.getCompletionHandler().register("#regions", input ->
+        commandManager.registerSuggestion(SuggestionKey.of("#regions"), (sender, context) ->
                 realRegions.getRegionManagerAPI().getRegions()
                         .stream()
                         .map(Region::getRegionNamePlusWorld)
                         .collect(Collectors.toList())
         );
-        cm.getCompletionHandler().register("#mundos", input ->
+        commandManager.registerSuggestion(SuggestionKey.of("#mundos"), (sender, context) ->
                 realRegions.getWorldManagerAPI().getWorldList()
                         .stream()
                         .map(RWorld::getRWorldName)
                         .collect(Collectors.toList())
         );
-        cm.getCompletionHandler().register("#mundosPLUSimport", input ->
+        commandManager.registerSuggestion(SuggestionKey.of("#mundosPLUSimport"), (sender, context) ->
                 realRegions.getWorldManagerAPI().getWorldsAndPossibleImports()
                         .stream()
                         .map(RWorld::getRWorldName)
                         .collect(Collectors.toList())
         );
-        cm.getCompletionHandler().register("#worldtype", input ->
+        commandManager.registerSuggestion(SuggestionKey.of("#worldtype"), (sender, context) ->
                 Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID", "FLAT")
         );
-        cm.getParameterHandler().register(RWorld.WorldType.class, argument -> {
-            try {
-                RWorld.WorldType tt = RWorld.WorldType.valueOf(argument.toString().toUpperCase());
-                return new TypeResult(tt, argument);
-            } catch (Exception e) {
-                return new TypeResult(null, argument);
-            }
-        });
-        cm.getCompletionHandler().register("#bool", input ->
+        commandManager.registerSuggestion(SuggestionKey.of("#bool"), (sender, context) ->
                 Arrays.asList("true", "false")
         );
-        cm.getCompletionHandler().register("#flags", input -> Arrays.asList(
-                "block_break",
-                "block_place",
-                "block_interact",
-                "container_interact",
-                "pvp",
-                "pve",
-                "hunger",
-                "take_damage",
-                "explosions",
-                "item_pickup",
-                "item_drop",
-                "entity_spawning",
-                "enter",
-                "access_crafting",
-                "access_chests",
-                "access_hoppers",
-                "no_chat",
-                "no_consumables",
-                "disabled_nether_portal",
-                "disabled_end_portal",
-                "no_fire_spreading",
-                "leaf_decay",
-                "item_pickup_only_owner"
-        ));
-        cm.getCompletionHandler().register("#gamerules", input -> Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.toList()));
+        commandManager.registerSuggestion(SuggestionKey.of("#flags"), (sender, context) ->
+                Arrays.asList(
+                        "block_break",
+                        "block_place",
+                        "block_interact",
+                        "container_interact",
+                        "pvp",
+                        "pve",
+                        "hunger",
+                        "take_damage",
+                        "explosions",
+                        "item_pickup",
+                        "item_drop",
+                        "entity_spawning",
+                        "enter",
+                        "access_crafting",
+                        "access_chests",
+                        "access_hoppers",
+                        "no_chat",
+                        "no_consumables",
+                        "disabled_nether_portal",
+                        "disabled_end_portal",
+                        "no_fire_spreading",
+                        "leaf_decay",
+                        "item_pickup_only_owner"
+                ));
+        commandManager.registerSuggestion(SuggestionKey.of("#gamerules"), (sender, context) ->
+                Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.toList()));
+        commandManager.registerArgument(RWorld.WorldType.class, (sender, argument) -> {
+            try {
+                return RWorld.WorldType.valueOf(argument.toUpperCase());
+            } catch (Exception e) {
+                return null;
+            }
+        });
 
-        cm.register(new RealRegionsCMD(realRegions));
+        commandManager.registerCommand(new RealRegionsCMD(realRegions));
 
         realRegions.getWorldManagerAPI().loadWorlds();
 
