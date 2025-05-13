@@ -6,13 +6,13 @@
 
     <groupId>joserodpt</groupId>
     <artifactId>realregions-api</artifactId>
-    <version>0.7.6</version>
+    <version>0.7.7</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>joserodpt.realregions</groupId>
         <artifactId>realregions-parent</artifactId>
-        <version>0.7.6</version>
+        <version>0.7.7</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

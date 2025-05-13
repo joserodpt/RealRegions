@@ -138,6 +138,7 @@ public class Region {
         this.disabledEndPortal = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Disabled-End-Portal", false);
         this.noFireSpreading = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".No-Fire-Spreading", false);
         this.itemPickupOnlyOwner = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Item-Pickup-Only-Owner", false);
+        this.leafDecay = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Leaf-Decay", false);
 
         this.saveData(Region.RegionData.FLAGS);
     }
@@ -171,6 +172,7 @@ public class Region {
                 cfg.set("Regions." + this.name + ".Disabled-End-Portal", this.disabledEndPortal);
                 cfg.set("Regions." + this.name + ".No-Fire-Spreading", this.noFireSpreading);
                 cfg.set("Regions." + this.name + ".Item-Pickup-Only-Owner", this.itemPickupOnlyOwner);
+                cfg.set("Regions." + this.name + ".Leaf-Decay", this.leafDecay);
                 break;
             case SETTINGS:
                 cfg.set("Regions." + this.name + ".Type", this.getType().name());
