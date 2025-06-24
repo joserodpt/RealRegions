@@ -30,8 +30,5 @@ public class IO {
                 .sum();
     }
 
-    public static long toMB(long l)
-    {
-        return l / (1024 * 1024);
-    }
+    public static long toMB(long l) {return l / (1024 * 1024);}
 }

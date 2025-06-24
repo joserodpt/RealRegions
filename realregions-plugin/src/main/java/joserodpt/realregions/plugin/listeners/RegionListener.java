@@ -280,6 +280,8 @@ public class RegionListener implements Listener {
         if (selected != null) {
             Player p = e.getPlayer();
 
+            notifyRegionChange(p, selected);
+
             if (p.isOp() || p.hasPermission(RegionFlags.ENTER.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
                 return;
             }
@@ -312,8 +314,6 @@ public class RegionListener implements Listener {
                     }
                     break;
             }
-
-            notifyRegionChange(p, selected);
         }
     }
 
@@ -331,11 +331,11 @@ public class RegionListener implements Listener {
         if (selected != null) {
             Player p = e.getPlayer();
 
+            notifyRegionChange(p, selected);
+
             if (p.isOp() || p.hasPermission(RegionFlags.ENTER.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
                 return;
             }
-
-            notifyRegionChange(p, selected);
 
             if (!selected.enter) {
                 Particles.spawnParticle(Particles.RRParticle.LAVA, e.getTo());
