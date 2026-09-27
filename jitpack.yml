@@ -1,0 +1,4 @@
+# JitPack builds this repo on demand so realregions-api can be consumed without a
+# manual `git clone && mvn install`. Java 21 matches the other Real* plugins.
+jdk:
+  - openjdk21
