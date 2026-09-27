@@ -25,6 +25,7 @@ public enum RegionFlags {
     ACCESS_CRAFTING_TABLES("access-crafting-tables"),
     ACCESS_HOPPERS("access-hoppers"),
     BLOCK_BREAK("block-break"),
+    BLOCK_COMMANDS("block-commands"),
     BLOCK_INTERACTIONS("block-interactions"),
     BLOCK_PLACE("block-place"),
     CONTAINER_INTERACTIONS("container-interactions"),

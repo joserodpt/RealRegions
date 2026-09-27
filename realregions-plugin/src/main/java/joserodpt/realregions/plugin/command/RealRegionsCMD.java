@@ -43,6 +43,7 @@ import revxrsal.commands.annotation.Usage;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -314,6 +315,9 @@ public class RealRegionsCMD {
                 case "item_pickup_only_owner":
                     TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemPickupOnlyOwner ? "&a✔ true" : "&c❌ false")).send(commandSender);
                     break;
+                case "block_commands":
+                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockCommands ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    break;
                 default:
                     TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
                     break;
@@ -394,6 +398,9 @@ public class RealRegionsCMD {
             case "item_pickup_only_owner":
                 reg.itemPickupOnlyOwner = value;
                 break;
+            case "block_commands":
+                reg.blockCommands = value;
+                break;
             default:
                 notFound = true;
                 TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
@@ -401,8 +408,27 @@ public class RealRegionsCMD {
         }
 
         if (!notFound) {
+            reg.saveData(Region.RegionData.FLAGS);
             TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&a✔ true" : "&c❌ false")).send(commandSender);
         }
+    }
+
+    @Subcommand({"blockcommands", "bc"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr blockcommands <region@world> <all | command...>")
+    @SuppressWarnings("unused")
+    public void blockcommandscmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, final String commands) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            return;
+        }
+
+        //turning the flag on is left to /rr flag, so a list can be set up before it applies
+        reg.setBlockedCommands(commands.trim().equalsIgnoreCase("all") ? Collections.emptyList() : Arrays.asList(commands.split("[\\s,]+")));
+        reg.saveData(Region.RegionData.FLAGS);
+        TranslatableLine.REGION_BLOCKED_COMMANDS_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(reg.getDisplayName()))
+                .setV2(TranslatableLine.ReplacableVar.INPUT.eq(RegionSettingsGUI.blockedCommandsText(reg))).send(commandSender);
     }
 
     @Subcommand({"regions", "world", "r"})

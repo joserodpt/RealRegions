@@ -23,6 +23,7 @@
 * Flag Toggling by GUI.
 * Console Commands also Supported.
 * Bypass any Region Flag with Permissions
+* Block all commands, or only some, inside a region.
 * Create, Import, Unload and Manage Worlds with commands and GUI.
 
 ----
@@ -117,6 +118,11 @@
     - Command: `/realregions players <name>` or `/rr plrs <name>`
     - Permission: `realregions.admin`
     - Function: Displays a graphical menu showing players present in the specified world.
+
+19. Block Commands Command:
+    - Command: `/realregions blockcommands <region@world> <all | command...>` or `/rr bc`
+    - Permission: `realregions.admin`
+    - Function: Sets which commands the `block_commands` flag blocks in a region, e.g. `/rr bc spawn@world tp home`. `all` blocks every command. Turn the flag on with `/rr flag <region@world> block_commands true` or from the region menu. Players with `realregions.<world>.<region>.block-commands.bypass` are not affected.
 
 ----
 

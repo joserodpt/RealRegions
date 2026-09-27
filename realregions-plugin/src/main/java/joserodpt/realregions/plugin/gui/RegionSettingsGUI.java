@@ -192,6 +192,14 @@ public class RegionSettingsGUI {
 						"  &eBypass&f: " + RegionFlags.NO_CHAT.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
+		inv.setItem(33, Items.createItem(Material.COMMAND_BLOCK, 1, "&7&lBlock Commands &r&7[" + getStyle(r.blockCommands) + "&7]",
+				Arrays.asList("&e&nDescription", "  Blocks commands in this region.",
+						"  &fBlocked: " + blockedCommandsText(r),
+						"&e&nPermissions",
+						"  &eBypass&f: " + RegionFlags.BLOCK_COMMANDS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
+						"&f&nLeft-click&r&f to change value", "&f&nShift-click&r&f to choose which commands",
+						"&f&nRight-click&r&f to copy bypass permission")));
+
 		inv.setItem(32, Items.createItem(Material.EMERALD, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
 				Arrays.asList("&e&nDescription", "  Region Priority over others.",
 						"Click to change the value.")));
@@ -209,6 +217,10 @@ public class RegionSettingsGUI {
 
 		inv.setItem(49, close);
 		inv.setItem(53, Items.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
+	}
+
+	public static String blockedCommandsText(Region r) {
+		return r.blockedCommands.isEmpty() ? "&ball commands" : "&b/" + String.join("&f, &b/", r.blockedCommands);
 	}
 
 	private String getStyle(boolean b) {
@@ -524,6 +536,33 @@ public class RegionSettingsGUI {
 									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								} else if (event.getClick() == ClickType.RIGHT) {
 									RegionFlags.NO_CHAT.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
+								}
+								break;
+
+							case 33:
+								if (event.getClick() == ClickType.LEFT) {
+									current.r.blockCommands = !current.r.blockCommands;
+									current.r.saveData(Region.RegionData.FLAGS);
+									current.load();
+									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+								} else if (event.getClick() == ClickType.RIGHT) {
+									RegionFlags.BLOCK_COMMANDS.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
+								} else if (event.isShiftClick()) {
+									//space or comma separated; "all" goes back to blocking every command
+									new PlayerInput(player, true, input -> {
+										current.r.setBlockedCommands(input.trim().equalsIgnoreCase("all")
+												? Collections.emptyList()
+												: Arrays.asList(input.split("[\\s,]+")));
+										current.r.saveData(Region.RegionData.FLAGS);
+										TranslatableLine.REGION_BLOCKED_COMMANDS_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(current.r.getDisplayName()))
+												.setV2(TranslatableLine.ReplacableVar.INPUT.eq(blockedCommandsText(current.r))).send(player);
+										new BukkitRunnable() {
+											public void run() {
+												new RegionSettingsGUI(player, current.r, current.rr).openInventory(player);
+											}
+										}.runTaskLater(current.rr.getPlugin(), 2);
+									}, input -> new RegionSettingsGUI(player, current.r, current.rr).openInventory(player));
+									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
 								}
 								break;
 

@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -85,6 +86,9 @@ public class Region {
     public boolean noFireSpreading = false;
     public boolean leafDecay = false;
     public boolean itemPickupOnlyOwner = false;
+    public boolean blockCommands = false;
+    //the commands blockCommands applies to, lowercase and without the slash; empty blocks every command
+    public List<String> blockedCommands = new ArrayList<>();
 
     public int priority;
 
@@ -139,6 +143,8 @@ public class Region {
         this.noFireSpreading = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".No-Fire-Spreading", false);
         this.itemPickupOnlyOwner = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Item-Pickup-Only-Owner", false);
         this.leafDecay = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Leaf-Decay", false);
+        this.blockCommands = rw.getConfig().getBoolean("Regions." + this.getRegionName() + ".Commands.Block", false);
+        this.setBlockedCommands(rw.getConfig().getStringList("Regions." + this.getRegionName() + ".Commands.Blocked"));
 
         this.saveData(Region.RegionData.FLAGS);
     }
@@ -173,6 +179,8 @@ public class Region {
                 cfg.set("Regions." + this.name + ".No-Fire-Spreading", this.noFireSpreading);
                 cfg.set("Regions." + this.name + ".Item-Pickup-Only-Owner", this.itemPickupOnlyOwner);
                 cfg.set("Regions." + this.name + ".Leaf-Decay", this.leafDecay);
+                cfg.set("Regions." + this.name + ".Commands.Block", this.blockCommands);
+                cfg.set("Regions." + this.name + ".Commands.Blocked", this.blockedCommands);
                 break;
             case SETTINGS:
                 cfg.set("Regions." + this.name + ".Type", this.getType().name());
@@ -275,7 +283,8 @@ public class Region {
                 Format.styleBoolean(this.noFireSpreading),
                 Format.styleBoolean(this.disabledNetherPortal),
                 Format.styleBoolean(this.disabledEndPortal),
-                Format.styleBoolean(this.leafDecay)
+                Format.styleBoolean(this.leafDecay),
+                Format.styleBoolean(this.blockCommands)
         ));
 
         // Add a special message if the origin is REALMINES
@@ -295,7 +304,7 @@ public class Region {
         );
     }
 
-    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21, String s22) {
+    public List<String> flagsList(String s, String s2, String s3, String s4, String s5, String s6, String s7, String s8, String s9, String s10, String s11, String s12, String s13, String s14, String s15, String s16, String s17, String s18, String s19, String s20, String s21, String s22, String s23) {
         return Arrays.asList("",
                 "&6Flags:",
                 " &fAccess Chests: " + s,
@@ -320,6 +329,7 @@ public class Region {
                 " &fDisable Nether Portal: " + s20,
                 " &fDisable End Portal: " + s21,
                 " &fLeaf Decay: " + s22,
+                " &fBlock Commands: " + s23,
 
                 "&f",
                 "&7Left Click to edit this region.",
@@ -328,6 +338,35 @@ public class Region {
                 "&7Shift + Right Click to change this regions displayname.",
                 "&cQ to delete this region."
         );
+    }
+
+    /**
+     * Whether a command is blocked here. {@code label} is what was typed after the slash, so a
+     * namespaced {@code /minecraft:tp} is caught by a {@code tp} entry. Aliases are not resolved:
+     * each one has to be listed on its own.
+     */
+    public boolean isCommandBlocked(String label) {
+        if (!this.blockCommands) {
+            return false;
+        }
+        if (this.blockedCommands.isEmpty()) {
+            return true;
+        }
+        String cmd = normalizeCommand(label);
+        return this.blockedCommands.contains(cmd.substring(cmd.indexOf(':') + 1)) || this.blockedCommands.contains(cmd);
+    }
+
+    public void setBlockedCommands(List<String> commands) {
+        this.blockedCommands = commands.stream()
+                .map(Region::normalizeCommand)
+                .filter(c -> !c.isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private static String normalizeCommand(String cmd) {
+        String c = cmd.trim().toLowerCase(Locale.ROOT);
+        return c.startsWith("/") ? c.substring(1) : c;
     }
 
     public void teleport(Player p, boolean silent) {

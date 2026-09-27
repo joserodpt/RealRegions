@@ -47,6 +47,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -509,6 +510,27 @@ public class RegionListener implements Listener {
                 e.setCancelled(true);
                 if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
                     TranslatableLine.REGION_CANT_CHAT.send(p);
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onCommand(PlayerCommandPreprocessEvent e) {
+        Region selected = rr.getRegionManagerAPI().getFirstPriorityRegionContainingLocation(e.getPlayer().getLocation());
+
+        if (selected != null) {
+            Player p = e.getPlayer();
+
+            if (p.isOp() || p.hasPermission(RegionFlags.BLOCK_COMMANDS.getBypassPermission(selected.getRWorld().getRWorldName(), selected.getRegionName()))) {
+                return;
+            }
+
+            String label = e.getMessage().substring(1).split(" ", 2)[0];
+            if (selected.isCommandBlocked(label)) {
+                e.setCancelled(true);
+                if (!RRConfig.file().getBoolean("RealRegions.Disable-Alert-Messages")) {
+                    TranslatableLine.REGION_CANT_USE_COMMAND.send(p);
                 }
             }
         }

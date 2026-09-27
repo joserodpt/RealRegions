@@ -103,7 +103,8 @@ public final class RRCommandManager {
                 "disabled_end_portal",
                 "no_fire_spreading",
                 "leaf_decay",
-                "item_pickup_only_owner"));
+                "item_pickup_only_owner",
+                "block_commands"));
 
         sources.put(RRSuggestion.GAMERULES, context -> Arrays.stream(GameRule.values())
                 .map(GameRule::getName)

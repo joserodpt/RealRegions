@@ -1,4 +1,4 @@
-Version: 10
+Version: 11
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -21,6 +21,8 @@ Region:
   Cant-PVP: "&cYou can't PVP here."
   Cant-PVE: "&cYou can't PVE here."
   Cant-Chat: "&cYou can't chat here."
+  Cant-Use-Command: "&cYou can't use that command here."
+  Blocked-Commands-Set: "&fBlocked commands in &b%name%&f: %input%"
   Cant-Consume: "&cYou can't consume that here."
   Disabled-End-Portal: "&cYou can't use the end portal here."
   Disabled-Nether-Portal: "&cYou can't use the end portal here."

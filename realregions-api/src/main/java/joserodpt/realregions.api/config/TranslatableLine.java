@@ -42,6 +42,8 @@ public enum TranslatableLine {
     REGION_CANT_PVP("Region.Cant-PVP"),
     REGION_CANT_PVE("Region.Cant-PVE"),
     REGION_CANT_CHAT("Region.Cant-Chat"),
+    REGION_CANT_USE_COMMAND("Region.Cant-Use-Command"),
+    REGION_BLOCKED_COMMANDS_SET("Region.Blocked-Commands-Set", ReplacableVar.NAME, ReplacableVar.INPUT),
     REGION_CANT_CONSUME("Region.Cant-Consume"),
     REGION_DISABLED_END_PORTAL("Region.Disabled-End-Portal"),
     REGION_DISABLED_NETHER_PORTAL("Region.Disabled-Nether-Portal"),
