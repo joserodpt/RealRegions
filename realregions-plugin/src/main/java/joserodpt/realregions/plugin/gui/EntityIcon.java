@@ -15,8 +15,8 @@ package joserodpt.realregions.plugin.gui;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realregions.api.utils.Format;
+import joserodpt.realutils.item.Items;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -51,11 +51,11 @@ public class EntityIcon {
 
     public ItemStack getIcon() {
         if (this.getEntity().getType() == EntityType.PLAYER) {
-            return Itens.createItem(Material.PLAYER_HEAD, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
+            return Items.createItem(Material.PLAYER_HEAD, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Format.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
         }
 
         if (this.getEntity().getType() == EntityType.MINECART_CHEST) {
-            return Itens.createItem(Material.CHEST_MINECART, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
+            return Items.createItem(Material.CHEST_MINECART, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Format.cords(this.getEntity().getLocation()), this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u","&7Click to teleport!"));
         }
 
         String mat = this.getEntity().getType().name().toUpperCase() + "_SPAWN_EGG";
@@ -63,15 +63,15 @@ public class EntityIcon {
             Material m = Material.valueOf(mat);
             if (this.getEntity().getCustomName() == null)
             {
-                return Itens.createItem(m, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
+                return Items.createItem(m, 1, "&f" + getEntityName(), Arrays.asList("&fLocation: &b" + Format.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             } else {
-                return Itens.createItem(m, 1, "&f" + this.getEntity().getCustomName() + " &7[&r&f" + getEntityName() + "&7]", Arrays.asList("&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
+                return Items.createItem(m, 1, "&f" + this.getEntity().getCustomName() + " &7[&r&f" + getEntityName() + "&7]", Arrays.asList("&fLocation: &b" + Format.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             }
         } catch (Exception e) {
             if (this.getEntity().getCustomName() == null) {
-                return Itens.createItem(Material.PAINTING, 1, "&f" + getEntityName(), Arrays.asList("&8Icon could not be found.", "&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
+                return Items.createItem(Material.PAINTING, 1, "&f" + getEntityName(), Arrays.asList("&8Icon could not be found.", "&fLocation: &b" + Format.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             } else {
-                return Itens.createItem(Material.PAINTING, 1, "&f" + this.getEntity().getCustomName() + " &7[&r&f" + getEntityName() + "&7]", Arrays.asList("&8Icon could not be found.", "&fLocation: &b" + Text.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
+                return Items.createItem(Material.PAINTING, 1, "&f" + this.getEntity().getCustomName() + " &7[&r&f" + getEntityName() + "&7]", Arrays.asList("&8Icon could not be found.", "&fLocation: &b" + Format.cords(this.getEntity().getLocation()),this.distanceRelativeToPlayer == -1 ? "" : "&fDistance relative to you: &b" + this.distanceRelativeToPlayer + "u", "&7Click to teleport!"));
             }
         }
     }

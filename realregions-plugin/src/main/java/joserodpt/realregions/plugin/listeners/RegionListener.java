@@ -22,7 +22,7 @@ import joserodpt.realregions.plugin.RealRegionsPlugin;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
 import joserodpt.realregions.api.utils.Particles;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;

@@ -19,8 +19,8 @@ import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
-import joserodpt.realregions.api.utils.Text;
-import joserodpt.realregions.api.utils.Itens;
+import joserodpt.realutils.text.Text;
+import joserodpt.realutils.item.Items;
 import joserodpt.realutils.input.PlayerInput;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -50,7 +50,7 @@ public class RegionSettingsGUI {
 	private static Map<UUID, RegionSettingsGUI> inventories = new HashMap<>();
 	private Inventory inv;
 
-	private final ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+	private final ItemStack close = Items.createItem(Material.OAK_DOOR, 1, "&cClose",
 			Collections.singletonList("&fClick here to close this menu."));
 
 	private UUID uuid;
@@ -70,73 +70,73 @@ public class RegionSettingsGUI {
 
 	public void load() {
 		//row1
-		inv.setItem(1, Itens.createItem(Material.GOLDEN_APPLE, 1, "&7&lNo Consumables &r&7[" + getStyle(r.noConsumables) + "&7]",
+		inv.setItem(1, Items.createItem(Material.GOLDEN_APPLE, 1, "&7&lNo Consumables &r&7[" + getStyle(r.noConsumables) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows item consumables.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.NO_CONSUMABLES.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(2, Itens.createItem(Material.DIAMOND_PICKAXE, 1, "&7&lBlock Breaking &r&7[" + getStyle(r.blockBreak) + "&7]",
+		inv.setItem(2, Items.createItem(Material.DIAMOND_PICKAXE, 1, "&7&lBlock Breaking &r&7[" + getStyle(r.blockBreak) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows block breaking.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.BLOCK_BREAK.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(3, Itens.createItem(Material.GRASS_BLOCK, 1, "&7&lBlock Placing &r&7[" + getStyle(r.blockPlace) + "&7]",
+		inv.setItem(3, Items.createItem(Material.GRASS_BLOCK, 1, "&7&lBlock Placing &r&7[" + getStyle(r.blockPlace) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows block placing.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.BLOCK_PLACE.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(4, Itens.createItem(Material.STONE, 1, "&7&lBlock Interaction &r&7[" + getStyle(r.blockInteract) + "&7]",
+		inv.setItem(4, Items.createItem(Material.STONE, 1, "&7&lBlock Interaction &r&7[" + getStyle(r.blockInteract) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Block Interaction.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.BLOCK_INTERACTIONS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(5, Itens.createItem(Material.DIAMOND_SWORD, 1, "&7&lPVP &r&7[" + getStyle(r.pvp) + "&7]",
+		inv.setItem(5, Items.createItem(Material.DIAMOND_SWORD, 1, "&7&lPVP &r&7[" + getStyle(r.pvp) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows PVP (player vs player).", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.PVP.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(6, Itens.createItem(Material.IRON_SWORD, 1, "&7&lPVE &r&7[" + getStyle(r.pve) + "&7]",
+		inv.setItem(6, Items.createItem(Material.IRON_SWORD, 1, "&7&lPVE &r&7[" + getStyle(r.pve) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows PVE (player vs entity).", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.PVE.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
-		inv.setItem(7, Itens.createItem(Material.OBSIDIAN, 1, "&7&lDisabled Nether Portal &r&7[" + getStyle(r.disabledNetherPortal) + "&7]",
+		inv.setItem(7, Items.createItem(Material.OBSIDIAN, 1, "&7&lDisabled Nether Portal &r&7[" + getStyle(r.disabledNetherPortal) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Nether Portal Entering.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
 		//row2
 
-		inv.setItem(10, Itens.createItem(Material.ORANGE_WOOL, 1, "&7&lNo Fire Spreading &r&7[" + getStyle(r.noFireSpreading) + "&7]",
+		inv.setItem(10, Items.createItem(Material.ORANGE_WOOL, 1, "&7&lNo Fire Spreading &r&7[" + getStyle(r.noFireSpreading) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows spreakind of fire and mushrooms.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
-		inv.setItem(11, Itens.createItem(Material.CRAFTING_TABLE, 1, "&7&lCrafting &r&7[" + getStyle(r.accessCrafting) + "&7]",
+		inv.setItem(11, Items.createItem(Material.CRAFTING_TABLE, 1, "&7&lCrafting &r&7[" + getStyle(r.accessCrafting) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows access to Crafting Tables.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ACCESS_CRAFTING_TABLES.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(12, Itens.createItem(Material.CHEST, 1, "&7&lChests &r&7[" + getStyle(r.accessChests) + "&7]",
+		inv.setItem(12, Items.createItem(Material.CHEST, 1, "&7&lChests &r&7[" + getStyle(r.accessChests) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows chest interactions.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ACCESS_CHESTS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(13, Itens.createItem(Material.HOPPER, 1, "&7&lHoppers &r&7[" + getStyle(r.accessHoppers) + "&7]",
+		inv.setItem(13, Items.createItem(Material.HOPPER, 1, "&7&lHoppers &r&7[" + getStyle(r.accessHoppers) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows hopper interactions.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ACCESS_HOPPERS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(14, Itens.createItem(Material.ENDER_CHEST, 1, "&7&lContainer Interaction &r&7[" + getStyle(r.containerInteract) + "&7]",
+		inv.setItem(14, Items.createItem(Material.ENDER_CHEST, 1, "&7&lContainer Interaction &r&7[" + getStyle(r.containerInteract) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows container interactions.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.CONTAINER_INTERACTIONS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(15, Itens.createItem(Material.CREEPER_SPAWN_EGG, 1, "&7&lEntity Spawning &r&7[" + getStyle(r.entitySpawning) + "&7]",
+		inv.setItem(15, Items.createItem(Material.CREEPER_SPAWN_EGG, 1, "&7&lEntity Spawning &r&7[" + getStyle(r.entitySpawning) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Entity Spawning.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
-		inv.setItem(16, Itens.createItem(Material.END_PORTAL_FRAME, 1, "&7&lDisabled End Portal &r&7[" + getStyle(r.disabledEndPortal) + "&7]",
+		inv.setItem(16, Items.createItem(Material.END_PORTAL_FRAME, 1, "&7&lDisabled End Portal &r&7[" + getStyle(r.disabledEndPortal) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows End Portal Entering.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
@@ -144,71 +144,71 @@ public class RegionSettingsGUI {
 
 		//row3
 
-		inv.setItem(19, Itens.createItem(Material.OAK_LEAVES, 1, "&7&lLeave Decay &r&7[" + getStyle(r.leafDecay) + "&7]",
+		inv.setItem(19, Items.createItem(Material.OAK_LEAVES, 1, "&7&lLeave Decay &r&7[" + getStyle(r.leafDecay) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Leaf Decay in This Region this region.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
 
-		inv.setItem(20, Itens.createItem(Material.BARRIER, 1, "&7&lEnter &r&7[" + getStyle(r.enter) + "&7]",
+		inv.setItem(20, Items.createItem(Material.BARRIER, 1, "&7&lEnter &r&7[" + getStyle(r.enter) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows player access to this region.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
-		inv.setItem(21, Itens.createItem(Material.TNT, 1, "&7&lExplosions &r&7[" + getStyle(r.explosions) + "&7]",
+		inv.setItem(21, Items.createItem(Material.TNT, 1, "&7&lExplosions &r&7[" + getStyle(r.explosions) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows explosions.", "&e&nPermissions",
 						"  &fNot applicable for Players.",
 						"&f&nLeft-click&r&f to change value")));
 
-		inv.setItem(22, Itens.createItem(Material.COOKED_BEEF, 1, "&7&lHunger &r&7[" + getStyle(r.hunger) + "&7]",
+		inv.setItem(22, Items.createItem(Material.COOKED_BEEF, 1, "&7&lHunger &r&7[" + getStyle(r.hunger) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Hunger.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.HUNGER.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(23, Itens.createItem(Material.DROPPER, 1, "&7&lItem Drop &r&7[" + getStyle(r.itemDrop) + "&7]",
+		inv.setItem(23, Items.createItem(Material.DROPPER, 1, "&7&lItem Drop &r&7[" + getStyle(r.itemDrop) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows item drop.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ITEM_DROP.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(24, Itens.createItem(Material.HOPPER_MINECART, 1, "&7&lItem Pickup &r&7[" + getStyle(r.itemPickup) + "&7]",
+		inv.setItem(24, Items.createItem(Material.HOPPER_MINECART, 1, "&7&lItem Pickup &r&7[" + getStyle(r.itemPickup) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Item Pickup.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ITEM_PICKUP.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(25, Itens.createItem(Material.NAME_TAG, 1, "&7&lItem Pickup Only Owner &r&7[" + getStyle(r.itemPickupOnlyOwner) + "&7]",
+		inv.setItem(25, Items.createItem(Material.NAME_TAG, 1, "&7&lItem Pickup Only Owner &r&7[" + getStyle(r.itemPickupOnlyOwner) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Item Pickup only to the item's owner.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.ITEM_PICKUP_ONLY_OWNER.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
 
 		//row4
-		inv.setItem(30, Itens.createItem(Material.FLINT_AND_STEEL, 1, "&7&lTake Damage &r&7[" + getStyle(r.takeDamage) + "&7]",
+		inv.setItem(30, Items.createItem(Material.FLINT_AND_STEEL, 1, "&7&lTake Damage &r&7[" + getStyle(r.takeDamage) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Damage.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.TAKE_DAMAGE.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(31, Itens.createItem(Material.FILLED_MAP, 1, "&7&lNo Chat &r&7[" + getStyle(r.noChat) + "&7]",
+		inv.setItem(31, Items.createItem(Material.FILLED_MAP, 1, "&7&lNo Chat &r&7[" + getStyle(r.noChat) + "&7]",
 				Arrays.asList("&e&nDescription", "  Allows or Disallows Typing in Chat.", "&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.NO_CHAT.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
 						"&f&nLeft-click&r&f to change value", "&f&nRight-click&r&f to copy bypass permission")));
 
-		inv.setItem(32, Itens.createItem(Material.EMERALD, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
+		inv.setItem(32, Items.createItem(Material.EMERALD, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
 				Arrays.asList("&e&nDescription", "  Region Priority over others.",
 						"Click to change the value.")));
 
 		for (int i = 0; i < 9; ++i) {
-			inv.setItem(36 + i, Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
+			inv.setItem(36 + i, Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, " "));
 		}
 
-		inv.setItem(45, Itens.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
+		inv.setItem(45, Items.createItem(Material.ENDER_PEARL, 1, "&fTeleport to this region."));
 
-		inv.setItem(46, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Title &r&7[" + getStyle(r.announceEnterTitle) + "&7]",
+		inv.setItem(46, Items.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Title &r&7[" + getStyle(r.announceEnterTitle) + "&7]",
                 Collections.singletonList("&f&nLeft-click&r&f to toggle value")));
-		inv.setItem(47, Itens.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Actionbar &r&7[" + getStyle(r.announceEnterActionbar) + "&7]",
+		inv.setItem(47, Items.createItem(Material.TRIPWIRE_HOOK, 1, "&fAnnounce Enter Actionbar &r&7[" + getStyle(r.announceEnterActionbar) + "&7]",
                 Collections.singletonList("&f&nLeft-click&r&f to toggle value")));
 
 		inv.setItem(49, close);
-		inv.setItem(53, Itens.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
+		inv.setItem(53, Items.createItem(Material.LAVA_BUCKET, 1, "&cDelete this region."));
 	}
 
 	private String getStyle(boolean b) {

@@ -15,7 +15,7 @@ package joserodpt.realregions.api.config;
  * @link https://github.com/joserodpt/RealRegions
  */
 
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import org.bukkit.command.CommandSender;
 
 public enum TranslatableLine {

@@ -20,10 +20,11 @@ import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.Pagination;
+import joserodpt.realutils.item.Items;
+import joserodpt.realutils.gui.Pagination;
+import joserodpt.realutils.gui.MaterialPickerGUI;
 import joserodpt.realutils.input.PlayerInput;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,10 +54,10 @@ public class RegionsListGUI {
     private static Map<UUID, RegionsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
-    private final ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
-    private final ItemStack newr = Itens.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
+    private final ItemStack placeholder = Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "&7Regions");
+    private final ItemStack newr = Items.createItem(Material.CRAFTING_TABLE, 1, "&b&lNew Region", Collections.singletonList("&FClick to create a new region."));
 
-    private final ItemStack close = Itens.createItem(Material.OAK_DOOR, 1, "&cClose",
+    private final ItemStack close = Items.createItem(Material.OAK_DOOR, 1, "&cClose",
             Collections.singletonList("&fClick here to close this menu."));
 
     private final UUID uuid;
@@ -113,15 +114,15 @@ public class RegionsListGUI {
         }
 
 
-        this.inv.setItem(16, this.r.isLoaded() ? Itens.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world.")) :  Itens.createItem(Material.COMMAND_BLOCK, 1, "&aLoad", Collections.singletonList("&FClick to load this world.")));
-        this.inv.setItem(25,  Itens.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&9On this world: &b" + (r.getWorld() == null ? "?" : r.getWorld().getEntities().size()),"","&FClick to manage this worlds entities.")));
-        this.inv.setItem(34, Itens.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + (r.getWorld() == null ? "?" : r.getWorld().getPlayers().size()) + " &fplayers")));
+        this.inv.setItem(16, this.r.isLoaded() ? Items.createItem(Material.DISPENSER, 1, "&6Unload", Collections.singletonList("&FClick to unload this world.")) :  Items.createItem(Material.COMMAND_BLOCK, 1, "&aLoad", Collections.singletonList("&FClick to load this world.")));
+        this.inv.setItem(25,  Items.createItem(Material.SPAWNER, 1, "&aEntities", Arrays.asList("&9On this world: &b" + (r.getWorld() == null ? "?" : r.getWorld().getEntities().size()),"","&FClick to manage this worlds entities.")));
+        this.inv.setItem(34, Items.createItem(Material.PLAYER_HEAD, 1, "&9Players on this world", Collections.singletonList("&b" + (r.getWorld() == null ? "?" : r.getWorld().getPlayers().size()) + " &fplayers")));
 
         this.inv.setItem(41, newr);
 
-        ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+        ItemStack next = Items.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
                 Arrays.asList("&fCurrent Page: &b" + (pageNumber + 1), "&fClick here to go to the next page."));
-        ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+        ItemStack back = Items.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
                 Arrays.asList("&fCurrent Page: &b" + (pageNumber + 1), "&fClick here to go back to the next page."));
 
         this.inv.setItem(38, next);
@@ -270,7 +271,14 @@ public class RegionsListGUI {
                                     p.closeInventory();
                                     new BukkitRunnable() {
                                         public void run() {
-                                            MaterialPickerGUI mp = new MaterialPickerGUI(a, p, MaterialPickerGUI.PickType.ICON_REG, current.rr);
+                                            //null when closed without picking: back to this list either way
+                                            MaterialPickerGUI mp = new MaterialPickerGUI(p, "Select icon for " + a.getDisplayName(), MaterialPickerGUI.MaterialLists.ONLY_BLOCKS, m -> {
+                                                if (m != null) {
+                                                    a.setIcon(m);
+                                                    a.saveData(Region.RegionData.ICON);
+                                                }
+                                                new RegionsListGUI(p, a.getRWorld(), current.rr).openInventory(p);
+                                            });
                                             mp.openInventory(p);
                                         }
                                     }.runTaskLater(current.rr.getPlugin(), 2);

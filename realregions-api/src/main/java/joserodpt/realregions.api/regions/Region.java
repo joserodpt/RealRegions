@@ -16,10 +16,10 @@ package joserodpt.realregions.api.regions;
  */
 
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
+import joserodpt.realregions.api.utils.Format;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.config.TranslatableLine;
-import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.item.Items;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -190,8 +190,8 @@ public class Region {
                     if (cr.getCube() == null || cr.getCube().getPOS1() == null || cr.getCube().getPOS2() == null) {
                         return;
                     }
-                    cfg.set("Regions." + this.getRegionName() + ".POS.1", Text.locToTex(cr.getCube().getPOS1()));
-                    cfg.set("Regions." + this.getRegionName() + ".POS.2", Text.locToTex(cr.getCube().getPOS2()));
+                    cfg.set("Regions." + this.getRegionName() + ".POS.1", Format.locToTex(cr.getCube().getPOS1()));
+                    cfg.set("Regions." + this.getRegionName() + ".POS.2", Format.locToTex(cr.getCube().getPOS2()));
                 }
                 break;
             case ALL:
@@ -254,28 +254,28 @@ public class Region {
 
         // Add flags
         desc.addAll(flagsList(
-                Text.styleBoolean(this.accessChests),
-                Text.styleBoolean(this.accessCrafting),
-                Text.styleBoolean(this.accessHoppers),
-                Text.styleBoolean(this.blockBreak),
-                Text.styleBoolean(this.blockInteract),
-                Text.styleBoolean(this.blockPlace),
-                Text.styleBoolean(this.containerInteract),
-                Text.styleBoolean(this.entitySpawning),
-                Text.styleBoolean(this.enter),
-                Text.styleBoolean(this.explosions),
-                Text.styleBoolean(this.hunger),
-                Text.styleBoolean(this.itemDrop),
-                Text.styleBoolean(this.itemPickup),
-                Text.styleBoolean(this.pve),
-                Text.styleBoolean(this.pvp),
-                Text.styleBoolean(this.takeDamage),
-                Text.styleBoolean(this.noChat),
-                Text.styleBoolean(this.noConsumables),
-                Text.styleBoolean(this.noFireSpreading),
-                Text.styleBoolean(this.disabledNetherPortal),
-                Text.styleBoolean(this.disabledEndPortal),
-                Text.styleBoolean(this.leafDecay)
+                Format.styleBoolean(this.accessChests),
+                Format.styleBoolean(this.accessCrafting),
+                Format.styleBoolean(this.accessHoppers),
+                Format.styleBoolean(this.blockBreak),
+                Format.styleBoolean(this.blockInteract),
+                Format.styleBoolean(this.blockPlace),
+                Format.styleBoolean(this.containerInteract),
+                Format.styleBoolean(this.entitySpawning),
+                Format.styleBoolean(this.enter),
+                Format.styleBoolean(this.explosions),
+                Format.styleBoolean(this.hunger),
+                Format.styleBoolean(this.itemDrop),
+                Format.styleBoolean(this.itemPickup),
+                Format.styleBoolean(this.pve),
+                Format.styleBoolean(this.pvp),
+                Format.styleBoolean(this.takeDamage),
+                Format.styleBoolean(this.noChat),
+                Format.styleBoolean(this.noConsumables),
+                Format.styleBoolean(this.noFireSpreading),
+                Format.styleBoolean(this.disabledNetherPortal),
+                Format.styleBoolean(this.disabledEndPortal),
+                Format.styleBoolean(this.leafDecay)
         ));
 
         // Add a special message if the origin is REALMINES
@@ -287,7 +287,7 @@ public class Region {
         String typeDisplay = this.getType() == RegionType.INFINITE ? "INFINITE" : this.getType().name();
 
         // Create and return the item
-        return Itens.createItem(
+        return Items.createItem(
                 getIcon(),
                 1,
                 "&f" + getDisplayName() + " &7[&b" + typeDisplay + "&7]",

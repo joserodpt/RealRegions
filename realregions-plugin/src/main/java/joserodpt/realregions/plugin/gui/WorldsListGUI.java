@@ -17,10 +17,11 @@ package joserodpt.realregions.plugin.gui;
 
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.RWorld;
-import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.Pagination;
+import joserodpt.realutils.item.Items;
+import joserodpt.realutils.gui.Pagination;
+import joserodpt.realutils.gui.MaterialPickerGUI;
 import joserodpt.realutils.input.PlayerInput;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -49,12 +50,12 @@ public class WorldsListGUI {
     private static Map<UUID, WorldsListGUI> inventories = new HashMap<>();
     private Inventory inv;
 
-    private final ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    private final ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private final ItemStack placeholder = Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private final ItemStack next = Items.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    private final ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private final ItemStack back = Items.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    private final ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+    private final ItemStack close = Items.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to close this menu."));
 
     private UUID uuid;
@@ -148,16 +149,16 @@ public class WorldsListGUI {
         switch (ws)
         {
             case SIZE:
-                this.inv.setItem(47, Itens.createItem(Material.CHEST, 1, "&fSorted by &aSize", Collections.singletonList("&fClick here to sort by &bRegistration Date")));
+                this.inv.setItem(47, Items.createItem(Material.CHEST, 1, "&fSorted by &aSize", Collections.singletonList("&fClick here to sort by &bRegistration Date")));
                 break;
             case REGISTRATION_DATE:
-                this.inv.setItem(47, Itens.createItem(Material.CLOCK, 1, "&fSorted by &aRegistration Date", Collections.singletonList("&fClick here to sort by &bSize")));
+                this.inv.setItem(47, Items.createItem(Material.CLOCK, 1, "&fSorted by &aRegistration Date", Collections.singletonList("&fClick here to sort by &bSize")));
                 break;
         }
 
         this.inv.setItem(49, close);
 
-        this.inv.setItem(51, Itens.createItem(Material.CRAFTING_TABLE, 1, "&fCreate a New World"));
+        this.inv.setItem(51, Items.createItem(Material.CRAFTING_TABLE, 1, "&fCreate a New World"));
     }
 
     public void openInventory(Player target) {
@@ -258,7 +259,14 @@ public class WorldsListGUI {
                                         {
                                             public void run()
                                             {
-                                                MaterialPickerGUI mp = new MaterialPickerGUI(a, p, MaterialPickerGUI.PickType.ICON_WORLD, current.rr);
+                                                //null when closed without picking: back to this list either way
+                                                MaterialPickerGUI mp = new MaterialPickerGUI(p, "Select icon for " + a.getRWorldName(), MaterialPickerGUI.MaterialLists.ONLY_BLOCKS, m -> {
+                                                    if (m != null) {
+                                                        a.setIcon(m);
+                                                        a.saveData(RWorld.Data.ICON, true);
+                                                    }
+                                                    new WorldsListGUI(p, WorldSort.REGISTRATION_DATE, current.rr).openInventory(p);
+                                                });
                                                 mp.openInventory(p);
                                             }
                                         }.runTaskLater(current.rr.getPlugin(), 2);

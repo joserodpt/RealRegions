@@ -29,7 +29,7 @@ import joserodpt.realregions.api.config.RRLanguage;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import joserodpt.realregions.plugin.gui.ConfigEditor;
 import joserodpt.realregions.plugin.gui.Confirmations;
 import joserodpt.realregions.plugin.gui.EntityViewer;

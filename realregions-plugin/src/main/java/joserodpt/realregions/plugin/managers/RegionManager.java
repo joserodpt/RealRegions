@@ -17,6 +17,7 @@ package joserodpt.realregions.plugin.managers;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import joserodpt.realmines.api.mine.RMine;
+import joserodpt.realregions.api.utils.Format;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.managers.RegionManagerAPI;
@@ -25,7 +26,7 @@ import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Cube;
 import joserodpt.realregions.api.utils.CubeVisualizer;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -227,7 +228,7 @@ public class RegionManager extends RegionManagerAPI {
                 this.getViewing().add(a);
             }
 
-            TranslatableLine.REGION_VIEW_REGION.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).setV2(TranslatableLine.ReplacableVar.INPUT.eq(Text.styleBoolean(this.getViewing().contains(a)))).send(commandSender);
+            TranslatableLine.REGION_VIEW_REGION.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).setV2(TranslatableLine.ReplacableVar.INPUT.eq(Format.styleBoolean(this.getViewing().contains(a)))).send(commandSender);
         } else {
             TranslatableLine.REGION_CANT_VIEW_INFINITE_REGION.send(commandSender);
         }

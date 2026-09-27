@@ -15,13 +15,13 @@ package joserodpt.realregions.api;
  * @link https://github.com/joserodpt/RealRegions
  */
 
+import joserodpt.realregions.api.utils.Format;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.CuboidRegion;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.ItemStackSpringer;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realutils.item.ItemStackSpringer;
 import joserodpt.realregions.api.utils.IO;
-import joserodpt.realregions.api.utils.Itens;
+import joserodpt.realutils.item.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -174,13 +174,13 @@ public class RWorld implements Listener {
                     reg = new Region(regionName, this, mat);
                     break;
                 case CUBOID:
-                    Location pos1 = Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.1"), this.getWorld());
+                    Location pos1 = Format.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.1"), this.getWorld());
                     if (pos1 == null) {
                         Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". POS1 is invalid. Skipping!");
                         continue;
                     }
 
-                    Location pos2 = Text.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.2"), this.getWorld());
+                    Location pos2 = Format.textToLoc(this.getConfig().getString("Regions." + regionName + ".POS.2"), this.getWorld());
                     if (pos2 == null) {
                         Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". POS2 is invalid. Skipping!");
                         continue;
@@ -469,8 +469,8 @@ public class RWorld implements Listener {
 
     public ItemStack getItem() {
         return this.getWorldType() == WorldType.UNKNOWN_TO_BE_IMPORTED ?
-                Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&e&lUNIMPORTED&7]", Arrays.asList("&f", "&7Click to import this world.", "&cQ (Drop)&7 to &cdelete &7this world."))
-                : Itens.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.", "", "&fRegistered on: &b" + Text.convertUnixTimeToDate(this.getRegistrationDate()), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world.", "&cQ (Drop)&7 to unregister this world."));
+                Items.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&e&lUNIMPORTED&7]", Arrays.asList("&f", "&7Click to import this world.", "&cQ (Drop)&7 to &cdelete &7this world."))
+                : Items.createItem(getIcon(), 1, "&f" + this.getRWorldName() + " &7[&b" + (this.getWorld() == null ? "&e&lUNLOADED" : this.getWorldSizeMB() + "mb") + "&7]", Arrays.asList("&5", " &6On this world:", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getPlayers().size()) + " &fplayers.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getEntities().size()) + " &fentities.", "  &b" + (this.getWorld() == null ? "?" : this.getWorld().getLoadedChunks().length) + " &floaded chunks.", "", "&fRegistered on: &b" + Format.convertUnixTimeToDate(this.getRegistrationDate()), "&f", "&7Left Click to inspect this world.", "&7Middle click to change the world icon.", "&7Right Click to teleport to this world.", "&cQ (Drop)&7 to unregister this world."));
     }
 
     private Material getIcon() {

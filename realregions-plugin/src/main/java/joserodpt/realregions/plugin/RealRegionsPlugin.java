@@ -32,7 +32,6 @@ import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.plugin.gui.EntityViewer;
 import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
-import joserodpt.realregions.plugin.gui.MaterialPickerGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import joserodpt.realregions.plugin.listeners.GeneralListener;
@@ -40,8 +39,10 @@ import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
 import joserodpt.realutils.RealUtils;
 import joserodpt.realutils.dialog.Dialogs;
+import joserodpt.realutils.gui.MaterialPickerGUI;
 import joserodpt.realutils.input.PlayerInput;
 import joserodpt.realutils.text.Text;
+import joserodpt.realutils.update.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
@@ -90,7 +91,6 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(new RegionListener(realRegions), this);
         pm.registerEvents(WorldsListGUI.getListener(), this);
         pm.registerEvents(RegionsListGUI.getListener(), this);
-        pm.registerEvents(MaterialPickerGUI.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
         //typed input and confirmations are asked in dialogs on servers that have them, in chat everywhere else
         Dialogs.setup(this, () -> RRConfig.file().getBoolean("RealRegions.useDialogs", true));
@@ -101,6 +101,18 @@ public class RealRegionsPlugin extends JavaPlugin {
                 p -> RRLanguage.file().getStringList("System.Type-Input-Dialog"),
                 TranslatableLine.SYSTEM_INPUT_CANCELLED::send,
                 TranslatableLine.SYSTEM_ERROR_OCCURRED::send);
+        //the icon picker's words, as the picker RealRegions had before RealUtils; its listener comes with RealUtils.setup
+        MaterialPickerGUI.labels(() -> {
+            final MaterialPickerGUI.Labels labels = new MaterialPickerGUI.Labels();
+            labels.nextLore = Collections.singletonList("&fClick here to go to the next page.");
+            labels.previousName = "&6Back";
+            labels.previousLore = Collections.singletonList("&fClick here to go back to the previous page.");
+            labels.closeName = "&cGo Back";
+            labels.closeLore = Collections.singletonList("&fClick here to go back.");
+            labels.searchLore = Collections.singletonList("&fClick here to search for a block.");
+            labels.pickLore = Collections.singletonList("&fClick to pick this.");
+            return labels;
+        });
         pm.registerEvents(RegionSettingsGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 

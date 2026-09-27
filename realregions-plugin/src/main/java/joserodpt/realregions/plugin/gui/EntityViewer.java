@@ -18,9 +18,9 @@ package joserodpt.realregions.plugin.gui;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.RWorld;
-import joserodpt.realregions.api.utils.Text;
-import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.Pagination;
+import joserodpt.realutils.text.Text;
+import joserodpt.realutils.item.Items;
+import joserodpt.realutils.gui.Pagination;
 import joserodpt.realutils.input.PlayerInput;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -49,14 +49,14 @@ public class EntityViewer {
     private static Map<UUID, EntityViewer> inventories = new HashMap<>();
     private Inventory inv;
 
-    private ItemStack placeholder = Itens.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
-    private ItemStack next = Itens.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
+    private ItemStack placeholder = Items.createItem(Material.BLACK_STAINED_GLASS_PANE, 1, "");
+    private ItemStack next = Items.createItem(Material.GREEN_STAINED_GLASS, 1, "&aNext",
             Collections.singletonList("&fClick here to go to the next page."));
-    private ItemStack back = Itens.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
+    private ItemStack back = Items.createItem(Material.YELLOW_STAINED_GLASS, 1, "&6Back",
             Collections.singletonList("&fClick here to go back to the next page."));
-    private ItemStack close = Itens.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
+    private ItemStack close = Items.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to go back."));
-    private ItemStack search = Itens.createItem(Material.OAK_SIGN, 1, "&9Search",
+    private ItemStack search = Items.createItem(Material.OAK_SIGN, 1, "&9Search",
             Collections.singletonList("&fClick here to search for a entity."));
 
     private UUID uuid;
