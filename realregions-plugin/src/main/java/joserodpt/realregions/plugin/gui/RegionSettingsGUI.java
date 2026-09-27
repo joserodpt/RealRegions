@@ -45,6 +45,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.INPUT;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+
 public class RegionSettingsGUI {
 
 	private static Map<UUID, RegionSettingsGUI> inventories = new HashMap<>();
@@ -554,8 +557,8 @@ public class RegionSettingsGUI {
 												? Collections.emptyList()
 												: Arrays.asList(input.split("[\\s,]+")));
 										current.r.saveData(Region.RegionData.FLAGS);
-										TranslatableLine.REGION_BLOCKED_COMMANDS_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(current.r.getDisplayName()))
-												.setV2(TranslatableLine.ReplacableVar.INPUT.eq(blockedCommandsText(current.r))).send(player);
+										TranslatableLine.REGION_BLOCKED_COMMANDS_SET.with(NAME, current.r.getDisplayName())
+												.with(INPUT, blockedCommandsText(current.r)).send(player);
 										new BukkitRunnable() {
 											public void run() {
 												new RegionSettingsGUI(player, current.r, current.rr).openInventory(player);
@@ -578,7 +581,7 @@ public class RegionSettingsGUI {
 
 									current.r.setPriority(Integer.valueOf(input));
 									current.r.saveData(Region.RegionData.SETTINGS);
-									TranslatableLine.PRIORITY_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(player);
+									TranslatableLine.PRIORITY_CHANGED.with(INPUT, Text.color(input)).send(player);
 									new BukkitRunnable() {
 										public void run() {
 											RegionSettingsGUI wv = new RegionSettingsGUI(player, current.r, current.rr);

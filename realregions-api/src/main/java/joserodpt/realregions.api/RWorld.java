@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.WORLD;
+
 public class RWorld implements Listener {
 
     public enum WorldType {FLAT, NORMAL, NETHER, THE_END, VOID, UNKNOWN_TO_BE_IMPORTED}
@@ -366,7 +368,7 @@ public class RWorld implements Listener {
 
         p.teleport(this.world.getSpawnLocation());
         if (!silent) {
-            TranslatableLine.WORLD_TP.setV1(TranslatableLine.ReplacableVar.WORLD.eq(this.getRWorldName())).send(p);
+            TranslatableLine.WORLD_TP.with(WORLD, this.getRWorldName()).send(p);
         }
     }
 

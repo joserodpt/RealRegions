@@ -23,6 +23,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.WORLD;
+
 public class CuboidRegion extends Region {
 
     private Cube cube;
@@ -55,7 +58,7 @@ public class CuboidRegion extends Region {
 
         p.teleport(this.cube.getCenter());
         if (!silent) {
-            TranslatableLine.REGION_TP.setV1(TranslatableLine.ReplacableVar.NAME.eq(super.getDisplayName())).setV2(TranslatableLine.ReplacableVar.WORLD.eq(super.getRWorld().getRWorldName())).send(p);
+            TranslatableLine.REGION_TP.with(NAME, super.getDisplayName()).with(WORLD, super.getRWorld().getRWorldName()).send(p);
         }
     }
 

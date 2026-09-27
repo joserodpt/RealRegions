@@ -49,6 +49,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.INPUT;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.WORLD;
+
 public class RegionsListGUI {
 
     private static Map<UUID, RegionsListGUI> inventories = new HashMap<>();
@@ -199,7 +202,7 @@ public class RegionsListGUI {
                             case 41:
                                 if (!current.r.getWorld().getName().equals(p.getWorld().getName()))
                                 {
-                                    TranslatableLine.REGION_NOT_IN_WORLD.setV1(TranslatableLine.ReplacableVar.WORLD.eq(current.r.getWorld().getName())).send(p);
+                                    TranslatableLine.REGION_NOT_IN_WORLD.with(WORLD, current.r.getWorld().getName()).send(p);
                                     return;
                                 }
 
@@ -298,7 +301,7 @@ public class RegionsListGUI {
                                     new PlayerInput(p, false, input -> {
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
-                                        TranslatableLine.REGION_DISPLAY_NAME_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(p);
+                                        TranslatableLine.REGION_DISPLAY_NAME_CHANGED.with(INPUT, Text.color(input)).send(p);
                                         new BukkitRunnable() {
                                             public void run() {
                                                 RegionsListGUI g = new RegionsListGUI(p, current.r, current.rr);

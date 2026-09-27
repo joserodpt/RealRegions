@@ -62,6 +62,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+
 public class RegionListener implements Listener {
     private final RealRegionsAPI rr;
 
@@ -355,11 +357,11 @@ public class RegionListener implements Listener {
                 if (rr.getRegionManagerAPI().getLastRegions().get(player.getUniqueId()) != r) {
                     // announce region change via titles
                     if (r.announceEnterTitle)
-                        player.sendTitle(TranslatableLine.REGION_ENTERING_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(),
-                                TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(), 10, 40, 10);
+                        player.sendTitle(TranslatableLine.REGION_ENTERING_TITLE.with(NAME, r.getDisplayName()).get(),
+                                TranslatableLine.REGION_ENTERING_SUBTITLE.with(NAME, r.getDisplayName()).get(), 10, 40, 10);
 
                     if (r.announceEnterActionbar)
-                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(TranslatableLine.REGION_ENTERING_SUBTITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get()));
+                        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(TranslatableLine.REGION_ENTERING_SUBTITLE.with(NAME, r.getDisplayName()).get()));
                 }
                 rr.getRegionManagerAPI().getLastRegions().put(player.getUniqueId(), r);
             } else {

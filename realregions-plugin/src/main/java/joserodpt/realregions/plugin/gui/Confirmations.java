@@ -22,6 +22,8 @@ import joserodpt.realutils.dialog.Dialogs;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+
 /**
  * The yes-or-no questions asked before something that can't be undone: deleting a region, and
  * unloading or deleting a world.
@@ -41,8 +43,8 @@ public final class Confirmations {
             return false;
         }
         return Dialogs.confirm((Player) sender,
-                TranslatableLine.REGION_DELETE_CONFIRM_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(),
-                TranslatableLine.REGION_DELETE_CONFIRM.setV1(TranslatableLine.ReplacableVar.NAME.eq(r.getDisplayName())).get(),
+                TranslatableLine.REGION_DELETE_CONFIRM_TITLE.with(NAME, r.getDisplayName()).get(),
+                TranslatableLine.REGION_DELETE_CONFIRM.with(NAME, r.getDisplayName()).get(),
                 TranslatableLine.REGION_DELETE_CONFIRM_BUTTON.get(), null, confirmed, declined);
     }
 
@@ -51,8 +53,8 @@ public final class Confirmations {
             return false;
         }
         return Dialogs.confirm((Player) sender,
-                TranslatableLine.WORLD_UNLOAD_CONFIRM_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(rw.getRWorldName())).get(),
-                TranslatableLine.WORLD_UNLOAD_CONFIRM.setV1(TranslatableLine.ReplacableVar.NAME.eq(rw.getRWorldName())).get(),
+                TranslatableLine.WORLD_UNLOAD_CONFIRM_TITLE.with(NAME, rw.getRWorldName()).get(),
+                TranslatableLine.WORLD_UNLOAD_CONFIRM.with(NAME, rw.getRWorldName()).get(),
                 TranslatableLine.WORLD_UNLOAD_CONFIRM_BUTTON.get(), null, confirmed, declined);
     }
 
@@ -62,8 +64,8 @@ public final class Confirmations {
             return false;
         }
         return Dialogs.confirm((Player) sender,
-                TranslatableLine.WORLD_DELETE_CONFIRM_TITLE.setV1(TranslatableLine.ReplacableVar.NAME.eq(rw.getRWorldName())).get(),
-                TranslatableLine.WORLD_DELETE_CONFIRM.setV1(TranslatableLine.ReplacableVar.NAME.eq(rw.getRWorldName())).get(),
+                TranslatableLine.WORLD_DELETE_CONFIRM_TITLE.with(NAME, rw.getRWorldName()).get(),
+                TranslatableLine.WORLD_DELETE_CONFIRM.with(NAME, rw.getRWorldName()).get(),
                 TranslatableLine.WORLD_DELETE_CONFIRM_BUTTON.get(), null, confirmed, declined);
     }
 

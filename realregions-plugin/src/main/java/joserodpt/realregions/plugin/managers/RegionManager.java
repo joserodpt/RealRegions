@@ -43,6 +43,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.INPUT;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+
 public class RegionManager extends RegionManagerAPI {
 
     private final RealRegionsAPI rra;
@@ -69,12 +72,12 @@ public class RegionManager extends RegionManagerAPI {
     @Override
     public void deleteRegion(CommandSender p, Region a) {
         if (a.getType() == Region.RegionType.INFINITE) {
-            TranslatableLine.REGION_CANT_DELETE_INFINITE.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+            TranslatableLine.REGION_CANT_DELETE_INFINITE.with(NAME, a.getDisplayName()).send(p);
             return;
         }
 
         if (a.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getOrigin().getDisplayName())).send(p);
+            TranslatableLine.REGION_IMPORTED_FROM_EXTERNAL.with(NAME, a.getOrigin().getDisplayName()).send(p);
             return;
         }
 
@@ -85,7 +88,7 @@ public class RegionManager extends RegionManagerAPI {
 
         deleteRegion(a);
 
-        TranslatableLine.REGION_DELETED.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).send(p);
+        TranslatableLine.REGION_DELETED.with(NAME, a.getDisplayName()).send(p);
     }
 
     @Override
@@ -172,7 +175,7 @@ public class RegionManager extends RegionManagerAPI {
     @Override
     public void setRegionBounds(Region reg, Player p) {
         if (reg.getOrigin() != Region.RegionOrigin.REALREGIONS) {
-            TranslatableLine.REGION_REDEFINE_EXTERNAL_PLUGIN.setV1(TranslatableLine.ReplacableVar.NAME.eq(reg.getDisplayName())).send(p);
+            TranslatableLine.REGION_REDEFINE_EXTERNAL_PLUGIN.with(NAME, reg.getDisplayName()).send(p);
             return;
         }
 
@@ -228,7 +231,7 @@ public class RegionManager extends RegionManagerAPI {
                 this.getViewing().add(a);
             }
 
-            TranslatableLine.REGION_VIEW_REGION.setV1(TranslatableLine.ReplacableVar.NAME.eq(a.getDisplayName())).setV2(TranslatableLine.ReplacableVar.INPUT.eq(Format.styleBoolean(this.getViewing().contains(a)))).send(commandSender);
+            TranslatableLine.REGION_VIEW_REGION.with(NAME, a.getDisplayName()).with(INPUT, Format.styleBoolean(this.getViewing().contains(a))).send(commandSender);
         } else {
             TranslatableLine.REGION_CANT_VIEW_INFINITE_REGION.send(commandSender);
         }

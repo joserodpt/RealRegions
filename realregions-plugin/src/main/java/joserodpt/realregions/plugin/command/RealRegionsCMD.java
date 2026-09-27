@@ -47,6 +47,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.INPUT;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.WORLD;
+
 /**
  * Every {@code /rr} subcommand. Those that only make sense in game take a {@link Player} rather than
  * a {@link CommandSender}, which is what tells the console it can't run them: Lamp raises
@@ -161,7 +165,7 @@ public class RealRegionsCMD {
         }
 
         if (worldtype == null) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, "like that").send(commandSender);
             return;
         }
 
@@ -171,7 +175,7 @@ public class RealRegionsCMD {
                 rw.teleport((Player) commandSender, true);
             }
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, worldtype.name()).send(commandSender);
             e.printStackTrace();
         }
     }
@@ -192,7 +196,7 @@ public class RealRegionsCMD {
         }
 
         if (worldtype == null) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, "like that").send(commandSender);
             return;
         }
 
@@ -202,7 +206,7 @@ public class RealRegionsCMD {
                 rw.teleport((Player) commandSender, true);
             }
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, worldtype.name()).send(commandSender);
             e.printStackTrace();
         }
     }
@@ -213,7 +217,7 @@ public class RealRegionsCMD {
     public void resetworld(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -228,7 +232,7 @@ public class RealRegionsCMD {
     public void regioncmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(p);
             return;
         }
 
@@ -243,80 +247,80 @@ public class RealRegionsCMD {
     public void regioncmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String regionName, @SuggestFrom(RRSuggestion.FLAGS) @Single final String flag, @Optional @SuggestFrom(RRSuggestion.BOOLEANS) @Single String valueSTR) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(regionName);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(regionName)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, regionName).send(commandSender);
             return;
         }
 
         if (valueSTR == null || valueSTR.isEmpty()) {
             switch (flag) {
                 case "block_break":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockBreak ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.blockBreak ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "block_place":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockPlace ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.blockPlace ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "block_interact":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockInteract ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.blockInteract ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "container_interact":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.containerInteract ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.containerInteract ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "pvp":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.pvp ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.pvp ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "pve":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.pve ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.pve ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "hunger":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.hunger ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.hunger ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "take_damage":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.takeDamage ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.takeDamage ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "explosions":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.explosions ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.explosions ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "item_pickup":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemPickup ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.itemPickup ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "item_drop":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemDrop ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.itemDrop ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "entity_spawning":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.entitySpawning ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.entitySpawning ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "enter":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.enter ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.enter ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "access_crafting":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessCrafting ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.accessCrafting ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "access_chests":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessChests ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.accessChests ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "access_hoppers":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.accessHoppers ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.accessHoppers ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "no_chat":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noChat ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.noChat ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "no_consumables":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noConsumables ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.noConsumables ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "disabled_nether_portal":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.disabledNetherPortal ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.disabledNetherPortal ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "disabled_end_portal":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.disabledEndPortal ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.disabledEndPortal ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "no_fire_spreading":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.noFireSpreading ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.noFireSpreading ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "item_pickup_only_owner":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.itemPickupOnlyOwner ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.itemPickupOnlyOwner ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 case "block_commands":
-                    TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(reg.blockCommands ? "&a✔ true" : "&c❌ false")).send(commandSender);
+                    TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, reg.blockCommands ? "&a✔ true" : "&c❌ false").send(commandSender);
                     break;
                 default:
                     TranslatableLine.REGION_FLAG_UNKNOWN.send(commandSender);
@@ -409,7 +413,7 @@ public class RealRegionsCMD {
 
         if (!notFound) {
             reg.saveData(Region.RegionData.FLAGS);
-            TranslatableLine.REGION_FLAG_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(flag)).setV2(TranslatableLine.ReplacableVar.INPUT.eq(value ? "&a✔ true" : "&c❌ false")).send(commandSender);
+            TranslatableLine.REGION_FLAG_SET.with(NAME, flag).with(INPUT, value ? "&a✔ true" : "&c❌ false").send(commandSender);
         }
     }
 
@@ -420,15 +424,15 @@ public class RealRegionsCMD {
     public void blockcommandscmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, final String commands) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
         //turning the flag on is left to /rr flag, so a list can be set up before it applies
         reg.setBlockedCommands(commands.trim().equalsIgnoreCase("all") ? Collections.emptyList() : Arrays.asList(commands.split("[\\s,]+")));
         reg.saveData(Region.RegionData.FLAGS);
-        TranslatableLine.REGION_BLOCKED_COMMANDS_SET.setV1(TranslatableLine.ReplacableVar.NAME.eq(reg.getDisplayName()))
-                .setV2(TranslatableLine.ReplacableVar.INPUT.eq(RegionSettingsGUI.blockedCommandsText(reg))).send(commandSender);
+        TranslatableLine.REGION_BLOCKED_COMMANDS_SET.with(NAME, reg.getDisplayName())
+                .with(INPUT, RegionSettingsGUI.blockedCommandsText(reg)).send(commandSender);
     }
 
     @Subcommand({"regions", "world", "r"})
@@ -437,7 +441,7 @@ public class RealRegionsCMD {
     public void regionscmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(p);
             return;
         }
 
@@ -460,12 +464,12 @@ public class RealRegionsCMD {
         }
 
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(p);
             return;
         }
 
         rw.setWorldSpawn(p.getLocation());
-        TranslatableLine.WORLD_SPAWN_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+        TranslatableLine.WORLD_SPAWN_SET.with(WORLD, name).send(p);
     }
 
     @Subcommand("tp")
@@ -474,7 +478,7 @@ public class RealRegionsCMD {
     public void tpcmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(p);
             return;
         }
 
@@ -497,7 +501,7 @@ public class RealRegionsCMD {
 
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -512,7 +516,7 @@ public class RealRegionsCMD {
     public void tprcmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(p);
             return;
         }
 
@@ -526,7 +530,7 @@ public class RealRegionsCMD {
     public void viewcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
@@ -540,7 +544,7 @@ public class RealRegionsCMD {
     public void unloadcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -558,12 +562,12 @@ public class RealRegionsCMD {
     public void toggletpjoin(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
         rw.setTPJoin(!rw.isTPJoinON());
-        TranslatableLine.WORLD_TPJOIN_SET.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rw.isTPJoinON() ? "&a✔ true" : "&c❌ false")).send(commandSender);
+        TranslatableLine.WORLD_TPJOIN_SET.with(INPUT, rw.isTPJoinON() ? "&a✔ true" : "&c❌ false").send(commandSender);
     }
 
     @Subcommand({"toggle-enter-title", "toggle-title"})
@@ -573,13 +577,13 @@ public class RealRegionsCMD {
     public void toggleentertitle(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
         rg.announceEnterTitle = !rg.announceEnterTitle;
         rg.saveData(Region.RegionData.SETTINGS);
-        TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterTitle ? "&a✔ true" : "&c❌ false")).send(commandSender);
+        TranslatableLine.REGION_ENTERING_TOGGLE.with(INPUT, rg.announceEnterTitle ? "&a✔ true" : "&c❌ false").send(commandSender);
     }
 
     @Subcommand({"toggle-enter-actionbar", "toggle-actionbar"})
@@ -589,13 +593,13 @@ public class RealRegionsCMD {
     public void toggleenteractionbar(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
         rg.announceEnterActionbar = !rg.announceEnterActionbar;
         rg.saveData(Region.RegionData.SETTINGS);
-        TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterActionbar ? "&a✔ true" : "&c❌ false")).send(commandSender);
+        TranslatableLine.REGION_ENTERING_TOGGLE.with(INPUT, rg.announceEnterActionbar ? "&a✔ true" : "&c❌ false").send(commandSender);
     }
 
     @Subcommand({"toggle-inventories", "toggle-invs"})
@@ -605,12 +609,12 @@ public class RealRegionsCMD {
     public void toggleinventoriescmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
         rw.setWorldInventories(!rw.hasWorldInventories());
-        TranslatableLine.WORLD_INVENTORIES_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(rw.hasWorldInventories() ? "&a✔ true" : "&c❌ false")).send(commandSender);
+        TranslatableLine.WORLD_INVENTORIES_SET.with(WORLD, rw.hasWorldInventories() ? "&a✔ true" : "&c❌ false").send(commandSender);
     }
 
     @Subcommand("load")
@@ -620,7 +624,7 @@ public class RealRegionsCMD {
     public void loadcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -634,7 +638,7 @@ public class RealRegionsCMD {
     public void unregistercmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -652,14 +656,14 @@ public class RealRegionsCMD {
         }
 
         if (worldtype == null) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq("like that")).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, "like that").send(commandSender);
             return;
         }
 
         try {
             rra.getWorldManagerAPI().importWorld(commandSender, name, worldtype);
         } catch (Exception e) {
-            TranslatableLine.WORLD_INVALID_TYPE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(worldtype.name())).send(commandSender);
+            TranslatableLine.WORLD_INVALID_TYPE.with(INPUT, worldtype.name()).send(commandSender);
         }
     }
 
@@ -670,7 +674,7 @@ public class RealRegionsCMD {
     public void delregcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
@@ -688,13 +692,13 @@ public class RealRegionsCMD {
     public void renamecmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, @Single final String newname) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
         reg.setDisplayName(newname);
         reg.saveData(Region.RegionData.SETTINGS);
-        TranslatableLine.REGION_RENAMED.setV1(TranslatableLine.ReplacableVar.NAME.eq(newname)).send(commandSender);
+        TranslatableLine.REGION_RENAMED.with(NAME, newname).send(commandSender);
     }
 
     @Subcommand({"setbounds", "sb"})
@@ -704,7 +708,7 @@ public class RealRegionsCMD {
     public void setboundscmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
-            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(p);
             return;
         }
 
@@ -718,7 +722,7 @@ public class RealRegionsCMD {
     public void entitiescmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(p);
             return;
         }
 
@@ -733,7 +737,7 @@ public class RealRegionsCMD {
     public void setgamerulecmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name, @SuggestFrom(RRSuggestion.GAMERULES) @Single final String gameRule, @Single final String op) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -751,7 +755,7 @@ public class RealRegionsCMD {
     public void deleteworldcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS_AND_IMPORTS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(commandSender);
             return;
         }
 
@@ -769,7 +773,7 @@ public class RealRegionsCMD {
     public void playerscmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
-            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            TranslatableLine.WORLD_NO_WORLD_NAMED.with(WORLD, name).send(p);
             return;
         }
 

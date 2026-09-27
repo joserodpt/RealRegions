@@ -33,6 +33,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
+import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.WORLD;
+
 public class Region {
 
     public enum RegionOrigin {
@@ -377,7 +380,7 @@ public class Region {
 
         p.teleport(this.rw.getWorld().getSpawnLocation());
         if (!silent) {
-            TranslatableLine.REGION_TP.setV1(TranslatableLine.ReplacableVar.NAME.eq(this.displayname)).setV2(TranslatableLine.ReplacableVar.WORLD.eq(this.getRWorld().getRWorldName())).send(p);
+            TranslatableLine.REGION_TP.with(NAME, this.displayname).with(WORLD, this.getRWorld().getRWorldName()).send(p);
         }
     }
 

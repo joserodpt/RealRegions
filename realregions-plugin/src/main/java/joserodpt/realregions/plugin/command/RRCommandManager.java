@@ -19,12 +19,16 @@ import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.Region;
+import com.mojang.brigadier.arguments.ArgumentType;
 import joserodpt.realutils.command.LampExceptionHandler;
 import org.bukkit.GameRule;
 import revxrsal.commands.Lamp;
 import revxrsal.commands.autocomplete.SuggestionProvider;
 import revxrsal.commands.bukkit.BukkitLamp;
+import revxrsal.commands.bukkit.BukkitLampConfig;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
+import revxrsal.commands.bukkit.brigadier.MinecraftArgumentType;
+import revxrsal.commands.node.ParameterNode;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -47,7 +51,11 @@ public final class RRCommandManager {
         //`/rr reload junk` would quietly fall back to the bare `/rr` handler; Brigadier's tree
         //refuses it outright. Where it can't attach Lamp falls back on its own and
         //the exception handler's @Usage messages are what players see instead.
-        this.lamp = BukkitLamp.builder(rra.getPlugin())
+        final BukkitLampConfig<BukkitCommandActor> config = BukkitLampConfig.<BukkitCommandActor>builder(rra.getPlugin())
+                .argumentTypes(types -> types.addTypeFactory(RRCommandManager::nameArgument))
+                .build();
+
+        this.lamp = BukkitLamp.builder(config)
                 .exceptionHandler(new LampExceptionHandler(
                         TranslatableLine.SYSTEM_ERROR_COMMAND::send,
                         TranslatableLine.SYSTEM_ERROR_PERMISSION::send,
@@ -58,6 +66,21 @@ public final class RRCommandManager {
                 .build();
 
         this.lamp.register(new RealRegionsCMD(rra));
+    }
+
+    /**
+     * Brigadier's word type only takes {@code [A-Za-z0-9_.+-]} unquoted, so {@code /rr tpr test@world}
+     * stops at the {@code @} with "expected whitespace to end one argument". GameProfileArgument reads
+     * up to the next space whatever is in it, and only resolves a profile when asked to, which the
+     * handlers never do: Lamp re-reads the raw input itself. It is kept to the {@link SuggestFrom}
+     * arguments, whose suggestions replace the player names the client would otherwise offer.
+     */
+    private static ArgumentType<?> nameArgument(final ParameterNode<BukkitCommandActor, ?> parameter) {
+        if (parameter.type() != String.class || parameter.isGreedy() || !parameter.annotations().contains(SuggestFrom.class)) {
+            return null;
+        }
+        //empty where the server's GameProfileArgument can't be found, leaving Lamp's plain string
+        return MinecraftArgumentType.GAME_PROFILE.<Object>getIfPresent().orElse(null);
     }
 
     private static Map<RRSuggestion, SuggestionProvider<BukkitCommandActor>> suggestions(final RealRegionsAPI rra) {
