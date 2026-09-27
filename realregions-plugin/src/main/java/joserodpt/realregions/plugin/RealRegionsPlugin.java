@@ -17,19 +17,14 @@ package joserodpt.realregions.plugin;
 
 import java.util.Collections;
 
-import dev.triumphteam.cmd.bukkit.BukkitCommandManager;
-import dev.triumphteam.cmd.bukkit.message.BukkitMessageKey;
-import dev.triumphteam.cmd.core.message.MessageKey;
-import dev.triumphteam.cmd.core.suggestion.SuggestionKey;
 import joserodpt.realpermissions.api.RealPermissionsAPI;
 import joserodpt.realpermissions.api.pluginhook.ExternalPlugin;
 import joserodpt.realpermissions.api.pluginhook.ExternalPluginPermission;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
-import joserodpt.realregions.api.RWorld;
-import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.config.TranslatableLine;
+import joserodpt.realregions.plugin.command.RRCommandManager;
 import joserodpt.realregions.plugin.gui.EntityViewer;
 import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
@@ -45,16 +40,13 @@ import joserodpt.realutils.text.Text;
 import joserodpt.realutils.update.UpdateChecker;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RealRegionsPlugin extends JavaPlugin {
     private boolean newUpdate;
@@ -116,74 +108,9 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(RegionSettingsGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
-        BukkitCommandManager<CommandSender> commandManager = BukkitCommandManager.create(this);
-
-        commandManager.registerMessage(BukkitMessageKey.NO_PERMISSION, (sender, context) -> Text.send(sender, "&cYou don't have permission to execute this command!"));
-        commandManager.registerMessage(MessageKey.UNKNOWN_COMMAND, (sender, context) -> Text.send(sender, "&cThe command you're trying to run doesn't exist"));
-        commandManager.registerMessage(MessageKey.NOT_ENOUGH_ARGUMENTS, (sender, context) -> Text.send(sender, "&cWrong usage for the command!"));
-        commandManager.registerMessage(BukkitMessageKey.PLAYER_ONLY, (sender, context) -> Text.send(sender, "&cCommand can't be used in the console!"));
-
-        commandManager.registerSuggestion(SuggestionKey.of("#regions"), (sender, context) ->
-                realRegions.getRegionManagerAPI().getRegions()
-                        .stream()
-                        .map(Region::getRegionNamePlusWorld)
-                        .collect(Collectors.toList())
-        );
-        commandManager.registerSuggestion(SuggestionKey.of("#mundos"), (sender, context) ->
-                realRegions.getWorldManagerAPI().getWorldList()
-                        .stream()
-                        .map(RWorld::getRWorldName)
-                        .collect(Collectors.toList())
-        );
-        commandManager.registerSuggestion(SuggestionKey.of("#mundosPLUSimport"), (sender, context) ->
-                realRegions.getWorldManagerAPI().getWorldsAndPossibleImports()
-                        .stream()
-                        .map(RWorld::getRWorldName)
-                        .collect(Collectors.toList())
-        );
-        commandManager.registerSuggestion(SuggestionKey.of("#worldtype"), (sender, context) ->
-                Arrays.asList("NORMAL", "NETHER", "THE_END", "VOID", "FLAT")
-        );
-        commandManager.registerSuggestion(SuggestionKey.of("#bool"), (sender, context) ->
-                Arrays.asList("true", "false")
-        );
-        commandManager.registerSuggestion(SuggestionKey.of("#flags"), (sender, context) ->
-                Arrays.asList(
-                        "block_break",
-                        "block_place",
-                        "block_interact",
-                        "container_interact",
-                        "pvp",
-                        "pve",
-                        "hunger",
-                        "take_damage",
-                        "explosions",
-                        "item_pickup",
-                        "item_drop",
-                        "entity_spawning",
-                        "enter",
-                        "access_crafting",
-                        "access_chests",
-                        "access_hoppers",
-                        "no_chat",
-                        "no_consumables",
-                        "disabled_nether_portal",
-                        "disabled_end_portal",
-                        "no_fire_spreading",
-                        "leaf_decay",
-                        "item_pickup_only_owner"
-                ));
-        commandManager.registerSuggestion(SuggestionKey.of("#gamerules"), (sender, context) ->
-                Arrays.stream(GameRule.values()).map(GameRule::getName).collect(Collectors.toList()));
-        commandManager.registerArgument(RWorld.WorldType.class, (sender, argument) -> {
-            try {
-                return RWorld.WorldType.valueOf(argument.toUpperCase());
-            } catch (Exception e) {
-                return null;
-            }
-        });
-
-        commandManager.registerCommand(new RealRegionsCMD(realRegions));
+        //Lamp owns the command tree: the suggestions, the permissions and the error messages.
+        //The WorldType resolver that used to live here is gone - Lamp parses enums case-insensitively.
+        new RRCommandManager(realRegions);
 
         realRegions.getWorldManagerAPI().loadWorlds();
 

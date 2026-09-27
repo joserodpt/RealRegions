@@ -56,7 +56,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>dev.dejvokep:boosted-yaml</include>
-                                    <include>dev.triumphteam:*</include>
                                     <include>io.github.revxrsal:lamp.common</include>
                                     <include>io.github.revxrsal:lamp.bukkit</include>
                                     <include>io.github.revxrsal:lamp.brigadier</include>
@@ -105,12 +104,6 @@
                                      reflection and version probing, so minimizeJar can't see they are used. -->
                                 <filter>
                                     <artifact>io.github.revxrsal:*</artifact>
-                                    <includes>
-                                        <include>**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
-                                    <artifact>dev.triumphteam:*</artifact>
                                     <includes>
                                         <include>**</include>
                                     </includes>
@@ -170,10 +163,6 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
-        <repository>
-            <id>repo</id>
-            <url>https://repo.triumphteam.dev/snapshots/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -182,11 +171,6 @@
             <artifactId>spigot-api</artifactId>
             <version>1.14-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-cmd-bukkit</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <!-- lamp.bukkit declares lamp.common and lamp.brigadier at runtime scope, which is enough
              for shading but leaves them off the compile classpath, so lamp.common is repeated here.

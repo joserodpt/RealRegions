@@ -1,4 +1,4 @@
-package joserodpt.realregions.plugin;
+package joserodpt.realregions.plugin.command;
 
 /*
  *  ______           _______
@@ -16,13 +16,6 @@ package joserodpt.realregions.plugin;
  */
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import dev.triumphteam.cmd.bukkit.annotation.Permission;
-import dev.triumphteam.cmd.core.BaseCommand;
-import dev.triumphteam.cmd.core.annotation.Command;
-import dev.triumphteam.cmd.core.annotation.Default;
-import dev.triumphteam.cmd.core.annotation.Optional;
-import dev.triumphteam.cmd.core.annotation.SubCommand;
-import dev.triumphteam.cmd.core.annotation.Suggestion;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
@@ -41,23 +34,33 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import revxrsal.commands.annotation.Command;
+import revxrsal.commands.annotation.CommandPlaceholder;
+import revxrsal.commands.annotation.Optional;
+import revxrsal.commands.annotation.Single;
+import revxrsal.commands.annotation.Subcommand;
+import revxrsal.commands.annotation.Usage;
+import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-@Command(value = "realregions", alias = "rr")
-public class RealRegionsCMD extends BaseCommand {
+/**
+ * Every {@code /rr} subcommand. Those that only make sense in game take a {@link Player} rather than
+ * a {@link CommandSender}, which is what tells the console it can't run them: Lamp raises
+ * SenderNotPlayerException and the exception handler answers it.
+ */
+@Command({"realregions", "rr"})
+public class RealRegionsCMD {
 
-    private final String onlyPlayers = "[RealRegions] Only players can run this command.";
-
-    RealRegionsAPI rra;
+    private final RealRegionsAPI rra;
 
     public RealRegionsCMD(RealRegionsAPI r) {
         this.rra = r;
     }
 
-    @Default
+    @CommandPlaceholder
     @SuppressWarnings("unused")
     public void defaultCommand(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
@@ -73,8 +76,8 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "reload", alias = "rl")
-    @Permission("realregions.admin")
+    @Subcommand({"reload", "rl"})
+    @CommandPermission("realregions.admin")
     @SuppressWarnings("unused")
     public void reloadcmd(final CommandSender commandSender) {
         RRConfig.reload();
@@ -86,19 +89,15 @@ public class RealRegionsCMD extends BaseCommand {
     }
 
     /** config.yml as dialogs, where the server has them. */
-    @SubCommand("settings")
-    @Permission("realregions.admin")
+    @Subcommand("settings")
+    @CommandPermission("realregions.admin")
     @SuppressWarnings("unused")
-    public void settingscmd(final CommandSender commandSender) {
-        if (commandSender instanceof Player) {
-            ConfigEditor.open((Player) commandSender);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-        }
+    public void settingscmd(final Player p) {
+        ConfigEditor.open(p);
     }
 
-    @SubCommand(value = "worlds", alias = "menu")
-    @Permission("realregions.admin")
+    @Subcommand({"worlds", "menu"})
+    @CommandPermission("realregions.admin")
     @SuppressWarnings("unused")
     public void worldscm(final CommandSender commandSender) {
         if (commandSender instanceof Player) {
@@ -113,16 +112,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "create", alias = "c")
-    @Permission("realregions.admin")
+    @Subcommand({"create", "c"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr create <name>")
     @SuppressWarnings("unused")
-    public void create(final CommandSender commandSender, final String name) {
-        if (!(commandSender instanceof Player)) {
-            Text.send(commandSender, onlyPlayers);
-            return;
-        }
-
-        Player p = (Player) commandSender;
+    public void create(final Player p, @Single final String name) {
         if (name == null || name.isEmpty()) {
             TranslatableLine.REGION_NAME_EMPTY.send(p);
             return;
@@ -146,7 +140,7 @@ public class RealRegionsCMD extends BaseCommand {
                     g.openInventory(p);
                 }
             } catch (Exception e) {
-                Text.send(commandSender, "&cError while getting player's worldedit selection. See console for details.");
+                Text.send(p, "&cError while getting player's worldedit selection. See console for details.");
                 Bukkit.getLogger().severe("Error while getting player's worldedit selection:");
                 e.printStackTrace();
             }
@@ -155,10 +149,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "createworld", alias = "cw")
-    @Permission("realregions.admin")
+    @Subcommand({"createworld", "cw"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr createworld <name> <type>")
     @SuppressWarnings("unused")
-    public void createworldcmd(final CommandSender commandSender, final String name, @Suggestion("#worldtype") final RWorld.WorldType worldtype) {
+    public void createworldcmd(final CommandSender commandSender, @Single final String name, @SuggestFrom(RRSuggestion.WORLD_TYPES) final RWorld.WorldType worldtype) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
             return;
@@ -180,10 +175,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "createtimedworld", alias = "ctw")
-    @Permission("realregions.admin")
+    @Subcommand({"createtimedworld", "ctw"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr createtimedworld <name> <type> <seconds>")
     @SuppressWarnings("unused")
-    public void createtimedworldcmd(final CommandSender commandSender, final String name, @Suggestion("#worldtype") final RWorld.WorldType worldtype, final Integer time) {
+    public void createtimedworldcmd(final CommandSender commandSender, @Single final String name, @SuggestFrom(RRSuggestion.WORLD_TYPES) final RWorld.WorldType worldtype, final Integer time) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
             return;
@@ -210,9 +206,10 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand("reset")
-    @Permission("realregions.admin")
-    public void resetworld(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    @Subcommand("reset")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr reset <world>")
+    public void resetworld(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -223,31 +220,26 @@ public class RealRegionsCMD extends BaseCommand {
         Text.send(commandSender, "&aWorld reseted.");
     }
 
-    @SubCommand(value = "flags", alias = "region")
-    @Permission("realregions.admin")
+    @Subcommand({"flags", "region"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr flags <region@world>")
     @SuppressWarnings("unused")
-    public void regioncmd(final CommandSender commandSender, @Suggestion("#regions") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
-            if (reg == null) {
-                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
-                return;
-            }
-
-            RegionSettingsGUI wv = new RegionSettingsGUI(p, reg, rra);
-            wv.openInventory(p);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-
+    public void regioncmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            return;
         }
+
+        RegionSettingsGUI wv = new RegionSettingsGUI(p, reg, rra);
+        wv.openInventory(p);
     }
 
-    @SubCommand(value = "flag", alias = "f")
-    @Permission("realregions.admin")
+    @Subcommand({"flag", "f"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr flag <region@world> <flag> [true/false]")
     @SuppressWarnings("unused")
-    public void regioncmd(final CommandSender commandSender, @Suggestion("#regions") final String regionName, @Suggestion("#flags") final String flag, @Suggestion("#bool") @Optional String valueSTR) {
+    public void regioncmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String regionName, @SuggestFrom(RRSuggestion.FLAGS) @Single final String flag, @Optional @SuggestFrom(RRSuggestion.BOOLEANS) @Single String valueSTR) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(regionName);
         if (reg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(regionName)).send(commandSender);
@@ -413,124 +405,99 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "regions", alias = {"world", "r"})
-    @Permission("realregions.admin")
-    public void regionscmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
+    @Subcommand({"regions", "world", "r"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr regions <world>")
+    public void regionscmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            return;
+        }
 
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
+        RegionsListGUI wv = new RegionsListGUI(p, rw, rra);
+        wv.openInventory(p);
+    }
 
-            RegionsListGUI wv = new RegionsListGUI(p, rw, rra);
-            wv.openInventory(p);
+    @Subcommand({"setworldspawn", "sws", "setspawn"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr setworldspawn [world]")
+    @SuppressWarnings("unused")
+    public void setworldspawn(final Player p, @Optional @SuggestFrom(RRSuggestion.WORLDS) @Single String name) {
+        RWorld rw;
+
+        if (name == null || name.isEmpty()) {
+            rw = rra.getWorldManagerAPI().getWorld(p.getWorld());
+            name = p.getWorld().getName();
         } else {
-            Text.send(commandSender, onlyPlayers);
+            rw = rra.getWorldManagerAPI().getWorld(name);
+        }
+
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            return;
+        }
+
+        rw.setWorldSpawn(p.getLocation());
+        TranslatableLine.WORLD_SPAWN_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+    }
+
+    @Subcommand("tp")
+    @Usage("&c/rr tp <world>")
+    @SuppressWarnings("unused")
+    public void tpcmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            return;
+        }
+
+        if (p.hasPermission("realregions.admin") || p.isOp() || p.hasPermission("realregions.tpworld." + rw.getRWorldName())) {
+            rw.teleport(p, false);
+        } else {
+            Text.send(p, "&cYou don't have permission to teleport to this world.");
         }
     }
 
-    @SubCommand(value = "setworldspawn", alias = {"sws", "setspawn"})
-    @Permission("realregions.admin")
+    @Subcommand("tpo")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr tpo <world> <player>")
     @SuppressWarnings("unused")
-    public void setworldspawn(final CommandSender commandSender, @Suggestion("#mundos") @Optional String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw;
-
-            if (name == null || name.isEmpty()) {
-                rw = rra.getWorldManagerAPI().getWorld(p.getWorld());
-                name = p.getWorld().getName();
-            } else {
-                rw = rra.getWorldManagerAPI().getWorld(name);
-            }
-
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
-
-            rw.setWorldSpawn(p.getLocation());
-            TranslatableLine.WORLD_SPAWN_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-        } else {
-            Text.send(commandSender, onlyPlayers);
+    public void topcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name, final Player player) {
+        if (player == null) {
+            Text.send(commandSender, "&cPlayer not found.");
+            return;
         }
+
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
+            return;
+        }
+
+        rw.teleport(player, false);
+        Text.send(commandSender, "&aTeleported " + player.getName() + " to " + name);
     }
 
-    @SubCommand("tp")
+    @Subcommand("tpr")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr tpr <region@world>")
     @SuppressWarnings("unused")
-    public void tpcmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
-
-            if (p.hasPermission("realregions.admin") || p.isOp() || p.hasPermission("realregions.tpworld." + rw.getRWorldName())) {
-                rw.teleport(p, false);
-            } else {
-                Text.send(commandSender, "&cYou don't have permission to teleport to this world.");
-            }
-        } else {
-            Text.send(commandSender, onlyPlayers);
+    public void tprcmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            return;
         }
+
+        reg.teleport(p, false);
     }
 
-    @SubCommand("tpo")
-    @Permission("realregions.admin")
+    @Subcommand("view")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr view <region@world>")
     @SuppressWarnings("unused")
-    public void topcmd(final CommandSender commandSender, @Suggestion("#mundos") final String name, final Player player) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            if (player == null) {
-                Text.send(commandSender, "&cPlayer not found.");
-                return;
-            }
-
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
-
-            rw.teleport(player, false);
-            Text.send(commandSender, "&aTeleported " + player.getName() + " to " + name);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-        }
-    }
-
-    @SubCommand("tpr")
-    @Permission("realregions.admin")
-    @SuppressWarnings("unused")
-    public void tprcmd(final CommandSender commandSender, @Suggestion("#regions") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
-            if (reg == null) {
-                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
-                return;
-            }
-
-            reg.teleport(p, false);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-
-        }
-    }
-
-    @SubCommand("view")
-    @Permission("realregions.admin")
-    @SuppressWarnings("unused")
-    public void viewcmd(final CommandSender commandSender, @Suggestion("#regions") final String name) {
+    public void viewcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
@@ -540,10 +507,11 @@ public class RealRegionsCMD extends BaseCommand {
         rra.getRegionManagerAPI().toggleRegionView(commandSender, reg);
     }
 
-    @SubCommand("unload")
-    @Permission("realregions.admin")
+    @Subcommand("unload")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr unload <world>")
     @SuppressWarnings("unused")
-    public void unloadcmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    public void unloadcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -557,10 +525,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand("toggle-tpjoin")
-    @Permission("realregions.admin")
+    @Subcommand("toggle-tpjoin")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr toggle-tpjoin <world>")
     @SuppressWarnings("unused")
-    public void toggletpjoin(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    public void toggletpjoin(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -571,10 +540,11 @@ public class RealRegionsCMD extends BaseCommand {
         TranslatableLine.WORLD_TPJOIN_SET.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rw.isTPJoinON() ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
-    @SubCommand(value = "toggle-enter-title", alias = "toggle-title")
-    @Permission("realregions.admin")
+    @Subcommand({"toggle-enter-title", "toggle-title"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr toggle-enter-title <region@world>")
     @SuppressWarnings("unused")
-    public void toggleentertitle(final CommandSender commandSender, @Suggestion("#regions") final String name) {
+    public void toggleentertitle(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
@@ -586,10 +556,11 @@ public class RealRegionsCMD extends BaseCommand {
         TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterTitle ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
-    @SubCommand(value = "toggle-enter-actionbar", alias = "toggle-actionbar")
-    @Permission("realregions.admin")
+    @Subcommand({"toggle-enter-actionbar", "toggle-actionbar"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr toggle-enter-actionbar <region@world>")
     @SuppressWarnings("unused")
-    public void toggleenteractionbar(final CommandSender commandSender, @Suggestion("#regions") final String name) {
+    public void toggleenteractionbar(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region rg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (rg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
@@ -601,10 +572,11 @@ public class RealRegionsCMD extends BaseCommand {
         TranslatableLine.REGION_ENTERING_TOGGLE.setV1(TranslatableLine.ReplacableVar.INPUT.eq(rg.announceEnterActionbar ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
-    @SubCommand(value = "toggle-inventories", alias = "toggle-invs")
-    @Permission("realregions.admin")
+    @Subcommand({"toggle-inventories", "toggle-invs"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr toggle-inventories <world>")
     @SuppressWarnings("unused")
-    public void toggleinventoriescmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    public void toggleinventoriescmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -615,10 +587,11 @@ public class RealRegionsCMD extends BaseCommand {
         TranslatableLine.WORLD_INVENTORIES_SET.setV1(TranslatableLine.ReplacableVar.WORLD.eq(rw.hasWorldInventories() ? "&a✔ true" : "&c❌ false")).send(commandSender);
     }
 
-    @SubCommand("load")
-    @Permission("realregions.admin")
+    @Subcommand("load")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr load <world>")
     @SuppressWarnings("unused")
-    public void loadcmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    public void loadcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -628,10 +601,11 @@ public class RealRegionsCMD extends BaseCommand {
         rra.getWorldManagerAPI().loadWorld(commandSender, name);
     }
 
-    @SubCommand("unregister")
-    @Permission("realregions.admin")
+    @Subcommand("unregister")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr unregister <world>")
     @SuppressWarnings("unused")
-    public void unregistercmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
+    public void unregistercmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -641,10 +615,11 @@ public class RealRegionsCMD extends BaseCommand {
         rra.getWorldManagerAPI().unregisterWorld(commandSender, rw);
     }
 
-    @SubCommand("import")
-    @Permission("realregions.admin")
+    @Subcommand("import")
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr import <world> <type>")
     @SuppressWarnings("unused")
-    public void importcmd(final CommandSender commandSender, final String name, @Suggestion("#worldtype") final RWorld.WorldType worldtype) {
+    public void importcmd(final CommandSender commandSender, @Single final String name, @SuggestFrom(RRSuggestion.WORLD_TYPES) final RWorld.WorldType worldtype) {
         if (name == null) {
             TranslatableLine.WORLD_NAME_EMPTY.send(commandSender);
             return;
@@ -662,10 +637,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "delete", alias = "del")
-    @Permission("realregions.admin")
+    @Subcommand({"delete", "del"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr delete <region@world>")
     @SuppressWarnings("unused")
-    public void delregcmd(final CommandSender commandSender, @Suggestion("#regions") final String name) {
+    public void delregcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
@@ -679,10 +655,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "rename", alias = "rn")
-    @Permission("realregions.admin")
+    @Subcommand({"rename", "rn"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr rename <region@world> <new name>")
     @SuppressWarnings("unused")
-    public void renamecmd(final CommandSender commandSender, @Suggestion("#regions") final String name, final String newname) {
+    public void renamecmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, @Single final String newname) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
@@ -694,48 +671,40 @@ public class RealRegionsCMD extends BaseCommand {
         TranslatableLine.REGION_RENAMED.setV1(TranslatableLine.ReplacableVar.NAME.eq(newname)).send(commandSender);
     }
 
-    @SubCommand(value = "setbounds", alias = "sb")
-    @Permission("realregions.admin")
+    @Subcommand({"setbounds", "sb"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr setbounds <region@world>")
     @SuppressWarnings("unused")
-    public void setboundscmd(final CommandSender commandSender, @Suggestion("#regions") final String name) {
-        if (commandSender instanceof Player) {
-            Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
-            if (reg == null) {
-                TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(commandSender);
-                return;
-            }
-
-            rra.getRegionManagerAPI().setRegionBounds(reg, (Player) commandSender);
-        } else {
-            Text.send(commandSender, onlyPlayers);
+    public void setboundscmd(final Player p, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name) {
+        Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
+        if (reg == null) {
+            TranslatableLine.REGION_NON_EXISTENT_NAME.setV1(TranslatableLine.ReplacableVar.NAME.eq(name)).send(p);
+            return;
         }
+
+        rra.getRegionManagerAPI().setRegionBounds(reg, p);
     }
 
-    @SubCommand(value = "entities", alias = "ents")
-    @Permission("realregions.admin")
+    @Subcommand({"entities", "ents"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr entities <world>")
     @SuppressWarnings("unused")
-    public void entitiescmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
-
-            EntityViewer ev = new EntityViewer(p, rw, rra);
-            ev.openInventory(p);
-        } else {
-            Text.send(commandSender, onlyPlayers);
-
+    public void entitiescmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            return;
         }
+
+        EntityViewer ev = new EntityViewer(p, rw, rra);
+        ev.openInventory(p);
     }
 
-    @SubCommand(value = "setgamerule", alias = "sgr")
-    @Permission("realregions.admin")
+    @Subcommand({"setgamerule", "sgr"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr setgamerule <world> <gamerule> <value>")
     @SuppressWarnings("unused")
-    public void setgamerulecmd(final CommandSender commandSender, @Suggestion("#mundos") final String name, @Suggestion("#gamerules") final String gameRule, final String op) {
+    public void setgamerulecmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name, @SuggestFrom(RRSuggestion.GAMERULES) @Single final String gameRule, @Single final String op) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -749,10 +718,11 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "deletew", alias = "delw")
-    @Permission("realregions.admin")
+    @Subcommand({"deletew", "delw"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr deletew <world>")
     @SuppressWarnings("unused")
-    public void deleteworldcmd(final CommandSender commandSender, @Suggestion("#mundosPLUSimport") final String name) {
+    public void deleteworldcmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.WORLDS_AND_IMPORTS) @Single final String name) {
         RWorld rw = rra.getWorldManagerAPI().getWorld(name);
         if (rw == null) {
             TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
@@ -766,23 +736,18 @@ public class RealRegionsCMD extends BaseCommand {
         }
     }
 
-    @SubCommand(value = "players", alias = "plrs")
-    @Permission("realregions.admin")
+    @Subcommand({"players", "plrs"})
+    @CommandPermission("realregions.admin")
+    @Usage("&c/rr players <world>")
     @SuppressWarnings("unused")
-    public void playerscmd(final CommandSender commandSender, @Suggestion("#mundos") final String name) {
-        if (commandSender instanceof Player) {
-            Player p = (Player) commandSender;
-
-            RWorld rw = rra.getWorldManagerAPI().getWorld(name);
-            if (rw == null) {
-                TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(commandSender);
-                return;
-            }
-
-            EntityViewer ev = new EntityViewer(p, rw, EntityType.PLAYER, rra);
-            ev.openInventory(p);
-        } else {
-            Text.send(commandSender, onlyPlayers);
+    public void playerscmd(final Player p, @SuggestFrom(RRSuggestion.WORLDS) @Single final String name) {
+        RWorld rw = rra.getWorldManagerAPI().getWorld(name);
+        if (rw == null) {
+            TranslatableLine.WORLD_NO_WORLD_NAMED.setV1(TranslatableLine.ReplacableVar.WORLD.eq(name)).send(p);
+            return;
         }
+
+        EntityViewer ev = new EntityViewer(p, rw, EntityType.PLAYER, rra);
+        ev.openInventory(p);
     }
 }

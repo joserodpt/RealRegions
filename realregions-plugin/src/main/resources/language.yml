@@ -1,4 +1,4 @@
-Version: 9
+Version: 10
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -114,3 +114,7 @@ System:
   Dialog-Close: "&cClose"
   Settings-Saved: "&fSettings saved."
   Settings-Need-Dialogs: "&fThe settings editor needs a server with dialogs (1.21.6 and up). Edit &bconfig.yml &fand use &b/rr reload &finstead."
+  Player-Only: "&cCommand can't be used in the console!"
+  Error-Permission: "&cYou don't have permission to execute this command!"
+  Error-Command: "&cThe command you're trying to run doesn't exist"
+  Error-Usage: "&cWrong usage for the command!"

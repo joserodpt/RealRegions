@@ -115,7 +115,11 @@ public enum TranslatableLine {
     SYSTEM_DIALOG_BACK("System.Dialog-Back"),
     SYSTEM_DIALOG_CLOSE("System.Dialog-Close"),
     SYSTEM_SETTINGS_SAVED("System.Settings-Saved"),
-    SYSTEM_SETTINGS_NEED_DIALOGS("System.Settings-Need-Dialogs");
+    SYSTEM_SETTINGS_NEED_DIALOGS("System.Settings-Need-Dialogs"),
+    SYSTEM_PLAYER_ONLY("System.Player-Only"),
+    SYSTEM_ERROR_PERMISSION("System.Error-Permission"),
+    SYSTEM_ERROR_COMMAND("System.Error-Command"),
+    SYSTEM_ERROR_USAGE("System.Error-Usage");
 
 
     private final String configPath;
