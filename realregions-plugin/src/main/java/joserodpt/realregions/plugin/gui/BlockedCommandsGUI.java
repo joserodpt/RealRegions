@@ -19,7 +19,7 @@ import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realutils.dialog.DialogForm;
-import joserodpt.realutils.dialog.DialogMenu;
+import joserodpt.realutils.dialog.PagedDialogMenu;
 import joserodpt.realutils.dialog.Dialogs;
 import joserodpt.realutils.gui.GUIBuilder;
 import joserodpt.realutils.gui.MaterialPickerGUI;
@@ -69,12 +69,6 @@ public final class BlockedCommandsGUI {
     /** In among where the entries would be, since it only shows when there are none. */
     private static final int EMPTY_SLOT = 22;
 
-    /**
-     * Commands on one page of the dialog. A dialog menu holds {@link DialogMenu#MAX_OPTIONS}
-     * buttons, and flag, add, clear and the two page turns take five of them.
-     */
-    private static final int DIALOG_PAGE_SIZE = 12;
-
     private static final int LORE_WIDTH = 40;
 
     private final Player p;
@@ -100,38 +94,31 @@ public final class BlockedCommandsGUI {
     // --- dialog ---
 
     private boolean openDialog(final int page) {
-        final Pagination<String> pages = new Pagination<>(DIALOG_PAGE_SIZE, new ArrayList<>(this.r.blockedCommands));
-        final int shown = shownPage(pages, page);
+        final PagedDialogMenu<String> menu = new PagedDialogMenu<>(
+                TranslatableLine.REGION_BLOCKED_COMMANDS_TITLE.with(NAME, this.r.getDisplayName()).get(),
+                this.description(), this.r.blockedCommands);
 
-        final DialogMenu menu = new DialogMenu(TranslatableLine.REGION_BLOCKED_COMMANDS_TITLE.with(NAME, this.r.getDisplayName()).get(),
-                this.description()).columns(2).icon(Material.COMMAND_BLOCK);
-
-        menu.option(this.flagLabel(), TranslatableLine.REGION_BLOCKED_COMMANDS_FLAG_DESCRIPTION.get(), () -> {
+        //every button of the menu's own is on each page, so the page it was clicked on is the one asked for
+        menu.button(this.flagLabel(), TranslatableLine.REGION_BLOCKED_COMMANDS_FLAG_DESCRIPTION.get(), () -> {
             this.toggleFlag();
-            this.open(shown);
+            this.open(page);
         });
-        menu.option(TranslatableLine.REGION_BLOCKED_COMMANDS_ADD.get(), TranslatableLine.REGION_BLOCKED_COMMANDS_ADD_DESCRIPTION.get(),
-                () -> this.askInDialog(shown));
-        if (!pages.isEmpty()) {
-            menu.option(TranslatableLine.REGION_BLOCKED_COMMANDS_CLEAR.get(), TranslatableLine.REGION_BLOCKED_COMMANDS_CLEAR_DESCRIPTION.get(),
-                    () -> this.confirmClear(shown));
-
-            for (final String command : pages.getPage(shown)) {
-                menu.option(entryName(command), TranslatableLine.REGION_BLOCKED_COMMANDS_ENTRY_REMOVE.get(), () -> {
-                    this.remove(command);
-                    this.open(shown);
-                });
-            }
-        }
-        if (pages.exists(shown - 1)) {
-            menu.option(TranslatableLine.REGION_BLOCKED_COMMANDS_PREVIOUS_PAGE.get(), null, () -> this.open(shown - 1));
-        }
-        if (pages.exists(shown + 1)) {
-            menu.option(TranslatableLine.REGION_BLOCKED_COMMANDS_NEXT_PAGE.get(), null, () -> this.open(shown + 1));
+        menu.button(TranslatableLine.REGION_BLOCKED_COMMANDS_ADD.get(), TranslatableLine.REGION_BLOCKED_COMMANDS_ADD_DESCRIPTION.get(),
+                () -> this.askInDialog(page));
+        if (!this.r.blockedCommands.isEmpty()) {
+            menu.button(TranslatableLine.REGION_BLOCKED_COMMANDS_CLEAR.get(), TranslatableLine.REGION_BLOCKED_COMMANDS_CLEAR_DESCRIPTION.get(),
+                    () -> this.confirmClear(page));
         }
 
-        return menu.close(TranslatableLine.SYSTEM_DIALOG_BACK.get())
-                .open(this.p, this::backToSettings, () -> this.openChest(shown));
+        return menu.entries(BlockedCommandsGUI::entryName, command -> TranslatableLine.REGION_BLOCKED_COMMANDS_ENTRY_REMOVE.get(),
+                        (command, onPage) -> {
+                            this.remove(command);
+                            this.open(onPage);
+                        })
+                .pageButtons(TranslatableLine.REGION_BLOCKED_COMMANDS_PREVIOUS_PAGE.get(), TranslatableLine.REGION_BLOCKED_COMMANDS_NEXT_PAGE.get())
+                .columns(2).icon(Material.COMMAND_BLOCK)
+                .close(TranslatableLine.SYSTEM_DIALOG_BACK.get())
+                .open(this.p, page, this::backToSettings, () -> this.openChest(page));
     }
 
     private void askInDialog(final int page) {
@@ -301,7 +288,8 @@ public final class BlockedCommandsGUI {
     }
 
     private int pageSize() {
-        return Dialogs.isSupported() ? DIALOG_PAGE_SIZE : ENTRY_SLOTS.length;
+        //with something listed the dialog has all three of its own buttons: the flag, add and clear
+        return Dialogs.isSupported() ? PagedDialogMenu.pageSize(3) : ENTRY_SLOTS.length;
     }
 
     private String description() {

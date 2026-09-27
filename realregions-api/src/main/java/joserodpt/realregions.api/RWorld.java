@@ -153,9 +153,16 @@ public class RWorld implements Listener {
 
     private void loadRegions() {
         for (String regionName : this.getConfig().getConfigurationSection("Regions").getKeys(false)) {
+            final String type = this.getConfig().getString("Regions." + regionName + ".Type");
+            if (type == null) {
+                //only its flags were written: the region was never finished, as happened when importing a
+                //RealMines schematic mine failed. A RealMines region is written again in full once it can be.
+                Bukkit.getLogger().warning("Skipping region " + regionName + " from world " + this.getRWorldName() + ": it has no type, so it was never fully created.");
+                continue;
+            }
             Region.RegionType rt;
             try {
-                rt = Region.RegionType.valueOf(this.getConfig().getString("Regions." + regionName + ".Type"));
+                rt = Region.RegionType.valueOf(type);
             } catch (IllegalArgumentException e) {
                 Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". Region type is invalid. Skipping!");
                 continue;
@@ -163,7 +170,7 @@ public class RWorld implements Listener {
 
             Material mat;
             try {
-                mat = Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon"));
+                mat = Material.valueOf(this.getConfig().getString("Regions." + regionName + ".Icon", "GRASS_BLOCK"));
             } catch (IllegalArgumentException e) {
                 Bukkit.getLogger().severe("Error loading region " + regionName + " from world " + this.getRWorldName() + ". Icon is invalid. Skipping!");
                 continue;
@@ -195,7 +202,11 @@ public class RWorld implements Listener {
             String orig = this.getConfig().getString("Regions." + regionName + ".Origin", "-");
             assert orig != null;
             if (!orig.equals("-")) {
-                reg.setOrigin(Region.RegionOrigin.valueOf(orig));
+                try {
+                    reg.setOrigin(Region.RegionOrigin.valueOf(orig));
+                } catch (IllegalArgumentException e) {
+                    Bukkit.getLogger().warning("Region " + regionName + " from world " + this.getRWorldName() + " has an unknown origin (" + orig + "). Treating it as a RealRegions region.");
+                }
             }
 
             this.getRegions().put(regionName, reg);
