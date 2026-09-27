@@ -11,6 +11,17 @@
 
     <properties>
         <revision>1.7</revision>
+        <maven.compiler.release>16</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Shared with the other Real* plugins: dialogs (1.21.6+), the chat prompt, GUIs and config. -->
+        <realutils.version>1.1.0</realutils.version>
+        <lamp.version>4.0.0-rc.18</lamp.version>
+        <bstats.version>3.2.1</bstats.version>
+        <!-- JitPack coordinate for joserodpt/RealPermissions, the same commit RealMines and RealHoppers pin. -->
+        <realpermissions.version>1e7015a05e</realpermissions.version>
+        <!-- JitPack coordinate for joserodpt/RealMines. RealMines has no release tags yet (its README's
+             v1.9 does not resolve), so this pins the commit JitPack built instead. -->
+        <realmines.version>01941a1e4b</realmines.version>
     </properties>
     <modules>
         <module>realregions-plugin</module>
@@ -37,16 +48,5 @@
     <build>
         <defaultGoal>clean install</defaultGoal>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>neziw-repo</id>
-            <url>https://repo.neziw.ovh/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>neziw-repo</id>
-            <url>https://repo.neziw.ovh/releases</url>
-        </repository>
-    </distributionManagement>
 
 </project>

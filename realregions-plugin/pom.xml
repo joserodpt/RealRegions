@@ -18,32 +18,125 @@
 
     <name>realregions-plugin</name>
 
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <build>
+        <finalName>realregions-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.14.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <release>${maven.compiler.release}</release>
+                    <compilerArgs>
+                        <!-- Lamp names command arguments after the method parameters, so the
+                             usage strings depend on these surviving. -->
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+
+                        <configuration>
+                            <!-- Replace the original jar rather than leaving an original-...jar beside it -->
+                            <outputFile>${project.build.directory}/${project.build.finalName}.jar</outputFile>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <minimizeJar>true</minimizeJar>
+
+                            <!-- Only these. Without an artifactSet the plugin shades every compile
+                                 dependency it can reach. -->
+                            <artifactSet>
+                                <includes>
+                                    <include>dev.dejvokep:boosted-yaml</include>
+                                    <include>dev.triumphteam:*</include>
+                                    <include>io.github.revxrsal:lamp.common</include>
+                                    <include>io.github.revxrsal:lamp.bukkit</include>
+                                    <include>io.github.revxrsal:lamp.brigadier</include>
+                                    <include>joserodpt:realregions-api</include>
+                                    <include>com.github.joserodpt:RealUtils</include>
+                                    <include>io.github.projectunified:*</include>
+                                    <include>org.bstats:*</include>
+                                </includes>
+                            </artifactSet>
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>dev.dejvokep.boostedyaml</pattern>
+                                    <shadedPattern>joserodpt.realregions.shaded.boostedyaml</shadedPattern>
+                                </relocation>
+                                <!-- com.mojang.brigadier is deliberately not relocated: those classes
+                                     come from the server, we only talk to them. -->
+                                <relocation>
+                                    <pattern>revxrsal.commands</pattern>
+                                    <shadedPattern>joserodpt.realregions.shaded.lamp</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>joserodpt.realutils</pattern>
+                                    <shadedPattern>joserodpt.realregions.shaded.realutils</shadedPattern>
+                                </relocation>
+                                <!-- Also rewrites the manager class names RealUtils loads by name. -->
+                                <relocation>
+                                    <pattern>io.github.projectunified.unidialog</pattern>
+                                    <shadedPattern>joserodpt.realregions.shaded.unidialog</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>joserodpt.realregions.shaded.bstats</shadedPattern>
+                                </relocation>
+                            </relocations>
+
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/**</exclude>
+                                        <exclude>org/jetbrains/annotations/**</exclude>
+                                    </excludes>
+                                </filter>
+                                <!-- Lamp reaches its Bukkit/Brigadier hooks and parameter types through
+                                     reflection and version probing, so minimizeJar can't see they are used. -->
+                                <filter>
+                                    <artifact>io.github.revxrsal:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>dev.triumphteam:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <!-- The dialog managers and RealUtils' Paper text are only ever loaded by name. -->
+                                <filter>
+                                    <artifact>com.github.joserodpt:RealUtils</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>io.github.projectunified:*</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                                <!-- Our own module: keep all of it rather than let minimizeJar guess. -->
+                                <filter>
+                                    <artifact>joserodpt:realregions-api</artifact>
+                                    <includes>
+                                        <include>**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -70,13 +163,12 @@
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
-            <id>placeholderapi</id>
-            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>neziw-repo-releases</id>
-            <name>Reposilite Repository</name>
-            <url>https://repo.neziw.ovh/releases</url>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>repo</id>
@@ -96,18 +188,59 @@
             <artifactId>triumph-cmd-bukkit</artifactId>
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
+        <!-- lamp.bukkit declares lamp.common and lamp.brigadier at runtime scope, which is enough
+             for shading but leaves them off the compile classpath, so lamp.common is repeated here.
+             lamp.brigadier is only ever reached at runtime, so it does not need the same. -->
+        <dependency>
+            <groupId>io.github.revxrsal</groupId>
+            <artifactId>lamp.common</artifactId>
+            <version>${lamp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.revxrsal</groupId>
+            <artifactId>lamp.bukkit</artifactId>
+            <version>${lamp.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.2.10</version>
             <scope>provided</scope>
+            <!-- minimizeJar reads every dependency, provided ones too, and its class scanner fails on
+                 log4j-api's multi-release entries. The server brings its own log4j anyway. -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>joserodpt</groupId>
             <artifactId>realregions-api</artifactId>
-            <version>0.7.7</version>
-            <scope>compile</scope>
+            <version>${project.version}</version>
         </dependency>
+        <!-- Dialogs, the chat prompt, GUIs and config, shaded and relocated above. It brings
+             UniDialog's Spigot and Paper backends with it, picked between at runtime. -->
+        <dependency>
+            <groupId>com.github.joserodpt</groupId>
+            <artifactId>RealUtils</artifactId>
+            <version>${realutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>${bstats.version}</version>
+        </dependency>
+        <!-- Pinned to bstats-bukkit's version, as in RealMines: WorldEdit can bring an older
+             bstats-base that would otherwise be shaded instead. -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-base</artifactId>
+            <version>${bstats.version}</version>
+        </dependency>
+        <!-- Soft hooks: only touched when the plugin is actually present at runtime, so they stay
+             provided and are never shaded in. -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
@@ -115,17 +248,16 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>joserodpt</groupId>
+            <groupId>com.github.joserodpt.RealPermissions</groupId>
             <artifactId>realpermissions-api</artifactId>
-            <version>0.4.2</version>
+            <version>${realpermissions.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>joserodpt.realmines</groupId>
-            <artifactId>realmines</artifactId>
-            <version>latest</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/RealMines.jar</systemPath>
+            <groupId>com.github.joserodpt.RealMines</groupId>
+            <artifactId>RealMinesAPI</artifactId>
+            <version>${realmines.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

@@ -39,6 +39,7 @@ import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import joserodpt.realregions.plugin.listeners.GeneralListener;
 import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
