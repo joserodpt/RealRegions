@@ -30,6 +30,8 @@ import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Text;
+import joserodpt.realregions.plugin.gui.ConfigEditor;
+import joserodpt.realregions.plugin.gui.Confirmations;
 import joserodpt.realregions.plugin.gui.EntityViewer;
 import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
@@ -81,6 +83,18 @@ public class RealRegionsCMD extends BaseCommand {
         //reload worlds config
         rra.getWorldManagerAPI().getWorlds().values().forEach(RWorld::reloadConfig);
         TranslatableLine.SYSTEM_RELOADED.send(commandSender);
+    }
+
+    /** config.yml as dialogs, where the server has them. */
+    @SubCommand("settings")
+    @Permission("realregions.admin")
+    @SuppressWarnings("unused")
+    public void settingscmd(final CommandSender commandSender) {
+        if (commandSender instanceof Player) {
+            ConfigEditor.open((Player) commandSender);
+        } else {
+            Text.send(commandSender, onlyPlayers);
+        }
     }
 
     @SubCommand(value = "worlds", alias = "menu")
@@ -536,7 +550,11 @@ public class RealRegionsCMD extends BaseCommand {
             return;
         }
 
-        rra.getWorldManagerAPI().unloadWorld(commandSender, rw);
+        final Runnable unload = () -> rra.getWorldManagerAPI().unloadWorld(commandSender, rw);
+        //asked first where the server has dialogs; the console, and servers without, unload straight away
+        if (!Confirmations.unloadWorld(commandSender, rw, unload, null)) {
+            unload.run();
+        }
     }
 
     @SubCommand("toggle-tpjoin")
@@ -654,7 +672,11 @@ public class RealRegionsCMD extends BaseCommand {
             return;
         }
 
-        rra.getRegionManagerAPI().deleteRegion(commandSender, reg);
+        final Runnable delete = () -> rra.getRegionManagerAPI().deleteRegion(commandSender, reg);
+        //asked first where the server has dialogs; the console, and servers without, delete straight away
+        if (!Confirmations.deleteRegion(commandSender, reg, delete, null)) {
+            delete.run();
+        }
     }
 
     @SubCommand(value = "rename", alias = "rn")
@@ -737,7 +759,11 @@ public class RealRegionsCMD extends BaseCommand {
             return;
         }
 
-        rra.getWorldManagerAPI().deleteWorld(commandSender, rw);
+        final Runnable delete = () -> rra.getWorldManagerAPI().deleteWorld(commandSender, rw);
+        //asked first where the server has dialogs; the console, and servers without, delete straight away
+        if (!Confirmations.deleteWorld(commandSender, rw, delete, null)) {
+            delete.run();
+        }
     }
 
     @SubCommand(value = "players", alias = "plrs")

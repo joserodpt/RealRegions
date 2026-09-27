@@ -29,8 +29,7 @@ import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.config.RRLanguage;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.PlayerInput;
-import joserodpt.realregions.api.utils.Text;
+import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.plugin.gui.EntityViewer;
 import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.MaterialPickerGUI;
@@ -39,6 +38,10 @@ import joserodpt.realregions.plugin.gui.WorldsListGUI;
 import joserodpt.realregions.plugin.listeners.GeneralListener;
 import joserodpt.realregions.plugin.listeners.RealMinesListener;
 import joserodpt.realregions.plugin.listeners.RegionListener;
+import joserodpt.realutils.RealUtils;
+import joserodpt.realutils.dialog.Dialogs;
+import joserodpt.realutils.input.PlayerInput;
+import joserodpt.realutils.text.Text;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
@@ -69,6 +72,10 @@ public class RealRegionsPlugin extends JavaPlugin {
         final long start = System.currentTimeMillis();
 
         pl = this;
+        //first: the GUIs' listeners, and the plugin RealUtils schedules and logs through
+        RealUtils.setup(this);
+        //read on every message, so a reloaded prefix applies
+        Text.prefix(() -> RRConfig.file().getString("RealRegions.Prefix") + " &r");
         realRegions = new RealRegions(this);
         RealRegionsAPI.setInstance(realRegions);
 
@@ -85,6 +92,15 @@ public class RealRegionsPlugin extends JavaPlugin {
         pm.registerEvents(RegionsListGUI.getListener(), this);
         pm.registerEvents(MaterialPickerGUI.getListener(), this);
         pm.registerEvents(PlayerInput.getListener(), this);
+        //typed input and confirmations are asked in dialogs on servers that have them, in chat everywhere else
+        Dialogs.setup(this, () -> RRConfig.file().getBoolean("RealRegions.useDialogs", true));
+        Dialogs.labels(TranslatableLine.SYSTEM_DIALOG_CONFIRM.get(), TranslatableLine.SYSTEM_DIALOG_CANCEL.get(),
+                TranslatableLine.SYSTEM_DIALOG_CLOSE.get(), TranslatableLine.SYSTEM_DIALOG_BACK.get(), TranslatableLine.SYSTEM_DIALOG_SAVE.get());
+        PlayerInput.setup(this,
+                p -> RRLanguage.file().getStringList("System.Type-Input"),
+                p -> RRLanguage.file().getStringList("System.Type-Input-Dialog"),
+                TranslatableLine.SYSTEM_INPUT_CANCELLED::send,
+                TranslatableLine.SYSTEM_ERROR_OCCURRED::send);
         pm.registerEvents(RegionSettingsGUI.getListener(), this);
         pm.registerEvents(EntityViewer.getListener(), this);
 
@@ -182,7 +198,7 @@ public class RealRegionsPlugin extends JavaPlugin {
             try {
                 realRegions.setRealPermissionsAPI(RealPermissionsAPI.getInstance());
                 List<ExternalPluginPermission> perms = new ArrayList<>(Collections.singletonList(
-                        new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
+                        new ExternalPluginPermission("realregions.admin", "Allow access to the main operator commands of RealRegions.", Arrays.asList("rr reload", "rr settings", "rr worlds", "rr create", "rr tp", "rr view", "rr del", "rr delw"))
                 ));
                 realRegions.getRegionManagerAPI().getRegions().forEach(region -> perms.addAll(region.getRegionBypassPermissions()));
                 realRegions.getRealPermissionsAPI().getHooksAPI().addHook(new ExternalPlugin(this.getDescription().getName(), "&fReal&aRegions", this.getDescription().getDescription(), Material.GRASS_BLOCK, perms, this.getDescription().getVersion()));
@@ -199,6 +215,13 @@ public class RealRegionsPlugin extends JavaPlugin {
 
         getLogger().info("Finished loading in " + ((System.currentTimeMillis() - start) / 1000F) + " seconds.");
         getLogger().info("<------------------ RealRegions vPT ------------------>".replace("PT", this.getDescription().getVersion()));
+    }
+
+    @Override
+    public void onDisable() {
+        Dialogs.shutdown();
+        //their callbacks hold GUIs and regions from this run of the plugin
+        PlayerInput.cancelAll();
     }
 
     private void printASCII() {

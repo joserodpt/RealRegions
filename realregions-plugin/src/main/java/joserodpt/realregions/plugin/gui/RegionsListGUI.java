@@ -22,7 +22,7 @@ import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Pagination;
-import joserodpt.realregions.api.utils.PlayerInput;
+import joserodpt.realutils.input.PlayerInput;
 import joserodpt.realregions.api.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -187,7 +187,11 @@ public class RegionsListGUI {
                                 if (!current.r.isLoaded()) {
                                     current.rr.getWorldManagerAPI().loadWorld(p, current.r.getRWorldName());
                                 } else {
-                                    current.rr.getWorldManagerAPI().unloadWorld(p, current.r);
+                                    final Runnable unload = () -> current.rr.getWorldManagerAPI().unloadWorld(p, current.r);
+                                    //asked first where the server has dialogs; a no brings this menu back
+                                    if (!Confirmations.unloadWorld(p, current.r, unload, () -> new RegionsListGUI(p, current.r, current.rr).openInventory(p))) {
+                                        unload.run();
+                                    }
                                 }
 
                                 break;
@@ -207,7 +211,7 @@ public class RegionsListGUI {
                                         Location max = new Location(p.getWorld(), r.getMaximumPoint().getBlockX(), r.getMaximumPoint().getBlockY(), r.getMaximumPoint().getBlockZ());
 
                                         p.closeInventory();
-                                        new PlayerInput(p, input -> {
+                                        new PlayerInput(p, true, input -> {
                                             //continue
                                             current.rr.getRegionManagerAPI().createCubeRegion(input, min, max, current.r);
                                             TranslatableLine.REGION_CREATED.send(p);
@@ -272,11 +276,18 @@ public class RegionsListGUI {
                                     }.runTaskLater(current.rr.getPlugin(), 2);
                                     break;
                                 case DROP:
-                                    current.rr.getRegionManagerAPI().deleteRegion(p, a);
-                                    current.load();
+                                    //asked first where the server has dialogs, which replace this menu, so it is reopened after
+                                    final Runnable reopen = () -> new RegionsListGUI(p, current.r, current.rr).openInventory(p);
+                                    if (!Confirmations.deleteRegion(p, a, () -> {
+                                        current.rr.getRegionManagerAPI().deleteRegion(p, a);
+                                        reopen.run();
+                                    }, reopen)) {
+                                        current.rr.getRegionManagerAPI().deleteRegion(p, a);
+                                        current.load();
+                                    }
                                     break;
                                 case SHIFT_RIGHT:
-                                    new PlayerInput(p, input -> {
+                                    new PlayerInput(p, false, input -> {
                                         a.setDisplayName(input);
                                         a.saveData(Region.RegionData.SETTINGS);
                                         TranslatableLine.REGION_DISPLAY_NAME_CHANGED.setV1(TranslatableLine.ReplacableVar.INPUT.eq(Text.color(input))).send(p);

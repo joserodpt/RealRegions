@@ -57,6 +57,9 @@ public enum TranslatableLine {
     REGION_ENTERING_TITLE("Region.Entering.Title", ReplacableVar.NAME),
     REGION_ENTERING_SUBTITLE("Region.Entering.Subtitle", ReplacableVar.NAME),
     REGION_ENTERING_TOGGLE("Region.Entering.Toggle", ReplacableVar.NAME),
+    REGION_DELETE_CONFIRM_TITLE("Region.Delete-Confirm-Title", ReplacableVar.NAME),
+    REGION_DELETE_CONFIRM("Region.Delete-Confirm", ReplacableVar.NAME),
+    REGION_DELETE_CONFIRM_BUTTON("Region.Delete-Confirm-Button"),
 
     //WORLD
 
@@ -86,6 +89,12 @@ public enum TranslatableLine {
     WORLD_INVALID_TYPE("World.Invalid-Type", ReplacableVar.INPUT),
     WORLD_TP_UNLOADED("World.TP-Unloaded-World"),
     WORLD_TP("World.TP", ReplacableVar.WORLD),
+    WORLD_UNLOAD_CONFIRM_TITLE("World.Unload-Confirm-Title", ReplacableVar.NAME),
+    WORLD_UNLOAD_CONFIRM("World.Unload-Confirm", ReplacableVar.NAME),
+    WORLD_UNLOAD_CONFIRM_BUTTON("World.Unload-Confirm-Button"),
+    WORLD_DELETE_CONFIRM_TITLE("World.Delete-Confirm-Title", ReplacableVar.NAME),
+    WORLD_DELETE_CONFIRM("World.Delete-Confirm", ReplacableVar.NAME),
+    WORLD_DELETE_CONFIRM_BUTTON("World.Delete-Confirm-Button"),
 
     //MENU
     MENU_UNLOADED_WORLD("Menu.Unloaded-World"),
@@ -97,7 +106,16 @@ public enum TranslatableLine {
 
     SYSTEM_RELOADED("System.Reloaded"),
     SYSTEM_NOT_FOUND("System.Not-Found", ReplacableVar.NAME),
-    SYSTEM_ERROR_REMOVING_FILES("System.Error-Removing-Files", ReplacableVar.NAME);
+    SYSTEM_ERROR_REMOVING_FILES("System.Error-Removing-Files", ReplacableVar.NAME),
+    SYSTEM_INPUT_CANCELLED("System.Input-Cancelled"),
+    SYSTEM_ERROR_OCCURRED("System.Error-Occurred"),
+    SYSTEM_DIALOG_CONFIRM("System.Dialog-Confirm"),
+    SYSTEM_DIALOG_CANCEL("System.Dialog-Cancel"),
+    SYSTEM_DIALOG_SAVE("System.Dialog-Save"),
+    SYSTEM_DIALOG_BACK("System.Dialog-Back"),
+    SYSTEM_DIALOG_CLOSE("System.Dialog-Close"),
+    SYSTEM_SETTINGS_SAVED("System.Settings-Saved"),
+    SYSTEM_SETTINGS_NEED_DIALOGS("System.Settings-Need-Dialogs");
 
 
     private final String configPath;

@@ -21,7 +21,7 @@ import joserodpt.realregions.api.regions.Region;
 import joserodpt.realregions.api.regions.RegionFlags;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.Itens;
-import joserodpt.realregions.api.utils.PlayerInput;
+import joserodpt.realutils.input.PlayerInput;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -283,15 +283,22 @@ public class RegionSettingsGUI {
 								break;
 							case 53:
 								player.closeInventory();
-								current.rr.getRegionManagerAPI().deleteRegion(player, current.r);
-								new BukkitRunnable()
-								{
-									public void run()
+								final Runnable delete = () -> {
+									current.rr.getRegionManagerAPI().deleteRegion(player, current.r);
+									new BukkitRunnable()
 									{
-										RegionsListGUI mp = new RegionsListGUI(player, current.r.getRWorld(), current.rr);
-										mp.openInventory(player);
-									}
-								}.runTaskLater(current.rr.getPlugin(), 2);
+										public void run()
+										{
+											RegionsListGUI mp = new RegionsListGUI(player, current.r.getRWorld(), current.rr);
+											mp.openInventory(player);
+										}
+									}.runTaskLater(current.rr.getPlugin(), 2);
+								};
+								//asked first where the server has dialogs; a no brings these settings back
+								if (!Confirmations.deleteRegion(player, current.r, delete,
+										() -> new RegionSettingsGUI(player, current.r, current.rr).openInventory(player))) {
+									delete.run();
+								}
 								break;
 
 							case 1:
@@ -521,7 +528,7 @@ public class RegionSettingsGUI {
 								break;
 
 							case 32:
-								new PlayerInput(player, input -> {
+								new PlayerInput(player, true, input -> {
 									if (!StringUtils.isNumeric(input))
 									{
 										TranslatableLine.INPUT_NOT_NUMBER.send(player);

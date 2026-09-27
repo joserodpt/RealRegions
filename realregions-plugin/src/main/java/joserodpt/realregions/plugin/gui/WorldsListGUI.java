@@ -19,7 +19,7 @@ import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Pagination;
-import joserodpt.realregions.api.utils.PlayerInput;
+import joserodpt.realutils.input.PlayerInput;
 import joserodpt.realregions.api.utils.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -221,7 +221,7 @@ public class WorldsListGUI {
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 break;
                             case 51:
-                                new PlayerInput(p, input -> current.rr.getWorldManagerAPI().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
+                                new PlayerInput(p, true, input -> current.rr.getWorldManagerAPI().createWorld(p, input, RWorld.WorldType.NORMAL), input -> {
                                     WorldsListGUI wv = new WorldsListGUI(p, current.ws, current.rr);
                                     wv.openInventory(p);
                                 });
@@ -232,6 +232,14 @@ public class WorldsListGUI {
 
                             if (a.getWorldType() == RWorld.WorldType.UNKNOWN_TO_BE_IMPORTED) {
                                 if (e.getClick() == ClickType.DROP) {
+                                    //asked first where the server has dialogs, which replace this menu, so it is reopened after
+                                    final Runnable reopen = () -> new WorldsListGUI(p, current.ws, current.rr).openInventory(p);
+                                    if (Confirmations.deleteWorld(p, a, () -> {
+                                        current.rr.getWorldManagerAPI().removeWorldFiles(p, a);
+                                        reopen.run();
+                                    }, reopen)) {
+                                        return;
+                                    }
                                     current.rr.getWorldManagerAPI().removeWorldFiles(p, a);
                                 } else {
                                     current.rr.getWorldManagerAPI().importWorld(p, a.getRWorldName(), RWorld.WorldType.NORMAL);

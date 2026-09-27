@@ -9,4 +9,7 @@ RealRegions:
     RealMines:
       Import-Mines: true
   Fallback-World: "world"
-Version: 4
+  # On servers that have dialogs (1.21.6 and up), ask for typed input, the settings and the delete
+  # and unload confirmations in dialogs instead of the chat. Other servers ignore this.
+  useDialogs: true
+Version: 5

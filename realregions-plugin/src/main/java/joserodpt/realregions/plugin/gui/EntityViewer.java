@@ -21,7 +21,7 @@ import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.utils.Text;
 import joserodpt.realregions.api.utils.Itens;
 import joserodpt.realregions.api.utils.Pagination;
-import joserodpt.realregions.api.utils.PlayerInput;
+import joserodpt.realutils.input.PlayerInput;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -238,7 +238,7 @@ public class EntityViewer {
                         switch (e.getRawSlot())
                         {
                             case 4:
-                                new PlayerInput(p, input -> {
+                                new PlayerInput(p, true, input -> {
                                     if (current.searchEntity(p, input).isEmpty()) {
                                         TranslatableLine.SEARCH_NO_RESULTS.send(p);
                                         current.exit(p, current.rr);
