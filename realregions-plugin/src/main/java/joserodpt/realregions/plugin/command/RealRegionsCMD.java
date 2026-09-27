@@ -44,7 +44,6 @@ import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.annotation.Usage;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -76,12 +75,10 @@ public class RealRegionsCMD {
                 WorldsListGUI wv = new WorldsListGUI(p, WorldsListGUI.WorldSort.REGISTRATION_DATE, rra);
                 wv.openInventory(p);
             } else {
-                Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion()));
+                BuildInfo.sendAbout(commandSender, rra.getPlugin(), "&fReal&eRegions");
             }
         } else {
-            Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion(),
-                    "         &7Built &a" + BuildInfo.time(rra.getPlugin()),
-                    "         &7RealUtils &a" + BuildInfo.realUtilsVersion(rra.getPlugin())));
+            BuildInfo.sendAbout(commandSender, rra.getPlugin(), "&fReal&eRegions");
         }
     }
 
