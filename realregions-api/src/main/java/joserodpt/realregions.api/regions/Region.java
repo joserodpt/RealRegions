@@ -367,6 +367,35 @@ public class Region {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Adds commands to the list, skipping any already on it.
+     *
+     * @return the ones that were added, as they are kept: lowercase and without the slash
+     */
+    public List<String> addBlockedCommands(List<String> commands) {
+        List<String> added = new ArrayList<>();
+        for (String command : commands) {
+            String c = normalizeCommand(command);
+            if (!c.isEmpty() && !this.blockedCommands.contains(c) && !added.contains(c)) {
+                added.add(c);
+            }
+        }
+        this.blockedCommands.addAll(added);
+        return added;
+    }
+
+    /** @return false if it was not on the list */
+    public boolean removeBlockedCommand(String command) {
+        return this.blockedCommands.remove(normalizeCommand(command));
+    }
+
+    /** What a player typed as a list of commands: separated by spaces or commas, each slash optional. */
+    public static List<String> splitCommands(String input) {
+        return Arrays.stream(input.split("[\\s,]+"))
+                .filter(c -> !c.isEmpty())
+                .collect(Collectors.toList());
+    }
+
     private static String normalizeCommand(String cmd) {
         String c = cmd.trim().toLowerCase(Locale.ROOT);
         return c.startsWith("/") ? c.substring(1) : c;

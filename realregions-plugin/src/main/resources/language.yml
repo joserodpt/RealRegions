@@ -1,4 +1,4 @@
-Version: 11
+Version: 12
 Region:
   Created: "&aRegion created."
   Name-Empty: "Region name is empty."
@@ -23,6 +23,31 @@ Region:
   Cant-Chat: "&cYou can't chat here."
   Cant-Use-Command: "&cYou can't use that command here."
   Blocked-Commands-Set: "&fBlocked commands in &b%name%&f: %input%"
+  # The list of commands the Block Commands flag applies to, in a dialog on servers that have them
+  # (1.21.6 and up) and in a chest menu otherwise.
+  Blocked-Commands:
+    Title: "%name% &8| &fBlocked Commands"
+    Description-All: "&fNo commands are listed, so with the flag on &cevery command &fis blocked here. Add some to block only those."
+    Description-Some: "&fWith the flag on, only the commands listed are blocked here. Ops and holders of the bypass permission are never blocked."
+    Flag: "&fBlock Commands: %input%"
+    Flag-Description: "&fClick to turn the flag on or off."
+    Add: "&aAdd commands"
+    Add-Description: "&fType one or more commands, separated by spaces or commas. The slash is optional, and &b/minecraft:tp &fis caught by &btp&f. Aliases have to be listed on their own."
+    Add-Field: "&fCommands"
+    Clear: "&cClear the list"
+    Clear-Description: "&fRemoves every command, so with the flag on every command is blocked again."
+    Clear-Shift: "&fShift-click to clear."
+    Clear-Confirm-Title: "%name% &8| &fClear"
+    Clear-Confirm: "&fClear the blocked commands of %name%&f? With the flag on, every command is blocked again."
+    Entry: "&b/%input%"
+    Entry-Remove: "&fClick to stop blocking it."
+    Empty: "&fNo commands listed"
+    Previous-Page: "&6Previous page"
+    Next-Page: "&aNext page"
+    Added: "&fNow blocked in &b%name%&f: %input%"
+    Already-Listed: "&fThose commands are already blocked in &b%name%&f."
+    Removed: "&b/%input% &fis no longer blocked in &b%name%&f."
+    Cleared: "&fThe blocked commands of &b%name% &fwere cleared."
   Cant-Consume: "&cYou can't consume that here."
   Disabled-End-Portal: "&cYou can't use the end portal here."
   Disabled-Nether-Portal: "&cYou can't use the end portal here."

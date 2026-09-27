@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.INPUT;
-import static joserodpt.realregions.api.config.TranslatableLine.TranslatableLinePlaceholder.NAME;
 
 public class RegionSettingsGUI {
 
@@ -197,10 +196,10 @@ public class RegionSettingsGUI {
 
 		inv.setItem(33, Items.createItem(Material.COMMAND_BLOCK, 1, "&7&lBlock Commands &r&7[" + getStyle(r.blockCommands) + "&7]",
 				Arrays.asList("&e&nDescription", "  Blocks commands in this region.",
-						"  &fBlocked: " + blockedCommandsText(r),
+						"  &fBlocked: " + (r.blockedCommands.isEmpty() ? "&ball commands" : "&b" + r.blockedCommands.size() + " command" + (r.blockedCommands.size() == 1 ? "" : "s")),
 						"&e&nPermissions",
 						"  &eBypass&f: " + RegionFlags.BLOCK_COMMANDS.getBypassPermission(r.getRWorld().getRWorldName(), r.getRegionName()),
-						"&f&nLeft-click&r&f to change value", "&f&nShift-click&r&f to choose which commands",
+						"&f&nLeft-click&r&f to change value", "&f&nShift-click&r&f to manage the list",
 						"&f&nRight-click&r&f to copy bypass permission")));
 
 		inv.setItem(32, Items.createItem(Material.EMERALD, 1, "&7&lPriority &r&7[&b&l" + r.getPriority() + "&r&7]",
@@ -226,7 +225,7 @@ public class RegionSettingsGUI {
 		return r.blockedCommands.isEmpty() ? "&ball commands" : "&b/" + String.join("&f, &b/", r.blockedCommands);
 	}
 
-	private String getStyle(boolean b) {
+	static String getStyle(boolean b) {
 		return b ? "&a&lENABLED" : "&c&lDISABLED";
 	}
 
@@ -551,21 +550,14 @@ public class RegionSettingsGUI {
 								} else if (event.getClick() == ClickType.RIGHT) {
 									RegionFlags.BLOCK_COMMANDS.sendBypassPermissionToPlayer(player, current.r.getRWorld().getRWorldName(), current.r.getRegionName());
 								} else if (event.isShiftClick()) {
-									//space or comma separated; "all" goes back to blocking every command
-									new PlayerInput(player, true, input -> {
-										current.r.setBlockedCommands(input.trim().equalsIgnoreCase("all")
-												? Collections.emptyList()
-												: Arrays.asList(input.split("[\\s,]+")));
-										current.r.saveData(Region.RegionData.FLAGS);
-										TranslatableLine.REGION_BLOCKED_COMMANDS_SET.with(NAME, current.r.getDisplayName())
-												.with(INPUT, blockedCommandsText(current.r)).send(player);
-										new BukkitRunnable() {
-											public void run() {
-												new RegionSettingsGUI(player, current.r, current.rr).openInventory(player);
-											}
-										}.runTaskLater(current.rr.getPlugin(), 2);
-									}, input -> new RegionSettingsGUI(player, current.r, current.rr).openInventory(player));
+									//closed first: this menu's listener would otherwise keep answering for the new screen
+									player.closeInventory();
 									player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
+									new BukkitRunnable() {
+										public void run() {
+											BlockedCommandsGUI.open(player, current.r, current.rr);
+										}
+									}.runTaskLater(current.rr.getPlugin(), 2);
 								}
 								break;
 

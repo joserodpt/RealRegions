@@ -46,12 +46,12 @@ public final class ConfigEditor {
 
         settings.category("&eGeneral", "&7Prefix, dates and dialogs")
                 .text("RealRegions.Prefix", "Plugin prefix", 64)
-                .text("RealRegions.Date-Format", "Date format", 64).note("Java's SimpleDateFormat, such as yyyy-MM-dd HH:mm:ss")
+                .text("RealRegions.Date-Format", "Date format", 64).note("e.g yyyy-MM-dd HH:mm:ss")
                 .text("RealRegions.Fallback-World", "World players are sent to when theirs is reset", 64)
                 .toggle("RealRegions.useDialogs", "Use dialogs").note("off: chat prompts");
 
         settings.category("&aRegions", "&7Messages and effects")
-                .toggle("RealRegions.Disable-Alert-Messages", "Hide the messages when a flag stops something")
+                .toggle("RealRegions.Disable-Alert-Messages", "Hide messages when a region is entered or left")
                 .toggle("RealRegions.Effects.Particles", "Particles")
                 .toggle("RealRegions.Effects.Sounds", "Sounds");
 

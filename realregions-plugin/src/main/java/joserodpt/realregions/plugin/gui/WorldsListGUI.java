@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -57,6 +58,8 @@ public class WorldsListGUI {
             Collections.singletonList("&fClick here to go back to the next page."));
     private final ItemStack close = Items.createItem(Material.ACACIA_DOOR, 1, "&cGo Back",
             Collections.singletonList("&fClick here to close this menu."));
+    private final ItemStack settings = Items.createItem(Material.COMPARATOR, 1, "&fSettings",
+            Arrays.asList("&fClick here to edit config.yml.", "&7Needs a server with dialogs (1.21.6 and up)."));
 
     private UUID uuid;
     private HashMap<Integer, RWorld> display = new HashMap<>();
@@ -102,6 +105,7 @@ public class WorldsListGUI {
         for (int i = 0; i < 9; ++i) {
             this.inv.setItem(i, placeholder);
         }
+        this.inv.setItem(4, settings);
 
         this.inv.setItem(45, placeholder);
         this.inv.setItem(46, placeholder);
@@ -207,6 +211,12 @@ public class WorldsListGUI {
                                 }
                                 p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 50);
                                 current.load();
+                                break;
+                            case 4:
+                                //closed first either way: the dialog replaces this menu, and without
+                                //dialogs the chat message saying so would be hidden behind it
+                                p.closeInventory();
+                                ConfigEditor.open(p);
                                 break;
                             case 49:
                                 current.exit(p);

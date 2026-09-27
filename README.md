@@ -120,9 +120,9 @@
     - Function: Displays a graphical menu showing players present in the specified world.
 
 19. Block Commands Command:
-    - Command: `/realregions blockcommands <region@world> <all | command...>` or `/rr bc`
+    - Command: `/realregions blockcommands <region@world> [all | command...]` or `/rr bc`
     - Permission: `realregions.admin`
-    - Function: Sets which commands the `block_commands` flag blocks in a region, e.g. `/rr bc spawn@world tp home`. `all` blocks every command. Turn the flag on with `/rr flag <region@world> block_commands true` or from the region menu. Players with `realregions.<world>.<region>.block-commands.bypass` are not affected.
+    - Function: Sets which commands the `block_commands` flag blocks in a region, e.g. `/rr bc spawn@world tp home`. `all` blocks every command. Turn the flag on with `/rr flag <region@world> block_commands true` or from the region menu. Players with `realregions.<world>.<region>.block-commands.bypass` are not affected. Without any commands it opens the list instead, also reached with shift-click on Block Commands in the region menu: add commands, click one to remove it, clear the list or toggle the flag. It is a dialog on servers that have them (1.21.6 and up) and a chest menu otherwise.
 
 ----
 

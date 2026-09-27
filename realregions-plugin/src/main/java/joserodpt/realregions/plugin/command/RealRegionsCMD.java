@@ -26,6 +26,7 @@ import joserodpt.realutils.text.Text;
 import joserodpt.realregions.plugin.gui.ConfigEditor;
 import joserodpt.realregions.plugin.gui.Confirmations;
 import joserodpt.realregions.plugin.gui.EntityViewer;
+import joserodpt.realregions.plugin.gui.BlockedCommandsGUI;
 import joserodpt.realregions.plugin.gui.RegionSettingsGUI;
 import joserodpt.realregions.plugin.gui.RegionsListGUI;
 import joserodpt.realregions.plugin.gui.WorldsListGUI;
@@ -419,18 +420,24 @@ public class RealRegionsCMD {
 
     @Subcommand({"blockcommands", "bc"})
     @CommandPermission("realregions.admin")
-    @Usage("&c/rr blockcommands <region@world> <all | command...>")
+    @Usage("&c/rr blockcommands <region@world> [all | command...]")
     @SuppressWarnings("unused")
-    public void blockcommandscmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, final String commands) {
+    public void blockcommandscmd(final CommandSender commandSender, @SuggestFrom(RRSuggestion.REGIONS) @Single final String name, @Optional final String commands) {
         Region reg = rra.getRegionManagerAPI().getRegionPlusName(name);
         if (reg == null) {
             TranslatableLine.REGION_NON_EXISTENT_NAME.with(NAME, name).send(commandSender);
             return;
         }
 
-        //turning the flag on is left to /rr flag, so a list can be set up before it applies
-        reg.setBlockedCommands(commands.trim().equalsIgnoreCase("all") ? Collections.emptyList() : Arrays.asList(commands.split("[\\s,]+")));
-        reg.saveData(Region.RegionData.FLAGS);
+        if (commands != null) {
+            //turning the flag on is left to /rr flag, so a list can be set up before it applies
+            reg.setBlockedCommands(commands.trim().equalsIgnoreCase("all") ? Collections.emptyList() : Region.splitCommands(commands));
+            reg.saveData(Region.RegionData.FLAGS);
+        } else if (commandSender instanceof Player) {
+            //nothing to set: the list, to add to and remove from
+            BlockedCommandsGUI.open((Player) commandSender, reg, rra);
+            return;
+        }
         TranslatableLine.REGION_BLOCKED_COMMANDS_SET.with(NAME, reg.getDisplayName())
                 .with(INPUT, RegionSettingsGUI.blockedCommandsText(reg)).send(commandSender);
     }
