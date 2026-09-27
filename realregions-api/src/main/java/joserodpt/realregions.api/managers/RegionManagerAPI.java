@@ -49,6 +49,12 @@ public abstract class RegionManagerAPI {
 
     public abstract void checkRealMinesRegions(Map<String, RMine> mines);
 
+    /**
+     * Makes a RealMines mine's region match it: created if there is none, its bounds updated if they
+     * moved. A mine without an area yet, or in a world RealRegions doesn't know, is skipped.
+     */
+    public abstract void syncRealMinesRegion(RMine mine);
+
     public abstract void toggleRegionView(CommandSender commandSender, Region reg);
 
     public abstract Map<UUID, Region> getLastRegions();

@@ -21,8 +21,7 @@ import joserodpt.realmines.api.event.RealMinesPluginLoadedEvent;
 import joserodpt.realregions.api.RealRegionsAPI;
 import joserodpt.realregions.api.config.RRConfig;
 import joserodpt.realregions.api.regions.Region;
-import joserodpt.realregions.api.utils.Cube;
-import joserodpt.realregions.api.regions.CuboidRegion;
+import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -48,17 +47,21 @@ public class RealMinesListener implements Listener {
         switch (e.getChangeOperation()) {
             case ADDED:
                 if (RRConfig.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines"))
-                    rra.getRegionManagerAPI().createCubeRegionRealMines(e.getMine(), rra.getWorldManagerAPI().getWorld(e.getMine().getWorld()));
+                    rra.getRegionManagerAPI().syncRealMinesRegion(e.getMine());
                 break;
             case REMOVED:
-                if (RRConfig.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines"))
-                    rra.getRegionManagerAPI().deleteRegion(rra.getRegionManagerAPI().getRegionPlusName(e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
+                if (RRConfig.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines") && e.getMine().getWorld() != null) {
+                    //named without the mine's colours, as the region was created; skipped mines have none to delete
+                    final Region r = rra.getRegionManagerAPI().getRegionPlusName(ChatColor.stripColor(e.getMine().getName()) + "@" + e.getMine().getWorld().getName());
+                    if (r != null) {
+                        rra.getRegionManagerAPI().deleteRegion(r);
+                    }
+                }
                 break;
             case BOUNDS_UPDATED:
                 if (RRConfig.file().getBoolean("RealRegions.Hooks.RealMines.Import-Mines")) {
-                    CuboidRegion r = (CuboidRegion) rra.getRegionManagerAPI().getRegionPlusName((e.getMine().getName() + "@" + e.getMine().getWorld().getName()));
-                    r.setCube(new Cube(e.getMine().getPOS1(), e.getMine().getPOS2()));
-                    r.saveData(Region.RegionData.BOUNDS);
+                    //also creates the region of a mine that had no area when it was first seen
+                    rra.getRegionManagerAPI().syncRealMinesRegion(e.getMine());
                 }
                 break;
         }

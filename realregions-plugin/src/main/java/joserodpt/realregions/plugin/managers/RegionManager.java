@@ -146,7 +146,12 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void createCubeRegionRealMines(RMine mine, RWorld rw) {
-        CuboidRegion crg = new CuboidRegion(ChatColor.stripColor(mine.getName()), rw, mine.getIcon(), mine.getPOS1(), mine.getPOS2());
+        final Location[] bounds = mineBounds(mine);
+        if (bounds == null || rw == null) {
+            skipMine(mine, rw);
+            return;
+        }
+        CuboidRegion crg = new CuboidRegion(ChatColor.stripColor(mine.getName()), rw, mine.getIcon(), bounds[0], bounds[1]);
         crg.setDisplayName(mine.getDisplayName());
         crg.setupDefaultConfig();
         crg.setOrigin(Region.RegionOrigin.REALMINES);
@@ -198,28 +203,63 @@ public class RegionManager extends RegionManagerAPI {
 
     @Override
     public void checkRealMinesRegions(Map<String, RMine> mines) {
-        for (String mineName : mines.keySet()) {
-            RMine mine = mines.get(mineName);
-            RWorld rw = rra.getWorldManagerAPI().getWorld(mine.getWorld());
+        mines.values().forEach(this::syncRealMinesRegion);
+    }
 
-            if (!rw.hasRegion(mineName)) {
-                //create new region
-                rra.getRegionManagerAPI().createCubeRegionRealMines(mine, rw);
-            } else {
-                //update region location
-                CuboidRegion r = (CuboidRegion) rra.getRegionManagerAPI().getRegionPlusName(mineName + "@" + rw.getRWorldName());
-                if (r != null) {
-                    if (r.getCube().getPOS1() != mine.getPOS1()) {
-                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
-                        continue;
-                    }
+    @Override
+    public void syncRealMinesRegion(RMine mine) {
+        final RWorld rw = mine.getWorld() == null ? null : rra.getWorldManagerAPI().getWorld(mine.getWorld());
+        final Location[] bounds = mineBounds(mine);
+        if (bounds == null || rw == null) {
+            skipMine(mine, rw);
+            return;
+        }
 
-                    if (r.getCube().getPOS2() != mine.getPOS2()) {
-                        r.setCube(new Cube(mine.getPOS1(), mine.getPOS2()));
-                    }
-                }
+        //the region is named after the mine without its colours, as createCubeRegionRealMines names it
+        final Region existing = this.getRegionPlusName(ChatColor.stripColor(mine.getName()) + "@" + rw.getRWorldName());
+        if (existing == null) {
+            this.createCubeRegionRealMines(mine, rw);
+        } else if (existing instanceof CuboidRegion) {
+            final CuboidRegion r = (CuboidRegion) existing;
+            if (!sameArea(r.getCube(), bounds[0], bounds[1])) {
+                r.setCube(new Cube(bounds[0], bounds[1]));
+                r.saveData(Region.RegionData.BOUNDS);
             }
         }
+    }
+
+    /**
+     * The two corners of a mine's area, or null while it has none. A schematic mine only keeps
+     * where it is pasted, so its area is the one RealMines worked out when pasting it; the other
+     * types have both corners of their own.
+     */
+    private static Location[] mineBounds(RMine mine) {
+        if (mine.getMineCuboid() != null && mine.getMineCuboid().getPOS1() != null && mine.getMineCuboid().getPOS2() != null) {
+            return new Location[]{mine.getMineCuboid().getPOS1(), mine.getMineCuboid().getPOS2()};
+        }
+        if (mine.getPOS1() != null && mine.getPOS2() != null) {
+            return new Location[]{mine.getPOS1(), mine.getPOS2()};
+        }
+        return null;
+    }
+
+    private void skipMine(RMine mine, RWorld rw) {
+        rra.getLogger().warning("Skipped the region for RealMines' mine " + ChatColor.stripColor(mine.getName()) + ": "
+                + (rw == null ? "its world isn't registered in RealRegions." : "it has no area yet (a schematic mine that hasn't been pasted)."));
+    }
+
+    /** Whether a cube covers the blocks between these two corners, whichever order they come in. */
+    private static boolean sameArea(Cube cube, Location a, Location b) {
+        final Location c1 = cube.getPOS1(), c2 = cube.getPOS2();
+        if (c1 == null || c2 == null || c1.getWorld() == null || !c1.getWorld().equals(a.getWorld())) {
+            return false;
+        }
+        return Math.min(c1.getBlockX(), c2.getBlockX()) == Math.min(a.getBlockX(), b.getBlockX())
+                && Math.min(c1.getBlockY(), c2.getBlockY()) == Math.min(a.getBlockY(), b.getBlockY())
+                && Math.min(c1.getBlockZ(), c2.getBlockZ()) == Math.min(a.getBlockZ(), b.getBlockZ())
+                && Math.max(c1.getBlockX(), c2.getBlockX()) == Math.max(a.getBlockX(), b.getBlockX())
+                && Math.max(c1.getBlockY(), c2.getBlockY()) == Math.max(a.getBlockY(), b.getBlockY())
+                && Math.max(c1.getBlockZ(), c2.getBlockZ()) == Math.max(a.getBlockZ(), b.getBlockZ());
     }
 
     @Override
