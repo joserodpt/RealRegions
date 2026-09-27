@@ -22,6 +22,7 @@ import joserodpt.realregions.api.config.RRLanguage;
 import joserodpt.realregions.api.config.TranslatableLine;
 import joserodpt.realregions.api.RWorld;
 import joserodpt.realregions.api.regions.Region;
+import joserodpt.realutils.BuildInfo;
 import joserodpt.realutils.text.Text;
 import joserodpt.realregions.plugin.gui.ConfigEditor;
 import joserodpt.realregions.plugin.gui.Confirmations;
@@ -78,7 +79,9 @@ public class RealRegionsCMD {
                 Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion()));
             }
         } else {
-            Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion()));
+            Text.sendList(commandSender, Arrays.asList("         &fReal&eRegions", "         &7Release &a" + rra.getPlugin().getDescription().getVersion(),
+                    "         &7Built &a" + BuildInfo.time(rra.getPlugin()),
+                    "         &7RealUtils &a" + BuildInfo.realUtilsVersion(rra.getPlugin())));
         }
     }
 
